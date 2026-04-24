@@ -2,15 +2,44 @@
 /* Webhook, student identity, TTS, storage helpers, answer submission */
 
 const Common = (() => {
+  /**
+   * === PORTABILITY CONTRACT ===
+   * The *only* stable external dependency is the Apps Script webhook URL below.
+   * Everything else (this repo, the Pages URL, the HTML filenames) can change
+   * and students' data keeps working because:
+   *   1. Source of truth = Google Sheet (via WEBHOOK_URL). All marks, answers,
+   *      and SRS state stream there in real time.
+   *   2. localStorage is a cache keyed by student name. On cold start, the app
+   *      calls pullMarksSnapshot() which restores full state from the Sheet.
+   *   3. The student name in ?student=<name> is the identity. As long as students
+   *      visit any version of this app with their name, their data follows them.
+   *
+   * Schema migrations: bump SCHEMA_VERSION, add a migration step in migrate().
+   */
+  const SCHEMA_VERSION = 2;
   const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbw3f0cxkufdZkrG6kABkMy9djKGIrJvQX1qqqcFMFgt89ZhNGRlFVElYFUohA3z-tqoew/exec';
   const KEYS = {
     STUDENT: 'fkd_student',
     PENDING: 'fkd_pending',
-    MARKS: 'fkd_marks',
-    RESPONSES: 'fkd_history',
-    ANSWERS: 'fkd_answers',        // submitted answers (keyed by passage+q_id)
-    STARRED_CATS: 'fkd_starred_cats'
+    MARKS: 'fkd_marks',                  // per-student flashcards + SRS state
+    RESPONSES: 'fkd_history',            // last 2000 events (local audit log)
+    ANSWERS: 'fkd_answers',              // submitted answers (keyed by date+topic+q)
+    STARRED_CATS: 'fkd_starred_cats',
+    SCHEMA_VERSION: 'fkd_schema_version' // controls migration
   };
+
+  /** Run any schema migrations needed to bring local storage up to SCHEMA_VERSION. */
+  function migrate() {
+    const cur = parseInt(localStorage.getItem(KEYS.SCHEMA_VERSION) || '1', 10);
+    if (cur >= SCHEMA_VERSION) return { skipped: true, version: cur };
+    const log = [];
+    // v1 → v2: no data-shape changes yet (future migrations go here)
+    // Example: rename a key, add a default field, etc.
+    localStorage.setItem(KEYS.SCHEMA_VERSION, String(SCHEMA_VERSION));
+    log.push(`migrated v${cur} → v${SCHEMA_VERSION}`);
+    return { migrated: true, log };
+  }
+  migrate();
 
   let sessionId = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 
@@ -486,8 +515,59 @@ const Common = (() => {
     speechSynthesis.addEventListener?.('voiceschanged', () => speechSynthesis.getVoices());
   }
 
+  /**
+   * Belt-and-suspenders: download all of this student's local state as JSON.
+   * Works even if webhook is unreachable; lets the student/teacher archive offline.
+   */
+  function exportStudentData() {
+    const student = getStudent();
+    if (!student) return null;
+    const bundle = {
+      schema: SCHEMA_VERSION,
+      exported_at: new Date().toISOString(),
+      student,
+      marks: getMarks(student),
+      answers: JSON.parse(localStorage.getItem(KEYS.ANSWERS) || '{}'),
+      starred_categories: getStarredCats(),
+      history_tail: JSON.parse(localStorage.getItem(KEYS.RESPONSES) || '[]').slice(-200)
+    };
+    const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `fly-korean_${student}_${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    return bundle;
+  }
+
+  /**
+   * Import a previously-exported bundle. Merges by per-word lastSeen (later wins),
+   * so restoring an old export onto a newer state doesn't clobber recent work.
+   */
+  function importStudentData(bundle) {
+    if (!bundle || !bundle.student || !bundle.marks) return { error: 'invalid bundle' };
+    setStudent(bundle.student);
+    const existing = getMarks(bundle.student);
+    const merged = { ...existing };
+    let added = 0, updated = 0;
+    for (const [kr, m] of Object.entries(bundle.marks)) {
+      const cur = existing[kr];
+      if (!cur) { merged[kr] = m; added++; continue; }
+      const curTime = cur.lastSeen || cur.added || '';
+      const newTime = m.lastSeen || m.added || '';
+      if (newTime > curTime) { merged[kr] = m; updated++; }
+    }
+    saveMarks(merged, bundle.student);
+    // Also restore starred categories if not already set
+    if (bundle.starred_categories && getStarredCats().length === 0) {
+      localStorage.setItem(KEYS.STARRED_CATS, JSON.stringify(bundle.starred_categories));
+    }
+    pushMarksSnapshot(500);  // push the merged state back to the Sheet
+    return { added, updated, merged_count: Object.keys(merged).length };
+  }
+
   return {
-    WEBHOOK_URL,
+    WEBHOOK_URL, SCHEMA_VERSION,
     getStudent, setStudent, requireStudent,
     getMarks, addMark, editMark, removeMark, hasMark,
     updateSRS, getDueCards, getStats,
@@ -495,6 +575,7 @@ const Common = (() => {
     submitAnswer, getLocalAnswer, fetchFeedback, fetchRecentFeedback,
     markFeedbackSeen,
     pushMarksSnapshot, pullMarksSnapshot,
+    exportStudentData, importStudentData,
     queueWebhook, flushWebhook,
     playOrSpeak, speakKorean, stopAudio,
     createRecognizer,
