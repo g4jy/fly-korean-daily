@@ -150,21 +150,45 @@ Level-specific question profile (counts, types, expected answer length, nature):
 - Never generate a question whose answer requires the student to know something NOT stated in the passage.
 - Mix question types. Don't stack all factual or all inference — vary.
 
-### Step 5 — Write the JSON file (chunked to avoid output limits)
+### Step 5 — Write the JSON file (STRICT chunking — prevents stream timeouts)
 
-**Output-budget note**: the full 10-topic × 4-level JSON with token_maps typically runs ~50–80 KB. A single LLM response is capped at 32K output tokens. To avoid hitting the ceiling, write the JSON **one topic at a time** using multiple `Write` tool calls:
+**⚠️ Critical — read carefully**: the previous run failed with "Stream idle timeout" after trying to write 3 topics as one batch. Large single responses in the chat stream time out. The fix is **extreme chunking — ONE level at a time**, not one topic.
 
-```python
-# Initialize accumulator
-data = {"date": "{{TODAY_KST}}", "generated_at": "{{ISO_NOW_KST}}", "source": "routine", "topics": []}
+**Execution pattern (follow exactly):**
 
-# For each topic (one LLM pass per topic, or grouped 2-3 if safely under budget):
-#   Generate levels, vocab, token_map, questions for that topic only
-#   Append to data["topics"]
-#   Write data/{{TODAY_KST}}.json after each append (idempotent overwrite)
+```
+Stage 1 — Initialize (one tool call):
+  Write data/{{TODAY_KST}}.json with {"date":"{{TODAY_KST}}", "generated_at":"{{ISO_NOW_KST}}", "source":"routine", "topics":[]}
+
+Stage 2 — For topic T in [your 10 chosen topics]:
+  2a. Generate Level k1 ONLY for T. Output: {title, text, vocab, token_map, questions, audio_path}. ~1.5-3 KB.
+      Build one topic-scaffold object with just this level: {id, category, source_title, source_url, levels:{k1:{...}}}
+      Read current JSON, append/merge this scaffold into topics[], write back.
+  2b. Generate Level k2 for T. Read current JSON, add levels.k2 to T's entry, write back.
+  2c. Generate Level k3 for T. Same pattern. (This will be the longest level; still output ≤5KB.)
+  2d. Generate Level k4 for T. Same pattern.
+  2e. Brief log line: "topic T complete: {category}".
+
+Stage 3 — Finalize:
+  Read JSON. Re-sort topics[] alphabetically by category then id.
+  Ensure each level has {title, text, vocab, token_map, questions, audio}.
+  Write back.
 ```
 
-At the end, re-sort `topics` alphabetically by category and rewrite the final JSON.
+**Why one LEVEL at a time (not one topic at a time):**
+- k4 alone can be 3KB of Korean + its token_map of ~150 entries. Three k4s in one response is what timed out last time.
+- Each Write tool call is a fresh response segment. Keeps the stream alive.
+
+**Idempotent restart:**
+- At startup, read `data/{{TODAY_KST}}.json` if it exists. For each topic already present, check which levels are filled.
+- Skip levels that are already written (non-empty `text` AND non-empty `token_map`).
+- This lets a failed run resume without starting over.
+
+**Validation after every write:**
+```bash
+python -c "import json; json.load(open('data/{{TODAY_KST}}.json', encoding='utf-8'))"
+```
+If this fails, the last write corrupted the JSON — roll back and retry that write.
 
 Full schema:
 
