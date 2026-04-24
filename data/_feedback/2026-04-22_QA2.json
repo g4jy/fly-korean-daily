@@ -1,0 +1,22 @@
+{
+  "q1": {
+    "score": 4,
+    "correctness": "correct",
+    "korean_feedback": "잘 대답했어요! 자연스러운 한국어 문장이에요. 다만 '입니다' 대신 '이에요'가 더 자연스러워요.",
+    "english_note": "Good answer, appropriate register suggestion.",
+    "grammar_corrections": [
+      {
+        "before": "축제입니다",
+        "after": "축제예요",
+        "why": "일상 대화에서는 해요체가 자연스러워요."
+      }
+    ]
+  },
+  "q2": {
+    "score": 2,
+    "correctness": "partial",
+    "korean_feedback": "방향이 맞지만 조금 더 자세히 설명해 보세요.",
+    "english_note": "Too brief — flagged.",
+    "grammar_corrections": []
+  }
+}

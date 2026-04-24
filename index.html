@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Fly Korean Daily</title>
+<link rel="stylesheet" href="css/styles.css?v=3" />
+</head>
+<body>
+<div class="container">
+  <div class="topbar">
+    <h1><span class="brand">Fly Korean</span><span class="daily-suffix"> Daily</span></h1>
+    <div class="right" id="top-right"></div>
+  </div>
+
+  <div id="app"></div>
+</div>
+
+<script src="js/common.js?v=3"></script>
+<script>
+(async function () {
+  const gate = new URLSearchParams(location.search).get('gate');
+  const app = document.getElementById('app');
+  const student = Common.getStudent();
+
+  if (!student || gate) {
+    app.innerHTML = `
+      <div class="student-gate">
+        <h2>Who's reading today?</h2>
+        <p>Enter your name once — we'll remember on this device.</p>
+        <input id="name" type="text" placeholder="Your name" autocomplete="off" autofocus />
+        <button class="btn btn-full" id="go">Start</button>
+      </div>
+    `;
+    const go = () => {
+      const v = document.getElementById('name').value.trim();
+      if (!v) return;
+      Common.setStudent(v);
+      location.href = 'index.html';
+    };
+    document.getElementById('go').addEventListener('click', go);
+    document.getElementById('name').addEventListener('keydown', e => { if (e.key === 'Enter') go(); });
+    return;
+  }
+
+  Common.renderStudentChip('#top-right');
+
+  // Pull cross-device snapshot so stats are accurate
+  await Common.pullMarksSnapshot();
+
+  const today = new Date().toISOString().slice(0, 10);
+  const stats = Common.getStats();
+
+  app.innerHTML = `
+    <div class="hero">
+      <div class="date">${today}</div>
+      <h2>Hello, ${student}.</h2>
+      <p>Read today's news in Korean at your level. Tap any word to save it for review.</p>
+    </div>
+
+    <div id="fb-widget"></div>
+
+    <div class="hub-cards">
+      <a class="hub-card" href="reading.html">
+        <span class="ic">📖</span>
+        <h3>Today's Reading</h3>
+        <p>Fresh news stories, 4 difficulty levels, plain Korean.</p>
+      </a>
+      <a class="hub-card" href="flashcards.html">
+        <span class="ic">🎴</span>
+        <h3>My Flashcards</h3>
+        <p>${stats.total} saved · ${stats.due} due · ${stats.mastered} mastered</p>
+      </a>
+    </div>
+
+    <div style="text-align:center; margin-top:32px;">
+      <button class="nav-link" id="switch-user">Not ${student}? Switch user</button>
+    </div>
+  `;
+
+  document.getElementById('switch-user').addEventListener('click', () => {
+    localStorage.removeItem('fkd_student');
+    location.href = 'index.html?gate=1';
+  });
+
+  // Render recent feedback widget
+  (async () => {
+    const items = await Common.fetchRecentFeedback(7);
+    const host = document.getElementById('fb-widget');
+    if (!host) return;
+    const unread = items.filter(it => it.isUnread);
+    if (items.length === 0) return; // nothing to show
+    const preview = items.slice(0, 5);
+    host.innerHTML = `
+      <details class="fb-widget" ${unread.length > 0 ? 'open' : ''}>
+        <summary>
+          <span>📝 Recent feedback ${unread.length > 0 ? `<span class="fb-unread-dot">${unread.length} new</span>` : ''}</span>
+          <span class="fb-widget-meta">${items.length} total · past 7 days</span>
+        </summary>
+        <div class="fb-widget-body">
+          ${preview.map(renderFbItem).join('')}
+          ${items.length > preview.length ? `<div class="fb-widget-more">+ ${items.length - preview.length} more earlier</div>` : ''}
+        </div>
+      </details>
+    `;
+    // Mark all as seen when opened
+    host.querySelector('details').addEventListener('toggle', (e) => {
+      if (e.target.open) {
+        items.forEach(it => Common.markFeedbackSeen(it.date, it.qId));
+        host.querySelectorAll('.fb-unread-dot').forEach(el => el.remove());
+      }
+    });
+  })();
+
+  function renderFbItem(it) {
+    const score = it.feedback.score ?? '?';
+    const scoreCls = score >= 4 ? 'ok' : score >= 3 ? 'mid' : 'bad';
+    return `
+      <div class="fb-item ${it.isUnread ? 'unread' : ''}">
+        <div class="fb-item-head">
+          <span class="fb-date">${it.date}</span>
+          <span class="fb-score ${scoreCls}">${score}/5</span>
+        </div>
+        ${it.qKr ? `<div class="fb-item-q">Q: ${it.qKr}</div>` : ''}
+        ${it.answerText ? `<div class="fb-item-a">A: ${it.answerText}</div>` : ''}
+        <div class="fb-item-body">${it.feedback.korean_feedback || ''}</div>
+        ${it.feedback.grammar_corrections?.length ? `
+          <div class="fb-corrections">
+            ${it.feedback.grammar_corrections.map(c => `
+              <div class="fb-corr">
+                <span class="fb-before">${c.before}</span>
+                <span class="fb-arrow">→</span>
+                <span class="fb-after">${c.after}</span>
+                ${c.why ? `<div class="fb-why">${c.why}</div>` : ''}
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+      </div>
+    `;
+  }
+})();
+</script>
+</body>
+</html>

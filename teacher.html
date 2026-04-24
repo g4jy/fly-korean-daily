@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Teacher Dashboard · Fly Korean Daily</title>
+<link rel="stylesheet" href="css/styles.css?v=3" />
+<style>
+.teacher-container { max-width: 1100px; }
+.t-grid { display: grid; grid-template-columns: 240px 1fr; gap: 18px; margin-top: 12px; }
+.t-sidebar { background: var(--card-bg); border-radius: var(--radius); padding: 12px; box-shadow: var(--shadow); }
+.t-main { background: var(--card-bg); border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow); min-height: 60vh; }
+.t-student-btn {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 12px; border-radius: 8px; cursor: pointer; font-size: 0.9rem;
+  background: transparent; border: none; width: 100%; text-align: left; font-family: inherit;
+  margin-bottom: 2px;
+}
+.t-student-btn:hover { background: var(--border-soft); }
+.t-student-btn.active { background: var(--primary); color: #fff; }
+.t-badge { font-size: 0.7rem; padding: 2px 7px; border-radius: 999px; background: var(--accent-hot); color: #fff; font-weight: 700; }
+.t-student-btn.active .t-badge { background: rgba(255,255,255,0.25); }
+.t-section { margin-bottom: 24px; }
+.t-section h3 { font-size: 0.9rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+.t-sub-card {
+  padding: 14px; border: 1.5px solid var(--border-soft); border-radius: var(--radius-sm); margin-bottom: 10px;
+}
+.t-sub-head { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-light); margin-bottom: 8px; }
+.t-sub-q { font-weight: 600; margin-bottom: 6px; }
+.t-sub-a { color: var(--text); padding: 8px 10px; background: var(--border-soft); border-radius: 6px; font-size: 0.92rem; line-height: 1.55; margin-bottom: 8px; }
+.t-sub-fb { color: var(--accent); font-style: italic; font-size: 0.88rem; }
+.t-flag {
+  display: inline-block; padding: 1px 8px; border-radius: 4px; background: var(--accent-hot); color: #fff;
+  font-size: 0.7rem; font-weight: 700; margin-left: 8px;
+}
+.t-filters { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+@media (max-width: 700px) {
+  .t-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="container teacher-container">
+  <div class="topbar">
+    <h1><a href="index.html" style="text-decoration:none; color:inherit;"><span class="brand">Fly Korean</span> Teacher</a></h1>
+    <div class="right">
+      <a class="nav-link" href="reading.html">Reading</a>
+      <a class="nav-link" href="flashcards.html">Flashcards</a>
+      <a class="nav-link active" href="teacher.html">Teacher</a>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="date" id="t-date"></div>
+    <h2>Student Activity</h2>
+    <p>Review submissions and AI-generated feedback. Override grades if needed.</p>
+  </div>
+
+  <div class="t-filters">
+    <button class="btn btn-ghost" id="t-refresh">↻ Refresh</button>
+    <button class="btn btn-ghost" id="t-flagged">Show flagged only</button>
+    <button class="btn btn-ghost" id="t-all">Show all</button>
+  </div>
+
+  <div class="t-grid">
+    <aside class="t-sidebar" id="t-students"><p style="color:var(--text-light); text-align:center; padding:20px 0;">Loading…</p></aside>
+    <section class="t-main" id="t-main"><p style="color:var(--text-light); text-align:center; padding:40px 0;">Select a student.</p></section>
+  </div>
+</div>
+
+<script src="js/common.js?v=3"></script>
+<script>
+(async function () {
+  const GET_URL = Common.WEBHOOK_URL + '?action=all&key=' + encodeURIComponent('teacher');
+
+  const state = { submissions: [], currentStudent: null, filter: 'all' };
+  document.getElementById('t-date').textContent = new Date().toISOString().slice(0, 10);
+
+  async function load() {
+    try {
+      const r = await fetch(GET_URL);
+      if (!r.ok) throw new Error('fetch failed: ' + r.status);
+      state.submissions = await r.json();
+    } catch (e) {
+      document.getElementById('t-main').innerHTML = `
+        <div class="empty-state">
+          <span class="ic">📭</span>
+          <h3>No data yet</h3>
+          <p>Either no submissions are in yet, or the Apps Script webhook needs to be extended.
+          See <code>docs/APPS_SCRIPT.md</code> for the required GET endpoint.</p>
+          <p style="font-size:0.85rem; color:var(--text-soft); margin-top:12px;">Error: ${e.message}</p>
+        </div>`;
+      return;
+    }
+    renderStudents();
+  }
+
+  function flaggedOnly(list) {
+    return list.filter(s => (s.feedback_score !== undefined && s.feedback_score <= 2) || s.flagged === true);
+  }
+
+  function groupByStudent(list) {
+    const g = {};
+    for (const s of list) {
+      const k = s.student || 'unknown';
+      if (!g[k]) g[k] = { name: k, total: 0, flagged: 0, awaitingFeedback: 0, latest: null };
+      g[k].total++;
+      if ((s.feedback_score !== undefined && s.feedback_score <= 2) || s.flagged) g[k].flagged++;
+      if (!s.feedback_score && s.status === 'submitted') g[k].awaitingFeedback++;
+      if (!g[k].latest || s.timestamp > g[k].latest) g[k].latest = s.timestamp;
+    }
+    return Object.values(g).sort((a, b) => (b.latest || '').localeCompare(a.latest || ''));
+  }
+
+  function renderStudents() {
+    const list = state.filter === 'flagged' ? flaggedOnly(state.submissions) : state.submissions;
+    const groups = groupByStudent(list);
+    const host = document.getElementById('t-students');
+    if (groups.length === 0) {
+      host.innerHTML = `<p style="color:var(--text-light); text-align:center; padding:20px 0;">No submissions match the filter.</p>`;
+      return;
+    }
+    host.innerHTML = groups.map(g => `
+      <button class="t-student-btn ${state.currentStudent === g.name ? 'active' : ''}" data-student="${g.name}">
+        <span>${g.name} <small style="opacity:0.7">· ${g.total}</small></span>
+        ${g.awaitingFeedback > 0 ? `<span class="t-badge">${g.awaitingFeedback} pending</span>` : g.flagged > 0 ? `<span class="t-badge">${g.flagged} flag</span>` : ''}
+      </button>
+    `).join('');
+    host.querySelectorAll('.t-student-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.currentStudent = btn.dataset.student;
+        renderStudents();
+        renderMain();
+      });
+    });
+  }
+
+  function renderMain() {
+    const main = document.getElementById('t-main');
+    if (!state.currentStudent) {
+      main.innerHTML = `<p style="color:var(--text-light); text-align:center; padding:40px 0;">Select a student.</p>`;
+      return;
+    }
+    const list = state.submissions
+      .filter(s => s.student === state.currentStudent)
+      .filter(s => state.filter !== 'flagged' || (s.feedback_score <= 2 || s.flagged))
+      .sort((a, b) => (b.timestamp || '').localeCompare(a.timestamp || ''));
+
+    if (list.length === 0) {
+      main.innerHTML = `<p style="color:var(--text-light); text-align:center; padding:40px 0;">No submissions for this student.</p>`;
+      return;
+    }
+
+    main.innerHTML = `
+      <h3 style="margin-bottom:14px;">${state.currentStudent} · ${list.length} submissions</h3>
+      ${list.map(s => `
+        <div class="t-sub-card">
+          <div class="t-sub-head">
+            <span>${s.date || ''} · ${s.level || ''} · ${s.topic_id || ''} · ${s.q_id || ''}</span>
+            <span>
+              ${s.feedback_score !== undefined ? `${s.feedback_score}/5` : '<span style="color:var(--accent-hot)">pending</span>'}
+              ${(s.feedback_score <= 2 || s.flagged) ? '<span class="t-flag">FLAG</span>' : ''}
+            </span>
+          </div>
+          <div class="t-sub-q">${s.q_kr || ''}</div>
+          <div class="t-sub-a">${s.answer_text || '<em style="color:var(--text-soft)">(no answer)</em>'}</div>
+          ${s.korean_feedback ? `<div class="t-sub-fb">📝 ${s.korean_feedback}</div>` : ''}
+        </div>
+      `).join('')}
+    `;
+  }
+
+  document.getElementById('t-refresh').addEventListener('click', load);
+  document.getElementById('t-flagged').addEventListener('click', () => {
+    state.filter = 'flagged';
+    renderStudents();
+    renderMain();
+  });
+  document.getElementById('t-all').addEventListener('click', () => {
+    state.filter = 'all';
+    renderStudents();
+    renderMain();
+  });
+
+  load();
+})();
+</script>
+</body>
+</html>

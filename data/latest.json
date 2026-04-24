@@ -1,0 +1,2625 @@
+{
+  "date": "2026-04-22",
+  "generated_at": "2026-04-22T06:00:00+09:00",
+  "source": "sample",
+  "topics": [
+    {
+      "id": "seoul-cherry-blossom-festival-2026",
+      "category": "Culture",
+      "source_title": "Seoul's Yeouido Cherry Blossom Festival Returns for 2026",
+      "source_url": "",
+      "levels": {
+        "k1": {
+          "title": "벚꽃 축제",
+          "text": "서울에 벚꽃 축제가 있어요. 여의도에서 벚꽃을 볼 수 있어요. 꽃이 정말 예뻐요. 많은 사람들이 와요.",
+          "vocab": [
+            {
+              "kr": "벚꽃",
+              "en": "cherry blossom",
+              "def": "봄에 피는 분홍색 꽃",
+              "pos": ""
+            },
+            {
+              "kr": "축제",
+              "en": "festival",
+              "def": "큰 행사나 이벤트",
+              "pos": ""
+            },
+            {
+              "kr": "예쁘다",
+              "en": "pretty",
+              "def": "보기 좋다",
+              "pos": ""
+            },
+            {
+              "kr": "사람",
+              "en": "person / people",
+              "def": "human being",
+              "pos": ""
+            }
+          ],
+          "audio": "audio/2026-04-22/seoul-cherry-blossom-festival-2026_k1.mp3",
+          "token_map": {
+            "꽃이": {
+              "dict": "꽃",
+              "en": "",
+              "pos": ""
+            },
+            "많은": {
+              "dict": "많",
+              "en": "",
+              "pos": ""
+            },
+            "벚꽃": {
+              "dict": "벚꽃",
+              "en": "cherry blossom",
+              "pos": "noun"
+            },
+            "벚꽃과": {
+              "dict": "벚꽃",
+              "en": "cherry blossom",
+              "pos": "noun"
+            },
+            "벚꽃도": {
+              "dict": "벚꽃",
+              "en": "cherry blossom",
+              "pos": "noun"
+            },
+            "벚꽃만": {
+              "dict": "벚꽃",
+              "en": "cherry blossom",
+              "pos": "noun"
+            },
+            "벚꽃에": {
+              "dict": "벚꽃",
+              "en": "cherry blossom",
+              "pos": "noun"
+            },
+            "벚꽃에는": {
+              "dict": "벚꽃",
+              "en": "cherry blossom",
+              "pos": "noun"
+            },
+            "벚꽃에도": {
+              "dict": "벚꽃",
+              "en": "cherry blossom",
+              "pos": "noun"
+            },
+            "벚꽃에서": {
+              "dict": "벚꽃",
+              "en": "cherry blossom",
+              "pos": "noun"
+            },
+            "벚꽃에서는": {
+              "dict": "벚꽃",
+              "en": "cherry blossom",
+              "pos": "noun"
+            },
+            "벚꽃와": {
+              "dict": "벚꽃",
+              "en": "cherry blossom",
+              "pos": "noun"
+            },
+            "벚꽃은": {
+              "dict": "벚꽃",
+              "en": "cherry blossom",
+              "pos": "noun"
+            },
+            "벚꽃을": {
+              "dict": "벚꽃",
+              "en": "cherry blossom",
+              "pos": "noun"
+            },
+            "벚꽃의": {
+              "dict": "벚꽃",
+              "en": "cherry blossom",
+              "pos": "noun"
+            },
+            "벚꽃이": {
+              "dict": "벚꽃",
+              "en": "cherry blossom",
+              "pos": "noun"
+            },
+            "볼": {
+              "dict": "볼",
+              "en": "",
+              "pos": ""
+            },
+            "사람": {
+              "dict": "사람",
+              "en": "person / people",
+              "pos": "noun"
+            },
+            "사람과": {
+              "dict": "사람",
+              "en": "person / people",
+              "pos": "noun"
+            },
+            "사람도": {
+              "dict": "사람",
+              "en": "person / people",
+              "pos": "noun"
+            },
+            "사람들이": {
+              "dict": "사람들",
+              "en": "",
+              "pos": ""
+            },
+            "사람만": {
+              "dict": "사람",
+              "en": "person / people",
+              "pos": "noun"
+            },
+            "사람에": {
+              "dict": "사람",
+              "en": "person / people",
+              "pos": "noun"
+            },
+            "사람에는": {
+              "dict": "사람",
+              "en": "person / people",
+              "pos": "noun"
+            },
+            "사람에도": {
+              "dict": "사람",
+              "en": "person / people",
+              "pos": "noun"
+            },
+            "사람에서": {
+              "dict": "사람",
+              "en": "person / people",
+              "pos": "noun"
+            },
+            "사람에서는": {
+              "dict": "사람",
+              "en": "person / people",
+              "pos": "noun"
+            },
+            "사람와": {
+              "dict": "사람",
+              "en": "person / people",
+              "pos": "noun"
+            },
+            "사람은": {
+              "dict": "사람",
+              "en": "person / people",
+              "pos": "noun"
+            },
+            "사람을": {
+              "dict": "사람",
+              "en": "person / people",
+              "pos": "noun"
+            },
+            "사람의": {
+              "dict": "사람",
+              "en": "person / people",
+              "pos": "noun"
+            },
+            "사람이": {
+              "dict": "사람",
+              "en": "person / people",
+              "pos": "noun"
+            },
+            "서울에": {
+              "dict": "서울",
+              "en": "",
+              "pos": ""
+            },
+            "수": {
+              "dict": "수",
+              "en": "",
+              "pos": ""
+            },
+            "여의도에서": {
+              "dict": "여의도",
+              "en": "",
+              "pos": ""
+            },
+            "예뻐요": {
+              "dict": "예뻐요",
+              "en": "",
+              "pos": ""
+            },
+            "예쁘고": {
+              "dict": "예쁘다",
+              "en": "pretty",
+              "pos": "verb",
+              "gloss": "connective -고"
+            },
+            "예쁘기": {
+              "dict": "예쁘다",
+              "en": "pretty",
+              "pos": "verb",
+              "gloss": "nominalization -기"
+            },
+            "예쁘는데": {
+              "dict": "예쁘다",
+              "en": "pretty",
+              "pos": "verb",
+              "gloss": "background -는데"
+            },
+            "예쁘다": {
+              "dict": "예쁘다",
+              "en": "pretty",
+              "pos": "verb",
+              "gloss": ""
+            },
+            "예쁘면": {
+              "dict": "예쁘다",
+              "en": "pretty",
+              "pos": "verb",
+              "gloss": "conditional -면"
+            },
+            "예쁘아서": {
+              "dict": "예쁘다",
+              "en": "pretty",
+              "pos": "verb",
+              "gloss": "sequential/causal -서"
+            },
+            "예쁘아요": {
+              "dict": "예쁘다",
+              "en": "pretty",
+              "pos": "verb",
+              "gloss": "polite-present"
+            },
+            "예쁘어서": {
+              "dict": "예쁘다",
+              "en": "pretty",
+              "pos": "verb",
+              "gloss": "sequential/causal -서"
+            },
+            "예쁘어요": {
+              "dict": "예쁘다",
+              "en": "pretty",
+              "pos": "verb",
+              "gloss": "polite-present"
+            },
+            "예쁘여서": {
+              "dict": "예쁘다",
+              "en": "pretty",
+              "pos": "verb",
+              "gloss": "sequential/causal -서"
+            },
+            "예쁘여요": {
+              "dict": "예쁘다",
+              "en": "pretty",
+              "pos": "verb",
+              "gloss": "polite-present"
+            },
+            "예쁘을": {
+              "dict": "예쁘다",
+              "en": "pretty",
+              "pos": "verb",
+              "gloss": "future modifier -ㄹ/-을"
+            },
+            "예쁘음": {
+              "dict": "예쁘다",
+              "en": "pretty",
+              "pos": "verb",
+              "gloss": "nominalization -음"
+            },
+            "예쁘지만": {
+              "dict": "예쁘다",
+              "en": "pretty",
+              "pos": "verb",
+              "gloss": "contrastive -지만"
+            },
+            "와요": {
+              "dict": "와요",
+              "en": "",
+              "pos": ""
+            },
+            "있어요": {
+              "dict": "있어요",
+              "en": "",
+              "pos": ""
+            },
+            "정말": {
+              "dict": "정말",
+              "en": "",
+              "pos": ""
+            },
+            "축제": {
+              "dict": "축제",
+              "en": "festival",
+              "pos": "noun"
+            },
+            "축제가": {
+              "dict": "축제",
+              "en": "festival",
+              "pos": "noun"
+            },
+            "축제과": {
+              "dict": "축제",
+              "en": "festival",
+              "pos": "noun"
+            },
+            "축제는": {
+              "dict": "축제",
+              "en": "festival",
+              "pos": "noun"
+            },
+            "축제도": {
+              "dict": "축제",
+              "en": "festival",
+              "pos": "noun"
+            },
+            "축제를": {
+              "dict": "축제",
+              "en": "festival",
+              "pos": "noun"
+            },
+            "축제만": {
+              "dict": "축제",
+              "en": "festival",
+              "pos": "noun"
+            },
+            "축제에": {
+              "dict": "축제",
+              "en": "festival",
+              "pos": "noun"
+            },
+            "축제에는": {
+              "dict": "축제",
+              "en": "festival",
+              "pos": "noun"
+            },
+            "축제에도": {
+              "dict": "축제",
+              "en": "festival",
+              "pos": "noun"
+            },
+            "축제에서": {
+              "dict": "축제",
+              "en": "festival",
+              "pos": "noun"
+            },
+            "축제에서는": {
+              "dict": "축제",
+              "en": "festival",
+              "pos": "noun"
+            },
+            "축제와": {
+              "dict": "축제",
+              "en": "festival",
+              "pos": "noun"
+            },
+            "축제의": {
+              "dict": "축제",
+              "en": "festival",
+              "pos": "noun"
+            }
+          },
+          "questions": [
+            {
+              "id": "q1",
+              "type": "short",
+              "q_kr": "이 글의 주제는 무엇이에요?",
+              "answer_hint": "Main topic of the passage."
+            },
+            {
+              "id": "q2",
+              "type": "yesno",
+              "q_kr": "이 글은 한국에 관한 글이에요?",
+              "answer_hint": "Is this about Korea?"
+            },
+            {
+              "id": "q3",
+              "type": "short",
+              "q_kr": "이 글에서 가장 중요한 단어는 무엇이에요?",
+              "answer_hint": "Most important word."
+            }
+          ]
+        },
+        "k2": {
+          "title": "여의도 벚꽃 축제",
+          "text": "서울 여의도에서 벚꽃 축제가 열려요. 매년 봄에 많은 사람들이 벚꽃을 보러 와요. 축제 기간에는 공연과 음식도 즐길 수 있어요. 벚꽃은 보통 일주일 정도 피어 있어요. 가족이나 친구와 함께 가면 좋아요.",
+          "vocab": [
+            {
+              "kr": "열리다",
+              "en": "to be held / to open",
+              "def": "행사가 시작되다",
+              "pos": ""
+            },
+            {
+              "kr": "기간",
+              "en": "period / duration",
+              "def": "어떤 일이 계속되는 시간",
+              "pos": ""
+            },
+            {
+              "kr": "공연",
+              "en": "performance",
+              "def": "무대에서 하는 행사",
+              "pos": ""
+            },
+            {
+              "kr": "즐기다",
+              "en": "to enjoy",
+              "def": "기분 좋게 경험하다",
+              "pos": ""
+            },
+            {
+              "kr": "피다",
+              "en": "to bloom",
+              "def": "꽃이 열리다",
+              "pos": ""
+            }
+          ],
+          "audio": "audio/2026-04-22/seoul-cherry-blossom-festival-2026_k2.mp3",
+          "token_map": {
+            "가면": {
+              "dict": "가면",
+              "en": "",
+              "pos": ""
+            },
+            "가족이나": {
+              "dict": "가족이나",
+              "en": "",
+              "pos": ""
+            },
+            "공연": {
+              "dict": "공연",
+              "en": "performance",
+              "pos": "noun"
+            },
+            "공연과": {
+              "dict": "공연",
+              "en": "performance",
+              "pos": "noun"
+            },
+            "공연도": {
+              "dict": "공연",
+              "en": "performance",
+              "pos": "noun"
+            },
+            "공연만": {
+              "dict": "공연",
+              "en": "performance",
+              "pos": "noun"
+            },
+            "공연에": {
+              "dict": "공연",
+              "en": "performance",
+              "pos": "noun"
+            },
+            "공연에는": {
+              "dict": "공연",
+              "en": "performance",
+              "pos": "noun"
+            },
+            "공연에도": {
+              "dict": "공연",
+              "en": "performance",
+              "pos": "noun"
+            },
+            "공연에서": {
+              "dict": "공연",
+              "en": "performance",
+              "pos": "noun"
+            },
+            "공연에서는": {
+              "dict": "공연",
+              "en": "performance",
+              "pos": "noun"
+            },
+            "공연와": {
+              "dict": "공연",
+              "en": "performance",
+              "pos": "noun"
+            },
+            "공연은": {
+              "dict": "공연",
+              "en": "performance",
+              "pos": "noun"
+            },
+            "공연을": {
+              "dict": "공연",
+              "en": "performance",
+              "pos": "noun"
+            },
+            "공연의": {
+              "dict": "공연",
+              "en": "performance",
+              "pos": "noun"
+            },
+            "공연이": {
+              "dict": "공연",
+              "en": "performance",
+              "pos": "noun"
+            },
+            "기간": {
+              "dict": "기간",
+              "en": "period / duration",
+              "pos": "noun"
+            },
+            "기간과": {
+              "dict": "기간",
+              "en": "period / duration",
+              "pos": "noun"
+            },
+            "기간도": {
+              "dict": "기간",
+              "en": "period / duration",
+              "pos": "noun"
+            },
+            "기간만": {
+              "dict": "기간",
+              "en": "period / duration",
+              "pos": "noun"
+            },
+            "기간에": {
+              "dict": "기간",
+              "en": "period / duration",
+              "pos": "noun"
+            },
+            "기간에는": {
+              "dict": "기간",
+              "en": "period / duration",
+              "pos": "noun"
+            },
+            "기간에도": {
+              "dict": "기간",
+              "en": "period / duration",
+              "pos": "noun"
+            },
+            "기간에서": {
+              "dict": "기간",
+              "en": "period / duration",
+              "pos": "noun"
+            },
+            "기간에서는": {
+              "dict": "기간",
+              "en": "period / duration",
+              "pos": "noun"
+            },
+            "기간와": {
+              "dict": "기간",
+              "en": "period / duration",
+              "pos": "noun"
+            },
+            "기간은": {
+              "dict": "기간",
+              "en": "period / duration",
+              "pos": "noun"
+            },
+            "기간을": {
+              "dict": "기간",
+              "en": "period / duration",
+              "pos": "noun"
+            },
+            "기간의": {
+              "dict": "기간",
+              "en": "period / duration",
+              "pos": "noun"
+            },
+            "기간이": {
+              "dict": "기간",
+              "en": "period / duration",
+              "pos": "noun"
+            },
+            "많은": {
+              "dict": "많",
+              "en": "",
+              "pos": ""
+            },
+            "매년": {
+              "dict": "매년",
+              "en": "",
+              "pos": ""
+            },
+            "벚꽃": {
+              "dict": "벚꽃",
+              "en": "",
+              "pos": ""
+            },
+            "벚꽃은": {
+              "dict": "벚꽃",
+              "en": "",
+              "pos": ""
+            },
+            "벚꽃을": {
+              "dict": "벚꽃",
+              "en": "",
+              "pos": ""
+            },
+            "보러": {
+              "dict": "보러",
+              "en": "",
+              "pos": ""
+            },
+            "보통": {
+              "dict": "보통",
+              "en": "",
+              "pos": ""
+            },
+            "봄에": {
+              "dict": "봄",
+              "en": "",
+              "pos": ""
+            },
+            "사람들이": {
+              "dict": "사람들",
+              "en": "",
+              "pos": ""
+            },
+            "서울": {
+              "dict": "서울",
+              "en": "",
+              "pos": ""
+            },
+            "수": {
+              "dict": "수",
+              "en": "",
+              "pos": ""
+            },
+            "여의도에서": {
+              "dict": "여의도",
+              "en": "",
+              "pos": ""
+            },
+            "열려": {
+              "dict": "열리다",
+              "en": "to be held / to open",
+              "pos": "verb",
+              "gloss": "polite-present (려 from 리)"
+            },
+            "열려요": {
+              "dict": "열리다",
+              "en": "to be held / to open",
+              "pos": "verb",
+              "gloss": "polite-present (려 from 리)"
+            },
+            "열리고": {
+              "dict": "열리다",
+              "en": "to be held / to open",
+              "pos": "verb",
+              "gloss": "connective -고"
+            },
+            "열리기": {
+              "dict": "열리다",
+              "en": "to be held / to open",
+              "pos": "verb",
+              "gloss": "nominalization -기"
+            },
+            "열리는데": {
+              "dict": "열리다",
+              "en": "to be held / to open",
+              "pos": "verb",
+              "gloss": "background -는데"
+            },
+            "열리다": {
+              "dict": "열리다",
+              "en": "to be held / to open",
+              "pos": "verb",
+              "gloss": ""
+            },
+            "열리면": {
+              "dict": "열리다",
+              "en": "to be held / to open",
+              "pos": "verb",
+              "gloss": "conditional -면"
+            },
+            "열리아서": {
+              "dict": "열리다",
+              "en": "to be held / to open",
+              "pos": "verb",
+              "gloss": "sequential/causal -서"
+            },
+            "열리아요": {
+              "dict": "열리다",
+              "en": "to be held / to open",
+              "pos": "verb",
+              "gloss": "polite-present"
+            },
+            "열리어서": {
+              "dict": "열리다",
+              "en": "to be held / to open",
+              "pos": "verb",
+              "gloss": "sequential/causal -서"
+            },
+            "열리어요": {
+              "dict": "열리다",
+              "en": "to be held / to open",
+              "pos": "verb",
+              "gloss": "polite-present"
+            },
+            "열리여서": {
+              "dict": "열리다",
+              "en": "to be held / to open",
+              "pos": "verb",
+              "gloss": "sequential/causal -서"
+            },
+            "열리여요": {
+              "dict": "열리다",
+              "en": "to be held / to open",
+              "pos": "verb",
+              "gloss": "polite-present"
+            },
+            "열리을": {
+              "dict": "열리다",
+              "en": "to be held / to open",
+              "pos": "verb",
+              "gloss": "future modifier -ㄹ/-을"
+            },
+            "열리음": {
+              "dict": "열리다",
+              "en": "to be held / to open",
+              "pos": "verb",
+              "gloss": "nominalization -음"
+            },
+            "열리지만": {
+              "dict": "열리다",
+              "en": "to be held / to open",
+              "pos": "verb",
+              "gloss": "contrastive -지만"
+            },
+            "와요": {
+              "dict": "와요",
+              "en": "",
+              "pos": ""
+            },
+            "음식도": {
+              "dict": "음식",
+              "en": "",
+              "pos": ""
+            },
+            "일주일": {
+              "dict": "일주일",
+              "en": "",
+              "pos": ""
+            },
+            "있어요": {
+              "dict": "있어요",
+              "en": "",
+              "pos": ""
+            },
+            "정도": {
+              "dict": "정",
+              "en": "",
+              "pos": ""
+            },
+            "좋아요": {
+              "dict": "좋아요",
+              "en": "",
+              "pos": ""
+            },
+            "즐기고": {
+              "dict": "즐기다",
+              "en": "to enjoy",
+              "pos": "verb",
+              "gloss": "connective -고"
+            },
+            "즐기기": {
+              "dict": "즐기다",
+              "en": "to enjoy",
+              "pos": "verb",
+              "gloss": "nominalization -기"
+            },
+            "즐기는데": {
+              "dict": "즐기다",
+              "en": "to enjoy",
+              "pos": "verb",
+              "gloss": "background -는데"
+            },
+            "즐기다": {
+              "dict": "즐기다",
+              "en": "to enjoy",
+              "pos": "verb",
+              "gloss": ""
+            },
+            "즐기면": {
+              "dict": "즐기다",
+              "en": "to enjoy",
+              "pos": "verb",
+              "gloss": "conditional -면"
+            },
+            "즐기아서": {
+              "dict": "즐기다",
+              "en": "to enjoy",
+              "pos": "verb",
+              "gloss": "sequential/causal -서"
+            },
+            "즐기아요": {
+              "dict": "즐기다",
+              "en": "to enjoy",
+              "pos": "verb",
+              "gloss": "polite-present"
+            },
+            "즐기어서": {
+              "dict": "즐기다",
+              "en": "to enjoy",
+              "pos": "verb",
+              "gloss": "sequential/causal -서"
+            },
+            "즐기어요": {
+              "dict": "즐기다",
+              "en": "to enjoy",
+              "pos": "verb",
+              "gloss": "polite-present"
+            },
+            "즐기여서": {
+              "dict": "즐기다",
+              "en": "to enjoy",
+              "pos": "verb",
+              "gloss": "sequential/causal -서"
+            },
+            "즐기여요": {
+              "dict": "즐기다",
+              "en": "to enjoy",
+              "pos": "verb",
+              "gloss": "polite-present"
+            },
+            "즐기을": {
+              "dict": "즐기다",
+              "en": "to enjoy",
+              "pos": "verb",
+              "gloss": "future modifier -ㄹ/-을"
+            },
+            "즐기음": {
+              "dict": "즐기다",
+              "en": "to enjoy",
+              "pos": "verb",
+              "gloss": "nominalization -음"
+            },
+            "즐기지만": {
+              "dict": "즐기다",
+              "en": "to enjoy",
+              "pos": "verb",
+              "gloss": "contrastive -지만"
+            },
+            "즐길": {
+              "dict": "즐길",
+              "en": "",
+              "pos": ""
+            },
+            "축제": {
+              "dict": "축제",
+              "en": "",
+              "pos": ""
+            },
+            "축제가": {
+              "dict": "축제",
+              "en": "",
+              "pos": ""
+            },
+            "친구와": {
+              "dict": "친구",
+              "en": "",
+              "pos": ""
+            },
+            "피고": {
+              "dict": "피다",
+              "en": "to bloom",
+              "pos": "verb",
+              "gloss": "connective -고"
+            },
+            "피기": {
+              "dict": "피다",
+              "en": "to bloom",
+              "pos": "verb",
+              "gloss": "nominalization -기"
+            },
+            "피는데": {
+              "dict": "피다",
+              "en": "to bloom",
+              "pos": "verb",
+              "gloss": "background -는데"
+            },
+            "피다": {
+              "dict": "피다",
+              "en": "to bloom",
+              "pos": "verb",
+              "gloss": ""
+            },
+            "피면": {
+              "dict": "피다",
+              "en": "to bloom",
+              "pos": "verb",
+              "gloss": "conditional -면"
+            },
+            "피아서": {
+              "dict": "피다",
+              "en": "to bloom",
+              "pos": "verb",
+              "gloss": "sequential/causal -서"
+            },
+            "피아요": {
+              "dict": "피다",
+              "en": "to bloom",
+              "pos": "verb",
+              "gloss": "polite-present"
+            },
+            "피어": {
+              "dict": "피어",
+              "en": "",
+              "pos": ""
+            },
+            "피어서": {
+              "dict": "피다",
+              "en": "to bloom",
+              "pos": "verb",
+              "gloss": "sequential/causal -서"
+            },
+            "피어요": {
+              "dict": "피다",
+              "en": "to bloom",
+              "pos": "verb",
+              "gloss": "polite-present"
+            },
+            "피여서": {
+              "dict": "피다",
+              "en": "to bloom",
+              "pos": "verb",
+              "gloss": "sequential/causal -서"
+            },
+            "피여요": {
+              "dict": "피다",
+              "en": "to bloom",
+              "pos": "verb",
+              "gloss": "polite-present"
+            },
+            "피을": {
+              "dict": "피다",
+              "en": "to bloom",
+              "pos": "verb",
+              "gloss": "future modifier -ㄹ/-을"
+            },
+            "피음": {
+              "dict": "피다",
+              "en": "to bloom",
+              "pos": "verb",
+              "gloss": "nominalization -음"
+            },
+            "피지만": {
+              "dict": "피다",
+              "en": "to bloom",
+              "pos": "verb",
+              "gloss": "contrastive -지만"
+            },
+            "함께": {
+              "dict": "함께",
+              "en": "",
+              "pos": ""
+            }
+          },
+          "questions": [
+            {
+              "id": "q1",
+              "type": "short",
+              "q_kr": "이 글의 주제는 무엇이에요?",
+              "answer_hint": "Main topic of the passage."
+            },
+            {
+              "id": "q2",
+              "type": "yesno",
+              "q_kr": "이 글은 한국에 관한 글이에요?",
+              "answer_hint": "Is this about Korea?"
+            },
+            {
+              "id": "q3",
+              "type": "short",
+              "q_kr": "이 글에서 가장 중요한 단어는 무엇이에요?",
+              "answer_hint": "Most important word."
+            },
+            {
+              "id": "q4",
+              "type": "long",
+              "q_kr": "이 글을 읽고 무엇을 알게 되었나요?",
+              "answer_hint": "What did you learn?"
+            }
+          ]
+        },
+        "k3": {
+          "title": "여의도 벚꽃 축제 개막",
+          "text": "서울 영등포구 여의도에서 2026년 벚꽃 축제가 이번 주 개막했습니다. 올해 축제는 열흘간 진행되며 다양한 문화 행사가 마련되어 있습니다. 한강 변을 따라 약 1,500그루의 벚나무가 만개하여 방문객들을 맞이하고 있습니다. 주최 측은 올해 방문객 수가 100만 명을 넘을 것으로 예상하고 있습니다. 축제 기간 중에는 대중교통 이용이 권장됩니다.",
+          "vocab": [
+            {
+              "kr": "개막",
+              "en": "opening / commencement",
+              "def": "행사나 공연이 시작됨",
+              "pos": ""
+            },
+            {
+              "kr": "진행되다",
+              "en": "to proceed / to be underway",
+              "def": "일이 계속해서 이루어지다",
+              "pos": ""
+            },
+            {
+              "kr": "만개하다",
+              "en": "to be in full bloom",
+              "def": "꽃이 완전히 피다",
+              "pos": ""
+            },
+            {
+              "kr": "주최",
+              "en": "host / organizer",
+              "def": "행사를 계획하고 운영하는 측",
+              "pos": ""
+            },
+            {
+              "kr": "예상하다",
+              "en": "to expect / to estimate",
+              "def": "앞으로의 일을 미리 생각하다",
+              "pos": ""
+            },
+            {
+              "kr": "권장되다",
+              "en": "to be recommended",
+              "def": "하도록 추천되다",
+              "pos": ""
+            }
+          ],
+          "audio": "audio/2026-04-22/seoul-cherry-blossom-festival-2026_k3.mp3",
+          "token_map": {
+            "1,500그루의": {
+              "dict": "1,500그루",
+              "en": "",
+              "pos": ""
+            },
+            "100만": {
+              "dict": "100",
+              "en": "",
+              "pos": ""
+            },
+            "2026년": {
+              "dict": "2026년",
+              "en": "",
+              "pos": ""
+            },
+            "개막": {
+              "dict": "개막",
+              "en": "opening / commencement",
+              "pos": "noun"
+            },
+            "개막과": {
+              "dict": "개막",
+              "en": "opening / commencement",
+              "pos": "noun"
+            },
+            "개막도": {
+              "dict": "개막",
+              "en": "opening / commencement",
+              "pos": "noun"
+            },
+            "개막만": {
+              "dict": "개막",
+              "en": "opening / commencement",
+              "pos": "noun"
+            },
+            "개막에": {
+              "dict": "개막",
+              "en": "opening / commencement",
+              "pos": "noun"
+            },
+            "개막에는": {
+              "dict": "개막",
+              "en": "opening / commencement",
+              "pos": "noun"
+            },
+            "개막에도": {
+              "dict": "개막",
+              "en": "opening / commencement",
+              "pos": "noun"
+            },
+            "개막에서": {
+              "dict": "개막",
+              "en": "opening / commencement",
+              "pos": "noun"
+            },
+            "개막에서는": {
+              "dict": "개막",
+              "en": "opening / commencement",
+              "pos": "noun"
+            },
+            "개막와": {
+              "dict": "개막",
+              "en": "opening / commencement",
+              "pos": "noun"
+            },
+            "개막은": {
+              "dict": "개막",
+              "en": "opening / commencement",
+              "pos": "noun"
+            },
+            "개막을": {
+              "dict": "개막",
+              "en": "opening / commencement",
+              "pos": "noun"
+            },
+            "개막의": {
+              "dict": "개막",
+              "en": "opening / commencement",
+              "pos": "noun"
+            },
+            "개막이": {
+              "dict": "개막",
+              "en": "opening / commencement",
+              "pos": "noun"
+            },
+            "개막했습니다": {
+              "dict": "개막했습니다",
+              "en": "",
+              "pos": ""
+            },
+            "것으로": {
+              "dict": "것",
+              "en": "",
+              "pos": ""
+            },
+            "권장되고": {
+              "dict": "권장되다",
+              "en": "to be recommended",
+              "pos": "verb",
+              "gloss": "connective -고"
+            },
+            "권장되기": {
+              "dict": "권장되다",
+              "en": "to be recommended",
+              "pos": "verb",
+              "gloss": "nominalization -기"
+            },
+            "권장되는데": {
+              "dict": "권장되다",
+              "en": "to be recommended",
+              "pos": "verb",
+              "gloss": "background -는데"
+            },
+            "권장되다": {
+              "dict": "권장되다",
+              "en": "to be recommended",
+              "pos": "verb",
+              "gloss": ""
+            },
+            "권장되면": {
+              "dict": "권장되다",
+              "en": "to be recommended",
+              "pos": "verb",
+              "gloss": "conditional -면"
+            },
+            "권장되아서": {
+              "dict": "권장되다",
+              "en": "to be recommended",
+              "pos": "verb",
+              "gloss": "sequential/causal -서"
+            },
+            "권장되아요": {
+              "dict": "권장되다",
+              "en": "to be recommended",
+              "pos": "verb",
+              "gloss": "polite-present"
+            },
+            "권장되어서": {
+              "dict": "권장되다",
+              "en": "to be recommended",
+              "pos": "verb",
+              "gloss": "sequential/causal -서"
+            },
+            "권장되어요": {
+              "dict": "권장되다",
+              "en": "to be recommended",
+              "pos": "verb",
+              "gloss": "polite-present"
+            },
+            "권장되여서": {
+              "dict": "권장되다",
+              "en": "to be recommended",
+              "pos": "verb",
+              "gloss": "sequential/causal -서"
+            },
+            "권장되여요": {
+              "dict": "권장되다",
+              "en": "to be recommended",
+              "pos": "verb",
+              "gloss": "polite-present"
+            },
+            "권장되을": {
+              "dict": "권장되다",
+              "en": "to be recommended",
+              "pos": "verb",
+              "gloss": "future modifier -ㄹ/-을"
+            },
+            "권장되음": {
+              "dict": "권장되다",
+              "en": "to be recommended",
+              "pos": "verb",
+              "gloss": "nominalization -음"
+            },
+            "권장되지만": {
+              "dict": "권장되다",
+              "en": "to be recommended",
+              "pos": "verb",
+              "gloss": "contrastive -지만"
+            },
+            "권장됩니다": {
+              "dict": "권장됩니다",
+              "en": "",
+              "pos": ""
+            },
+            "기간": {
+              "dict": "기간",
+              "en": "",
+              "pos": ""
+            },
+            "넘을": {
+              "dict": "넘",
+              "en": "",
+              "pos": ""
+            },
+            "다양한": {
+              "dict": "다양한",
+              "en": "",
+              "pos": ""
+            },
+            "대중교통": {
+              "dict": "대중교통",
+              "en": "",
+              "pos": ""
+            },
+            "따라": {
+              "dict": "따라",
+              "en": "",
+              "pos": ""
+            },
+            "마련되어": {
+              "dict": "마련되어",
+              "en": "",
+              "pos": ""
+            },
+            "만개하고": {
+              "dict": "만개하다",
+              "en": "to be in full bloom",
+              "pos": "verb",
+              "gloss": "connective -고"
+            },
+            "만개하기": {
+              "dict": "만개하다",
+              "en": "to be in full bloom",
+              "pos": "verb",
+              "gloss": "nominalization -기"
+            },
+            "만개하는데": {
+              "dict": "만개하다",
+              "en": "to be in full bloom",
+              "pos": "verb",
+              "gloss": "background -는데"
+            },
+            "만개하다": {
+              "dict": "만개하다",
+              "en": "to be in full bloom",
+              "pos": "verb",
+              "gloss": ""
+            },
+            "만개하면": {
+              "dict": "만개하다",
+              "en": "to be in full bloom",
+              "pos": "verb",
+              "gloss": "conditional -면"
+            },
+            "만개하아서": {
+              "dict": "만개하다",
+              "en": "to be in full bloom",
+              "pos": "verb",
+              "gloss": "sequential/causal -서"
+            },
+            "만개하아요": {
+              "dict": "만개하다",
+              "en": "to be in full bloom",
+              "pos": "verb",
+              "gloss": "polite-present"
+            },
+            "만개하어서": {
+              "dict": "만개하다",
+              "en": "to be in full bloom",
+              "pos": "verb",
+              "gloss": "sequential/causal -서"
+            },
+            "만개하어요": {
+              "dict": "만개하다",
+              "en": "to be in full bloom",
+              "pos": "verb",
+              "gloss": "polite-present"
+            },
+            "만개하여": {
+              "dict": "만개하여",
+              "en": "",
+              "pos": ""
+            },
+            "만개하여서": {
+              "dict": "만개하다",
+              "en": "to be in full bloom",
+              "pos": "verb",
+              "gloss": "sequential/causal -서"
+            },
+            "만개하여요": {
+              "dict": "만개하다",
+              "en": "to be in full bloom",
+              "pos": "verb",
+              "gloss": "polite-present"
+            },
+            "만개하을": {
+              "dict": "만개하다",
+              "en": "to be in full bloom",
+              "pos": "verb",
+              "gloss": "future modifier -ㄹ/-을"
+            },
+            "만개하음": {
+              "dict": "만개하다",
+              "en": "to be in full bloom",
+              "pos": "verb",
+              "gloss": "nominalization -음"
+            },
+            "만개하지만": {
+              "dict": "만개하다",
+              "en": "to be in full bloom",
+              "pos": "verb",
+              "gloss": "contrastive -지만"
+            },
+            "만개해": {
+              "dict": "만개하다",
+              "en": "to be in full bloom",
+              "pos": "verb",
+              "gloss": ""
+            },
+            "만개해서": {
+              "dict": "만개하다",
+              "en": "to be in full bloom",
+              "pos": "verb",
+              "gloss": "sequential/causal -서"
+            },
+            "만개해요": {
+              "dict": "만개하다",
+              "en": "to be in full bloom",
+              "pos": "verb",
+              "gloss": "polite-present"
+            },
+            "맞이하고": {
+              "dict": "맞이",
+              "en": "",
+              "pos": ""
+            },
+            "명을": {
+              "dict": "명",
+              "en": "",
+              "pos": ""
+            },
+            "문화": {
+              "dict": "문화",
+              "en": "",
+              "pos": ""
+            },
+            "방문객": {
+              "dict": "방문객",
+              "en": "",
+              "pos": ""
+            },
+            "방문객들을": {
+              "dict": "방문객들",
+              "en": "",
+              "pos": ""
+            },
+            "벚꽃": {
+              "dict": "벚꽃",
+              "en": "",
+              "pos": ""
+            },
+            "벚나무가": {
+              "dict": "벚나무",
+              "en": "",
+              "pos": ""
+            },
+            "변을": {
+              "dict": "변",
+              "en": "",
+              "pos": ""
+            },
+            "서울": {
+              "dict": "서울",
+              "en": "",
+              "pos": ""
+            },
+            "수가": {
+              "dict": "수",
+              "en": "",
+              "pos": ""
+            },
+            "약": {
+              "dict": "약",
+              "en": "",
+              "pos": ""
+            },
+            "여의도에서": {
+              "dict": "여의도",
+              "en": "",
+              "pos": ""
+            },
+            "열흘간": {
+              "dict": "열흘간",
+              "en": "",
+              "pos": ""
+            },
+            "영등포구": {
+              "dict": "영등포구",
+              "en": "",
+              "pos": ""
+            },
+            "예상하고": {
+              "dict": "예상하다",
+              "en": "to expect / to estimate",
+              "pos": "verb",
+              "gloss": "connective -고"
+            },
+            "예상하기": {
+              "dict": "예상하다",
+              "en": "to expect / to estimate",
+              "pos": "verb",
+              "gloss": "nominalization -기"
+            },
+            "예상하는데": {
+              "dict": "예상하다",
+              "en": "to expect / to estimate",
+              "pos": "verb",
+              "gloss": "background -는데"
+            },
+            "예상하다": {
+              "dict": "예상하다",
+              "en": "to expect / to estimate",
+              "pos": "verb",
+              "gloss": ""
+            },
+            "예상하면": {
+              "dict": "예상하다",
+              "en": "to expect / to estimate",
+              "pos": "verb",
+              "gloss": "conditional -면"
+            },
+            "예상하아서": {
+              "dict": "예상하다",
+              "en": "to expect / to estimate",
+              "pos": "verb",
+              "gloss": "sequential/causal -서"
+            },
+            "예상하아요": {
+              "dict": "예상하다",
+              "en": "to expect / to estimate",
+              "pos": "verb",
+              "gloss": "polite-present"
+            },
+            "예상하어서": {
+              "dict": "예상하다",
+              "en": "to expect / to estimate",
+              "pos": "verb",
+              "gloss": "sequential/causal -서"
+            },
+            "예상하어요": {
+              "dict": "예상하다",
+              "en": "to expect / to estimate",
+              "pos": "verb",
+              "gloss": "polite-present"
+            },
+            "예상하여서": {
+              "dict": "예상하다",
+              "en": "to expect / to estimate",
+              "pos": "verb",
+              "gloss": "sequential/causal -서"
+            },
+            "예상하여요": {
+              "dict": "예상하다",
+              "en": "to expect / to estimate",
+              "pos": "verb",
+              "gloss": "polite-present"
+            },
+            "예상하을": {
+              "dict": "예상하다",
+              "en": "to expect / to estimate",
+              "pos": "verb",
+              "gloss": "future modifier -ㄹ/-을"
+            },
+            "예상하음": {
+              "dict": "예상하다",
+              "en": "to expect / to estimate",
+              "pos": "verb",
+              "gloss": "nominalization -음"
+            },
+            "예상하지만": {
+              "dict": "예상하다",
+              "en": "to expect / to estimate",
+              "pos": "verb",
+              "gloss": "contrastive -지만"
+            },
+            "예상해": {
+              "dict": "예상하다",
+              "en": "to expect / to estimate",
+              "pos": "verb",
+              "gloss": ""
+            },
+            "예상해서": {
+              "dict": "예상하다",
+              "en": "to expect / to estimate",
+              "pos": "verb",
+              "gloss": "sequential/causal -서"
+            },
+            "예상해요": {
+              "dict": "예상하다",
+              "en": "to expect / to estimate",
+              "pos": "verb",
+              "gloss": "polite-present"
+            },
+            "올해": {
+              "dict": "올해",
+              "en": "",
+              "pos": ""
+            },
+            "이번": {
+              "dict": "이번",
+              "en": "",
+              "pos": ""
+            },
+            "이용이": {
+              "dict": "이용",
+              "en": "",
+              "pos": ""
+            },
+            "있습니다": {
+              "dict": "있습니다",
+              "en": "",
+              "pos": ""
+            },
+            "주": {
+              "dict": "주",
+              "en": "",
+              "pos": ""
+            },
+            "주최": {
+              "dict": "주최",
+              "en": "host / organizer",
+              "pos": "noun"
+            },
+            "주최가": {
+              "dict": "주최",
+              "en": "host / organizer",
+              "pos": "noun"
+            },
+            "주최과": {
+              "dict": "주최",
+              "en": "host / organizer",
+              "pos": "noun"
+            },
+            "주최는": {
+              "dict": "주최",
+              "en": "host / organizer",
+              "pos": "noun"
+            },
+            "주최도": {
+              "dict": "주최",
+              "en": "host / organizer",
+              "pos": "noun"
+            },
+            "주최를": {
+              "dict": "주최",
+              "en": "host / organizer",
+              "pos": "noun"
+            },
+            "주최만": {
+              "dict": "주최",
+              "en": "host / organizer",
+              "pos": "noun"
+            },
+            "주최에": {
+              "dict": "주최",
+              "en": "host / organizer",
+              "pos": "noun"
+            },
+            "주최에는": {
+              "dict": "주최",
+              "en": "host / organizer",
+              "pos": "noun"
+            },
+            "주최에도": {
+              "dict": "주최",
+              "en": "host / organizer",
+              "pos": "noun"
+            },
+            "주최에서": {
+              "dict": "주최",
+              "en": "host / organizer",
+              "pos": "noun"
+            },
+            "주최에서는": {
+              "dict": "주최",
+              "en": "host / organizer",
+              "pos": "noun"
+            },
+            "주최와": {
+              "dict": "주최",
+              "en": "host / organizer",
+              "pos": "noun"
+            },
+            "주최의": {
+              "dict": "주최",
+              "en": "host / organizer",
+              "pos": "noun"
+            },
+            "중에는": {
+              "dict": "중에",
+              "en": "",
+              "pos": ""
+            },
+            "진행되고": {
+              "dict": "진행되다",
+              "en": "to proceed / to be underway",
+              "pos": "verb",
+              "gloss": "connective -고"
+            },
+            "진행되기": {
+              "dict": "진행되다",
+              "en": "to proceed / to be underway",
+              "pos": "verb",
+              "gloss": "nominalization -기"
+            },
+            "진행되는데": {
+              "dict": "진행되다",
+              "en": "to proceed / to be underway",
+              "pos": "verb",
+              "gloss": "background -는데"
+            },
+            "진행되다": {
+              "dict": "진행되다",
+              "en": "to proceed / to be underway",
+              "pos": "verb",
+              "gloss": ""
+            },
+            "진행되며": {
+              "dict": "진행되며",
+              "en": "",
+              "pos": ""
+            },
+            "진행되면": {
+              "dict": "진행되다",
+              "en": "to proceed / to be underway",
+              "pos": "verb",
+              "gloss": "conditional -면"
+            },
+            "진행되아서": {
+              "dict": "진행되다",
+              "en": "to proceed / to be underway",
+              "pos": "verb",
+              "gloss": "sequential/causal -서"
+            },
+            "진행되아요": {
+              "dict": "진행되다",
+              "en": "to proceed / to be underway",
+              "pos": "verb",
+              "gloss": "polite-present"
+            },
+            "진행되어서": {
+              "dict": "진행되다",
+              "en": "to proceed / to be underway",
+              "pos": "verb",
+              "gloss": "sequential/causal -서"
+            },
+            "진행되어요": {
+              "dict": "진행되다",
+              "en": "to proceed / to be underway",
+              "pos": "verb",
+              "gloss": "polite-present"
+            },
+            "진행되여서": {
+              "dict": "진행되다",
+              "en": "to proceed / to be underway",
+              "pos": "verb",
+              "gloss": "sequential/causal -서"
+            },
+            "진행되여요": {
+              "dict": "진행되다",
+              "en": "to proceed / to be underway",
+              "pos": "verb",
+              "gloss": "polite-present"
+            },
+            "진행되을": {
+              "dict": "진행되다",
+              "en": "to proceed / to be underway",
+              "pos": "verb",
+              "gloss": "future modifier -ㄹ/-을"
+            },
+            "진행되음": {
+              "dict": "진행되다",
+              "en": "to proceed / to be underway",
+              "pos": "verb",
+              "gloss": "nominalization -음"
+            },
+            "진행되지만": {
+              "dict": "진행되다",
+              "en": "to proceed / to be underway",
+              "pos": "verb",
+              "gloss": "contrastive -지만"
+            },
+            "축제": {
+              "dict": "축제",
+              "en": "",
+              "pos": ""
+            },
+            "축제가": {
+              "dict": "축제",
+              "en": "",
+              "pos": ""
+            },
+            "축제는": {
+              "dict": "축제",
+              "en": "",
+              "pos": ""
+            },
+            "측은": {
+              "dict": "측",
+              "en": "",
+              "pos": ""
+            },
+            "한강": {
+              "dict": "한강",
+              "en": "",
+              "pos": ""
+            },
+            "행사가": {
+              "dict": "행사",
+              "en": "",
+              "pos": ""
+            }
+          },
+          "questions": [
+            {
+              "id": "q1",
+              "type": "short",
+              "q_kr": "이 글의 주제는 무엇이에요?",
+              "answer_hint": "Main topic of the passage."
+            },
+            {
+              "id": "q2",
+              "type": "yesno",
+              "q_kr": "이 글은 한국에 관한 글이에요?",
+              "answer_hint": "Is this about Korea?"
+            },
+            {
+              "id": "q3",
+              "type": "short",
+              "q_kr": "이 글에서 가장 중요한 단어는 무엇이에요?",
+              "answer_hint": "Most important word."
+            },
+            {
+              "id": "q4",
+              "type": "long",
+              "q_kr": "이 글을 읽고 무엇을 알게 되었나요?",
+              "answer_hint": "What did you learn?"
+            },
+            {
+              "id": "q5",
+              "type": "short",
+              "q_kr": "이 글에 나오는 장소는 어디인가요?",
+              "answer_hint": "Which place?"
+            }
+          ]
+        },
+        "k4": {
+          "title": "여의도 벚꽃 축제의 문화적 의의",
+          "text": "서울 여의도 일대에서 개최되는 벚꽃 축제는 도시 문화 행사로서의 위상을 확립해 왔다. 본 축제는 단순한 관광 행사를 넘어 시민들이 계절의 변화를 공동체적으로 경험하는 장으로 기능한다. 한강 수변 공간을 활용한 문화 프로그램은 도시 재생 및 공공 공간 활성화의 모범 사례로 평가받고 있다. 아울러 외국인 방문객의 증가에 따라 서울의 국제적 문화 도시 이미지 제고에도 기여하는 것으로 분석된다. 당국은 지속 가능한 축제 운영을 위해 쓰레기 감축 및 친환경 운영 방침을 강화하고 있다.",
+          "vocab": [
+            {
+              "kr": "위상",
+              "en": "status / standing",
+              "def": "어떤 사물이나 집단이 차지하는 위치나 지위",
+              "pos": ""
+            },
+            {
+              "kr": "확립하다",
+              "en": "to establish",
+              "def": "굳게 세우거나 정하다",
+              "pos": ""
+            },
+            {
+              "kr": "공동체",
+              "en": "community",
+              "def": "공통의 목적이나 생활을 공유하는 집단",
+              "pos": ""
+            },
+            {
+              "kr": "활성화",
+              "en": "revitalization / activation",
+              "def": "활발하게 만드는 것",
+              "pos": ""
+            },
+            {
+              "kr": "제고",
+              "en": "enhancement / elevation",
+              "def": "수준이나 가치를 높임",
+              "pos": ""
+            },
+            {
+              "kr": "친환경",
+              "en": "eco-friendly",
+              "def": "환경에 해를 끼치지 않는",
+              "pos": ""
+            }
+          ],
+          "audio": "audio/2026-04-22/seoul-cherry-blossom-festival-2026_k4.mp3",
+          "token_map": {
+            "가능한": {
+              "dict": "가능한",
+              "en": "",
+              "pos": ""
+            },
+            "감축": {
+              "dict": "감축",
+              "en": "",
+              "pos": ""
+            },
+            "강화하고": {
+              "dict": "강화",
+              "en": "",
+              "pos": ""
+            },
+            "개최되는": {
+              "dict": "개최되",
+              "en": "",
+              "pos": ""
+            },
+            "것으로": {
+              "dict": "것",
+              "en": "",
+              "pos": ""
+            },
+            "경험하는": {
+              "dict": "경험하",
+              "en": "",
+              "pos": ""
+            },
+            "계절의": {
+              "dict": "계절",
+              "en": "",
+              "pos": ""
+            },
+            "공간": {
+              "dict": "공간",
+              "en": "",
+              "pos": ""
+            },
+            "공간을": {
+              "dict": "공간",
+              "en": "",
+              "pos": ""
+            },
+            "공공": {
+              "dict": "공공",
+              "en": "",
+              "pos": ""
+            },
+            "공동체": {
+              "dict": "공동체",
+              "en": "community",
+              "pos": "noun"
+            },
+            "공동체가": {
+              "dict": "공동체",
+              "en": "community",
+              "pos": "noun"
+            },
+            "공동체과": {
+              "dict": "공동체",
+              "en": "community",
+              "pos": "noun"
+            },
+            "공동체는": {
+              "dict": "공동체",
+              "en": "community",
+              "pos": "noun"
+            },
+            "공동체도": {
+              "dict": "공동체",
+              "en": "community",
+              "pos": "noun"
+            },
+            "공동체를": {
+              "dict": "공동체",
+              "en": "community",
+              "pos": "noun"
+            },
+            "공동체만": {
+              "dict": "공동체",
+              "en": "community",
+              "pos": "noun"
+            },
+            "공동체에": {
+              "dict": "공동체",
+              "en": "community",
+              "pos": "noun"
+            },
+            "공동체에는": {
+              "dict": "공동체",
+              "en": "community",
+              "pos": "noun"
+            },
+            "공동체에도": {
+              "dict": "공동체",
+              "en": "community",
+              "pos": "noun"
+            },
+            "공동체에서": {
+              "dict": "공동체",
+              "en": "community",
+              "pos": "noun"
+            },
+            "공동체에서는": {
+              "dict": "공동체",
+              "en": "community",
+              "pos": "noun"
+            },
+            "공동체와": {
+              "dict": "공동체",
+              "en": "community",
+              "pos": "noun"
+            },
+            "공동체의": {
+              "dict": "공동체",
+              "en": "community",
+              "pos": "noun"
+            },
+            "공동체적으로": {
+              "dict": "공동체적",
+              "en": "",
+              "pos": ""
+            },
+            "관광": {
+              "dict": "관광",
+              "en": "",
+              "pos": ""
+            },
+            "국제적": {
+              "dict": "국제적",
+              "en": "",
+              "pos": ""
+            },
+            "기능한다": {
+              "dict": "기능한다",
+              "en": "",
+              "pos": ""
+            },
+            "기여하는": {
+              "dict": "기여하",
+              "en": "",
+              "pos": ""
+            },
+            "넘어": {
+              "dict": "넘어",
+              "en": "",
+              "pos": ""
+            },
+            "단순한": {
+              "dict": "단순한",
+              "en": "",
+              "pos": ""
+            },
+            "당국은": {
+              "dict": "당국",
+              "en": "",
+              "pos": ""
+            },
+            "도시": {
+              "dict": "도시",
+              "en": "",
+              "pos": ""
+            },
+            "따라": {
+              "dict": "따라",
+              "en": "",
+              "pos": ""
+            },
+            "모범": {
+              "dict": "모범",
+              "en": "",
+              "pos": ""
+            },
+            "문화": {
+              "dict": "문화",
+              "en": "",
+              "pos": ""
+            },
+            "및": {
+              "dict": "및",
+              "en": "",
+              "pos": ""
+            },
+            "방문객의": {
+              "dict": "방문객",
+              "en": "",
+              "pos": ""
+            },
+            "방침을": {
+              "dict": "방침",
+              "en": "",
+              "pos": ""
+            },
+            "벚꽃": {
+              "dict": "벚꽃",
+              "en": "",
+              "pos": ""
+            },
+            "변화를": {
+              "dict": "변화",
+              "en": "",
+              "pos": ""
+            },
+            "본": {
+              "dict": "본",
+              "en": "",
+              "pos": ""
+            },
+            "분석된다": {
+              "dict": "분석된다",
+              "en": "",
+              "pos": ""
+            },
+            "사례로": {
+              "dict": "사례",
+              "en": "",
+              "pos": ""
+            },
+            "서울": {
+              "dict": "서울",
+              "en": "",
+              "pos": ""
+            },
+            "서울의": {
+              "dict": "서울",
+              "en": "",
+              "pos": ""
+            },
+            "수변": {
+              "dict": "수변",
+              "en": "",
+              "pos": ""
+            },
+            "시민들이": {
+              "dict": "시민들",
+              "en": "",
+              "pos": ""
+            },
+            "쓰레기": {
+              "dict": "쓰레기",
+              "en": "",
+              "pos": ""
+            },
+            "아울러": {
+              "dict": "아울러",
+              "en": "",
+              "pos": ""
+            },
+            "여의도": {
+              "dict": "여의",
+              "en": "",
+              "pos": ""
+            },
+            "왔다": {
+              "dict": "왔다",
+              "en": "",
+              "pos": ""
+            },
+            "외국인": {
+              "dict": "외국인",
+              "en": "",
+              "pos": ""
+            },
+            "운영": {
+              "dict": "운영",
+              "en": "",
+              "pos": ""
+            },
+            "운영을": {
+              "dict": "운영",
+              "en": "",
+              "pos": ""
+            },
+            "위상": {
+              "dict": "위상",
+              "en": "status / standing",
+              "pos": "noun"
+            },
+            "위상과": {
+              "dict": "위상",
+              "en": "status / standing",
+              "pos": "noun"
+            },
+            "위상도": {
+              "dict": "위상",
+              "en": "status / standing",
+              "pos": "noun"
+            },
+            "위상만": {
+              "dict": "위상",
+              "en": "status / standing",
+              "pos": "noun"
+            },
+            "위상에": {
+              "dict": "위상",
+              "en": "status / standing",
+              "pos": "noun"
+            },
+            "위상에는": {
+              "dict": "위상",
+              "en": "status / standing",
+              "pos": "noun"
+            },
+            "위상에도": {
+              "dict": "위상",
+              "en": "status / standing",
+              "pos": "noun"
+            },
+            "위상에서": {
+              "dict": "위상",
+              "en": "status / standing",
+              "pos": "noun"
+            },
+            "위상에서는": {
+              "dict": "위상",
+              "en": "status / standing",
+              "pos": "noun"
+            },
+            "위상와": {
+              "dict": "위상",
+              "en": "status / standing",
+              "pos": "noun"
+            },
+            "위상은": {
+              "dict": "위상",
+              "en": "status / standing",
+              "pos": "noun"
+            },
+            "위상을": {
+              "dict": "위상",
+              "en": "status / standing",
+              "pos": "noun"
+            },
+            "위상의": {
+              "dict": "위상",
+              "en": "status / standing",
+              "pos": "noun"
+            },
+            "위상이": {
+              "dict": "위상",
+              "en": "status / standing",
+              "pos": "noun"
+            },
+            "위해": {
+              "dict": "위해",
+              "en": "",
+              "pos": ""
+            },
+            "이미지": {
+              "dict": "이미지",
+              "en": "",
+              "pos": ""
+            },
+            "일대에서": {
+              "dict": "일대",
+              "en": "",
+              "pos": ""
+            },
+            "있다": {
+              "dict": "있다",
+              "en": "",
+              "pos": ""
+            },
+            "장으로": {
+              "dict": "장",
+              "en": "",
+              "pos": ""
+            },
+            "재생": {
+              "dict": "재생",
+              "en": "",
+              "pos": ""
+            },
+            "제고": {
+              "dict": "제고",
+              "en": "enhancement / elevation",
+              "pos": "noun"
+            },
+            "제고가": {
+              "dict": "제고",
+              "en": "enhancement / elevation",
+              "pos": "noun"
+            },
+            "제고과": {
+              "dict": "제고",
+              "en": "enhancement / elevation",
+              "pos": "noun"
+            },
+            "제고는": {
+              "dict": "제고",
+              "en": "enhancement / elevation",
+              "pos": "noun"
+            },
+            "제고도": {
+              "dict": "제고",
+              "en": "enhancement / elevation",
+              "pos": "noun"
+            },
+            "제고를": {
+              "dict": "제고",
+              "en": "enhancement / elevation",
+              "pos": "noun"
+            },
+            "제고만": {
+              "dict": "제고",
+              "en": "enhancement / elevation",
+              "pos": "noun"
+            },
+            "제고에": {
+              "dict": "제고",
+              "en": "enhancement / elevation",
+              "pos": "noun"
+            },
+            "제고에는": {
+              "dict": "제고",
+              "en": "enhancement / elevation",
+              "pos": "noun"
+            },
+            "제고에도": {
+              "dict": "제고",
+              "en": "enhancement / elevation",
+              "pos": "noun"
+            },
+            "제고에서": {
+              "dict": "제고",
+              "en": "enhancement / elevation",
+              "pos": "noun"
+            },
+            "제고에서는": {
+              "dict": "제고",
+              "en": "enhancement / elevation",
+              "pos": "noun"
+            },
+            "제고와": {
+              "dict": "제고",
+              "en": "enhancement / elevation",
+              "pos": "noun"
+            },
+            "제고의": {
+              "dict": "제고",
+              "en": "enhancement / elevation",
+              "pos": "noun"
+            },
+            "증가에": {
+              "dict": "증가",
+              "en": "",
+              "pos": ""
+            },
+            "지속": {
+              "dict": "지속",
+              "en": "",
+              "pos": ""
+            },
+            "축제": {
+              "dict": "축제",
+              "en": "",
+              "pos": ""
+            },
+            "축제는": {
+              "dict": "축제",
+              "en": "",
+              "pos": ""
+            },
+            "친환경": {
+              "dict": "친환경",
+              "en": "eco-friendly",
+              "pos": "noun"
+            },
+            "친환경과": {
+              "dict": "친환경",
+              "en": "eco-friendly",
+              "pos": "noun"
+            },
+            "친환경도": {
+              "dict": "친환경",
+              "en": "eco-friendly",
+              "pos": "noun"
+            },
+            "친환경만": {
+              "dict": "친환경",
+              "en": "eco-friendly",
+              "pos": "noun"
+            },
+            "친환경에": {
+              "dict": "친환경",
+              "en": "eco-friendly",
+              "pos": "noun"
+            },
+            "친환경에는": {
+              "dict": "친환경",
+              "en": "eco-friendly",
+              "pos": "noun"
+            },
+            "친환경에도": {
+              "dict": "친환경",
+              "en": "eco-friendly",
+              "pos": "noun"
+            },
+            "친환경에서": {
+              "dict": "친환경",
+              "en": "eco-friendly",
+              "pos": "noun"
+            },
+            "친환경에서는": {
+              "dict": "친환경",
+              "en": "eco-friendly",
+              "pos": "noun"
+            },
+            "친환경와": {
+              "dict": "친환경",
+              "en": "eco-friendly",
+              "pos": "noun"
+            },
+            "친환경은": {
+              "dict": "친환경",
+              "en": "eco-friendly",
+              "pos": "noun"
+            },
+            "친환경을": {
+              "dict": "친환경",
+              "en": "eco-friendly",
+              "pos": "noun"
+            },
+            "친환경의": {
+              "dict": "친환경",
+              "en": "eco-friendly",
+              "pos": "noun"
+            },
+            "친환경이": {
+              "dict": "친환경",
+              "en": "eco-friendly",
+              "pos": "noun"
+            },
+            "평가받고": {
+              "dict": "평가받고",
+              "en": "",
+              "pos": ""
+            },
+            "프로그램은": {
+              "dict": "프로그램",
+              "en": "",
+              "pos": ""
+            },
+            "한강": {
+              "dict": "한강",
+              "en": "",
+              "pos": ""
+            },
+            "행사로서의": {
+              "dict": "행사로서",
+              "en": "",
+              "pos": ""
+            },
+            "행사를": {
+              "dict": "행사",
+              "en": "",
+              "pos": ""
+            },
+            "확립하고": {
+              "dict": "확립하다",
+              "en": "to establish",
+              "pos": "verb",
+              "gloss": "connective -고"
+            },
+            "확립하기": {
+              "dict": "확립하다",
+              "en": "to establish",
+              "pos": "verb",
+              "gloss": "nominalization -기"
+            },
+            "확립하는데": {
+              "dict": "확립하다",
+              "en": "to establish",
+              "pos": "verb",
+              "gloss": "background -는데"
+            },
+            "확립하다": {
+              "dict": "확립하다",
+              "en": "to establish",
+              "pos": "verb",
+              "gloss": ""
+            },
+            "확립하면": {
+              "dict": "확립하다",
+              "en": "to establish",
+              "pos": "verb",
+              "gloss": "conditional -면"
+            },
+            "확립하아서": {
+              "dict": "확립하다",
+              "en": "to establish",
+              "pos": "verb",
+              "gloss": "sequential/causal -서"
+            },
+            "확립하아요": {
+              "dict": "확립하다",
+              "en": "to establish",
+              "pos": "verb",
+              "gloss": "polite-present"
+            },
+            "확립하어서": {
+              "dict": "확립하다",
+              "en": "to establish",
+              "pos": "verb",
+              "gloss": "sequential/causal -서"
+            },
+            "확립하어요": {
+              "dict": "확립하다",
+              "en": "to establish",
+              "pos": "verb",
+              "gloss": "polite-present"
+            },
+            "확립하여서": {
+              "dict": "확립하다",
+              "en": "to establish",
+              "pos": "verb",
+              "gloss": "sequential/causal -서"
+            },
+            "확립하여요": {
+              "dict": "확립하다",
+              "en": "to establish",
+              "pos": "verb",
+              "gloss": "polite-present"
+            },
+            "확립하을": {
+              "dict": "확립하다",
+              "en": "to establish",
+              "pos": "verb",
+              "gloss": "future modifier -ㄹ/-을"
+            },
+            "확립하음": {
+              "dict": "확립하다",
+              "en": "to establish",
+              "pos": "verb",
+              "gloss": "nominalization -음"
+            },
+            "확립하지만": {
+              "dict": "확립하다",
+              "en": "to establish",
+              "pos": "verb",
+              "gloss": "contrastive -지만"
+            },
+            "확립해": {
+              "dict": "확립하다",
+              "en": "to establish",
+              "pos": "verb",
+              "gloss": ""
+            },
+            "확립해서": {
+              "dict": "확립하다",
+              "en": "to establish",
+              "pos": "verb",
+              "gloss": "sequential/causal -서"
+            },
+            "확립해요": {
+              "dict": "확립하다",
+              "en": "to establish",
+              "pos": "verb",
+              "gloss": "polite-present"
+            },
+            "활성화": {
+              "dict": "활성화",
+              "en": "revitalization / activation",
+              "pos": "noun"
+            },
+            "활성화가": {
+              "dict": "활성화",
+              "en": "revitalization / activation",
+              "pos": "noun"
+            },
+            "활성화과": {
+              "dict": "활성화",
+              "en": "revitalization / activation",
+              "pos": "noun"
+            },
+            "활성화는": {
+              "dict": "활성화",
+              "en": "revitalization / activation",
+              "pos": "noun"
+            },
+            "활성화도": {
+              "dict": "활성화",
+              "en": "revitalization / activation",
+              "pos": "noun"
+            },
+            "활성화를": {
+              "dict": "활성화",
+              "en": "revitalization / activation",
+              "pos": "noun"
+            },
+            "활성화만": {
+              "dict": "활성화",
+              "en": "revitalization / activation",
+              "pos": "noun"
+            },
+            "활성화에": {
+              "dict": "활성화",
+              "en": "revitalization / activation",
+              "pos": "noun"
+            },
+            "활성화에는": {
+              "dict": "활성화",
+              "en": "revitalization / activation",
+              "pos": "noun"
+            },
+            "활성화에도": {
+              "dict": "활성화",
+              "en": "revitalization / activation",
+              "pos": "noun"
+            },
+            "활성화에서": {
+              "dict": "활성화",
+              "en": "revitalization / activation",
+              "pos": "noun"
+            },
+            "활성화에서는": {
+              "dict": "활성화",
+              "en": "revitalization / activation",
+              "pos": "noun"
+            },
+            "활성화와": {
+              "dict": "활성화",
+              "en": "revitalization / activation",
+              "pos": "noun"
+            },
+            "활성화의": {
+              "dict": "활성화",
+              "en": "revitalization / activation",
+              "pos": "noun"
+            },
+            "활용한": {
+              "dict": "활용한",
+              "en": "",
+              "pos": ""
+            }
+          },
+          "questions": [
+            {
+              "id": "q1",
+              "type": "short",
+              "q_kr": "이 글의 주제는 무엇이에요?",
+              "answer_hint": "Main topic of the passage."
+            },
+            {
+              "id": "q2",
+              "type": "yesno",
+              "q_kr": "이 글은 한국에 관한 글이에요?",
+              "answer_hint": "Is this about Korea?"
+            },
+            {
+              "id": "q3",
+              "type": "short",
+              "q_kr": "이 글에서 가장 중요한 단어는 무엇이에요?",
+              "answer_hint": "Most important word."
+            },
+            {
+              "id": "q4",
+              "type": "long",
+              "q_kr": "이 글을 읽고 무엇을 알게 되었나요?",
+              "answer_hint": "What did you learn?"
+            },
+            {
+              "id": "q5",
+              "type": "short",
+              "q_kr": "이 글에 나오는 장소는 어디인가요?",
+              "answer_hint": "Which place?"
+            },
+            {
+              "id": "q6",
+              "type": "long",
+              "q_kr": "이 글의 주장에 동의하나요? 왜 그런가요?",
+              "answer_hint": "Agree / why?"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

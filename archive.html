@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Archive · Fly Korean Daily</title>
+<link rel="stylesheet" href="css/styles.css?v=3" />
+<style>
+.archive-container { max-width: 1000px; }
+.arch-layout { display: grid; grid-template-columns: 260px 1fr; gap: 20px; margin-top: 14px; }
+.arch-sidebar {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 14px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+.arch-main { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; min-height: 60vh; }
+.arch-day-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 9px 12px;
+  margin-bottom: 2px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.88rem;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--text);
+}
+.arch-day-btn:hover { background: var(--border-soft); }
+.arch-day-btn.active { background: var(--primary); color: #fff; }
+.arch-day-btn .arch-day-meta { font-size: 0.7rem; opacity: 0.7; display: block; margin-top: 2px; }
+.arch-search { width: 100%; padding: 8px 10px; border: 1.5px solid var(--border); border-radius: 6px; font-family: inherit; margin-bottom: 10px; font-size: 0.85rem; }
+.arch-topic {
+  padding: 12px 14px;
+  border: 1.5px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  margin-bottom: 10px;
+  background: var(--card-bg);
+}
+.arch-topic-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.arch-topic-cat { font-size: 0.72rem; padding: 2px 8px; border-radius: 999px; background: var(--border-soft); color: var(--text-light); font-weight: 600; }
+.arch-topic-title { font-weight: 700; font-size: 1rem; margin-bottom: 4px; }
+.arch-topic-src { font-size: 0.78rem; color: var(--text-light); margin-bottom: 10px; }
+.arch-level-btns { display: flex; gap: 4px; margin-bottom: 6px; flex-wrap: wrap; }
+.arch-level-btn {
+  padding: 3px 10px;
+  font-size: 0.75rem;
+  border: 1.5px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text-light);
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.arch-level-btn:hover { border-color: var(--primary); color: var(--primary); }
+.arch-level-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+.arch-passage { padding: 10px 12px; background: var(--bg); border-radius: 6px; font-size: 0.92rem; line-height: 1.7; word-break: keep-all; margin-top: 6px; }
+.arch-actions { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+.arch-btn {
+  padding: 5px 12px;
+  font-size: 0.78rem;
+  border: 1.5px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text);
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.arch-btn:hover { border-color: var(--primary); color: var(--primary); }
+.arch-summary {
+  background: var(--border-soft);
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 16px;
+  font-size: 0.88rem;
+  color: var(--text-light);
+}
+.arch-summary strong { color: var(--text); }
+@media (max-width: 700px) {
+  .arch-layout { grid-template-columns: 1fr; }
+  .arch-sidebar { max-height: 240px; }
+}
+</style>
+</head>
+<body>
+<div class="container archive-container">
+  <div class="topbar">
+    <h1><a href="index.html" style="text-decoration:none; color:inherit;"><span class="brand">Fly Korean</span><span class="daily-suffix"> Archive</span></a></h1>
+    <div class="right">
+      <a class="nav-link" href="teacher.html">Teacher</a>
+      <a class="nav-link active" href="archive.html">Archive</a>
+    </div>
+  </div>
+
+  <div class="hero">
+    <h2>Content Archive</h2>
+    <p>All past daily materials. For teacher reference and sharing with students (not linked from student nav).</p>
+  </div>
+
+  <div class="arch-layout">
+    <aside class="arch-sidebar">
+      <input class="arch-search" id="arch-search" type="text" placeholder="Filter dates…" />
+      <div id="arch-dates"><p style="color:var(--text-light); text-align:center; padding:20px 0;">Loading…</p></div>
+    </aside>
+
+    <section class="arch-main" id="arch-main">
+      <p style="color:var(--text-light); text-align:center; padding:40px 0;">Select a date from the list to view that day's content.</p>
+    </section>
+  </div>
+</div>
+
+<script src="js/common.js?v=3"></script>
+<script src="js/archive.js?v=3"></script>
+</body>
+</html>

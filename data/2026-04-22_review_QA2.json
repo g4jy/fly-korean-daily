@@ -1,0 +1,21 @@
+{
+  "student": "QA2",
+  "date": "2026-04-22",
+  "items": [
+    {
+      "kr": "축제",
+      "en": "festival",
+      "practice": "이번 주말에 벚꽃 축제에 갈 거예요."
+    },
+    {
+      "kr": "공연",
+      "en": "performance",
+      "practice": "공원에서 무료 공연을 볼 수 있어요."
+    },
+    {
+      "kr": "기간",
+      "en": "period",
+      "practice": "축제 기간은 일주일이에요."
+    }
+  ]
+}
