@@ -149,6 +149,11 @@
       <details class="word-list" ${all.length<=5?'open':''}>
         <summary>All saved words (${all.length})</summary>
         <div class="word-list-body">${rows}</div>
+        <div class="portability-row">
+          <button class="btn btn-ghost btn-small" id="export-data">💾 Export my flashcards</button>
+          <label class="btn btn-ghost btn-small" for="import-file" style="cursor:pointer;">📁 Import from file</label>
+          <input id="import-file" type="file" accept="application/json" hidden />
+        </div>
       </details>`;
   }
 
@@ -163,6 +168,34 @@
         if (queue.length === 0) renderEmpty(Object.keys(Common.getMarks()).length);
         else renderCard(queue[idx]);
       });
+    });
+
+    document.getElementById('export-data')?.addEventListener('click', () => {
+      const bundle = Common.exportStudentData();
+      if (bundle) Common.toast(`Exported ${Object.keys(bundle.marks).length} words`, 'success');
+    });
+
+    document.getElementById('import-file')?.addEventListener('change', (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        try {
+          const bundle = JSON.parse(ev.target.result);
+          const res = Common.importStudentData(bundle);
+          if (res.error) Common.toast('Import failed: ' + res.error, 'info');
+          else {
+            Common.toast(`Imported: +${res.added} new, ${res.updated} updated`, 'success', 2500);
+            queue = buildQueue();
+            idx = 0;
+            if (queue.length === 0) renderEmpty(Object.keys(Common.getMarks()).length);
+            else renderCard(queue[idx]);
+          }
+        } catch (err) {
+          Common.toast('Invalid JSON file', 'info');
+        }
+      };
+      reader.readAsText(file);
     });
   }
 
