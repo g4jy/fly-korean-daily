@@ -1035,6 +1035,26 @@ body {
 
 .word-row .wr-del:hover { background: rgba(225, 112, 85, 0.1); color: var(--accent-hot); }
 
+.portability-row {
+  display: flex;
+  gap: 8px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--border-soft);
+  background: var(--border-soft);
+  flex-wrap: wrap;
+}
+
+.btn-small {
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  border-radius: 8px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: inherit;
+}
+
 /* --- Responsive --- */
 @media (max-width: 560px) {
   .container { padding: 16px 14px 50px; }
