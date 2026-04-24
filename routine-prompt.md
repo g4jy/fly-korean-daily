@@ -57,22 +57,23 @@ For each chosen topic capture: `source_title` (English), `source_url`, `category
 
 For each topic, write 4 passages at these levels:
 
-| Level | Sentences | ~Characters | Reader | Style |
-|---|---|---|---|---|
-| `k1` | 7–10 | ~200 | Age 5–6 beginner | Very short sentences. Basic vocab (native Korean > Sino-Korean). Present tense dominant. |
-| `k2` | 15–20 | ~500 | Age 8–12 intermediate | Simple connectors (그리고, 하지만, 그래서). Basic past/present. Limited Sino-Korean. |
-| `k3` | 30–40 | ~1200 | Age 15+ advanced | Natural newspaper register. Mixed tenses. Sino-Korean vocab freely used. |
-| `k4` | 50–70 | ~2000 | 수능 / University academic | Formal written register (문어체). Nominalization, complex clauses, 수능-level passage depth. |
+| Level | Paragraphs | Sentences total | ~Chars | Reader | Style |
+|---|---|---|---|---|---|
+| `k1` | **1 paragraph** | 7–10 | ~200 | Beginner | Very short sentences. Basic vocab (native Korean > Sino-Korean). Present tense dominant. |
+| `k2` | **2 paragraphs** | **25–35** (≈1.5x previous) | ~750 | Elementary | Simple connectors (그리고, 하지만, 그래서). Basic past/present. Limited Sino-Korean. |
+| `k3` | **4 paragraphs** | **60–80** | ~2400 | Intermediate | Natural newspaper register. Mixed tenses. Sino-Korean freely used. Some causal reasoning. |
+| `k4` | **6 paragraphs** | **90–120** | ~3600 | Advanced / 수능 | Formal written register (문어체). Nominalization, complex clauses. Multi-angle analysis, embedded cited evidence, 수능-level depth. |
 
 **CONTENT DISCIPLINE (non-negotiable):**
 
 1. **Plain prose only.** No bullet points, no markdown bold, no `─` separator lines, no numbered lists, no headings inside text.
-2. Paragraph breaks inside `text` field: `\n\n` only.
+2. Paragraph breaks inside `text` field: exactly `\n\n` — the paragraph COUNT per level must match the table above.
 3. Titles: short Korean noun phrases.
 4. Rewrite idiomatically in Korean at the target register. Never word-for-word translation.
 5. k1–k2: prefer native Korean vocabulary (나라 over 국가) unless Sino-Korean is clearer.
 6. k3–k4: use register-appropriate vocabulary including Sino-Korean and academic terms.
-7. No PII. No real children's names. No targeting of identifiable private individuals in negative framing.
+7. Each paragraph should develop ONE sub-idea. k3 = 4 distinct aspects; k4 = 6 distinct aspects of the topic.
+8. No PII. No real children's names. No targeting of identifiable private individuals in negative framing.
 
 ### Step 3 — Build vocabulary and TOKEN MAP per level
 
@@ -110,25 +111,44 @@ Rules:
 
 ### Step 4 — Generate comprehension questions per level
 
-`questions[]` array per level:
-- `k1`: 3 questions · `k2`: 4 · `k3`: 5 · `k4`: 6
+Level-specific question profile (counts, types, expected answer length, nature):
 
-Each question:
+| Level | Count | Types allowed | Expected answer | Nature |
+|---|---|---|---|---|
+| `k1` | **2** | `factual` only (maybe 1 `yesno-plus`) | 1 complete sentence | Direct recall from the passage. No inference. |
+| `k2` | **3** | `factual`, `yesno-plus` | 1–2 complete sentences | Factual + simple why/how. No opinion. |
+| `k3` | **4** | `factual`, `reasoning`, `inference` | 2–3 sentences | Summary + cause/effect + "what would happen if". No yesno. Opinion OK only when the passage itself presents a viewpoint. |
+| `k4` | **5** | `reasoning`, `inference`, `synthesis`, `opinion` | 3–5 sentences | 수능-style: synthesize across paragraphs, evaluate arguments, compare perspectives. Opinion/agree-disagree questions ONLY when the passage explicitly presents at least two competing claims. |
+
+**Question type definitions:**
+
+- `factual`: direct recall. Example: "축제는 어디에서 열려요?" Answer is one clause extractable from the passage.
+- `yesno-plus`: yes/no question that DEMANDS a complete-sentence answer with the reason or object. The question itself must prompt for elaboration: "벚꽃 축제를 좋아해요? 왜 그렇게 생각해요?" — NOT just "벚꽃 축제를 좋아해요?". Expected answer: "네. 예쁘기 때문에 좋아해요." NOT just "네." The `answer_hint` must explicitly say "완전한 문장으로 답해 주세요. 예: '네. ~~ 때문에 좋아해요.'"
+- `reasoning`: asks HOW or WHY using passage content. Example: "왜 이 축제가 유명해졌어요?"
+- `inference`: requires combining multiple sentences or reading between lines. Example: "이 글을 바탕으로 봄에 여의도를 방문하면 무엇을 기대할 수 있을까요?"
+- `synthesis` (k4 only): asks to summarize or restate in the student's own words.
+- `opinion`: ONLY use this type when the passage itself contains debatable claims, competing views, or controversy. Never ask agree/disagree on neutral descriptive topics (e.g., a travel guide).
+
+**Each question schema:**
+
 ```json
 {
   "id": "q1",
-  "type": "short" | "long" | "yesno",
-  "q_kr": "벚꽃 축제는 어디에서 열려요?",
-  "answer_hint": "지문 첫 문장을 확인하세요."
+  "type": "factual" | "yesno-plus" | "reasoning" | "inference" | "synthesis" | "opinion",
+  "q_kr": "…",
+  "answer_hint": "짧은 한국어 힌트 (답의 형식을 안내)",
+  "min_sentences": 1,
+  "max_sentences": 5
 }
 ```
 
-Types:
-- `yesno`: single-sentence yes/no. Only for k1-k2.
-- `short`: 1-2 sentence factual recall. Common for all levels.
-- `long`: 3+ sentence opinion, inference, or summary. Only for k3-k4.
+**CRITICAL — question relevance:**
 
-Mix types. Difficulty must match the passage level (don't ask k4-level inference questions on a k1 passage).
+- Every question MUST be answerable FROM the passage, not from outside knowledge.
+- For `yesno-plus`: the question must explicitly end with "왜 그렇게 생각해요?" or "이유를 설명해 주세요" so the student gives a complete sentence.
+- For `opinion` at k4: re-read the passage. If it doesn't present a genuine debate, DO NOT generate an opinion question — substitute `inference` or `synthesis` instead.
+- Never generate a question whose answer requires the student to know something NOT stated in the passage.
+- Mix question types. Don't stack all factual or all inference — vary.
 
 ### Step 5 — Write the JSON file (chunked to avoid output limits)
 
@@ -257,6 +277,13 @@ git push
 ```
 
 ### Step 12 — Telegram notification
+
+**SECURITY — critical:**
+- The Telegram token is provided in the ROUTINE PROMPT BODY (not in this file). Use it for the HTTPS curl call only.
+- NEVER echo the token to the log or reply text.
+- NEVER write the token to any file in the repo (scripts, docs, JSON, anything committable).
+- NEVER include the token in git commit messages.
+- If the token is not present in the routine prompt body, skip Telegram silently and note "Telegram: skipped (no token)" in the English report.
 
 ```bash
 curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
