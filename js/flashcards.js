@@ -139,12 +139,17 @@
       (b.added || '').localeCompare(a.added || '')
     );
     if (all.length === 0) return '';
-    const rows = all.map(m => `
-      <div class="word-row">
-        <span class="wr-kr">${m.kr}</span>
-        <span class="wr-en">${m.en || '<i style="color:var(--text-soft)">no translation yet</i>'}</span>
-        <button class="wr-del" data-kr="${encodeURIComponent(m.kr)}">remove</button>
-      </div>`).join('');
+    const rows = all.map(m => {
+      const krEsc = encodeURIComponent(m.kr);
+      return `
+      <div class="word-row" data-kr="${krEsc}">
+        <span class="wr-kr">${m.kr}${m.dict_kr && m.dict_kr !== m.kr ? ` <small style="color:var(--text-soft)">(${m.dict_kr})</small>` : ''}</span>
+        <span class="wr-en-cell">
+          <input class="wr-en-edit" data-kr="${krEsc}" placeholder="뜻을 입력하세요…" value="${(m.en || '').replace(/"/g,'&quot;')}" />
+        </span>
+        <button class="wr-del" data-kr="${krEsc}">remove</button>
+      </div>`;
+    }).join('');
     return `
       <details class="word-list" ${all.length<=5?'open':''}>
         <summary>All saved words (${all.length})</summary>
@@ -167,6 +172,24 @@
         idx = Math.min(idx, Math.max(0, queue.length - 1));
         if (queue.length === 0) renderEmpty(Object.keys(Common.getMarks()).length);
         else renderCard(queue[idx]);
+      });
+    });
+
+    // Inline edit of English meaning — saves on blur or Enter
+    document.querySelectorAll('.wr-en-edit').forEach(input => {
+      const save = () => {
+        const kr = decodeURIComponent(input.dataset.kr);
+        const newEn = input.value.trim();
+        const marks = Common.getMarks();
+        const m = marks[kr];
+        if (!m) return;
+        if (m.en === newEn) return;  // no change
+        Common.editMark(kr, { en: newEn });
+        Common.toast('Saved: ' + kr + (newEn ? ' → ' + newEn : ' (cleared)'), 'success', 1200);
+      };
+      input.addEventListener('blur', save);
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
       });
     });
 
