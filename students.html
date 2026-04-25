@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Active Students · Fly Korean Daily (Teacher)</title>
+<link rel="stylesheet" href="css/styles.css?v=4" />
+<style>
+.students-container { max-width: 980px; }
+.s-meta {
+  background: var(--card-bg); border-radius: var(--radius-sm); padding: 14px 18px;
+  margin-bottom: 18px; box-shadow: var(--shadow-sm); display: flex; gap: 18px; flex-wrap: wrap;
+  align-items: center; font-size: 0.9rem;
+}
+.s-meta strong { color: var(--primary); }
+.s-search {
+  width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  font-family: inherit; font-size: 0.95rem; margin-bottom: 14px;
+}
+.s-search:focus { outline: none; border-color: var(--primary); }
+.s-toolbar { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; align-items: center; }
+.s-row {
+  display: grid; grid-template-columns: 30px 1fr 110px 110px 1fr auto; gap: 12px;
+  align-items: center; padding: 10px 16px; background: var(--card-bg);
+  border: 1px solid var(--border-soft); border-bottom: none; font-size: 0.92rem;
+}
+.s-row:first-of-type { border-radius: var(--radius-sm) var(--radius-sm) 0 0; }
+.s-row:last-of-type { border-radius: 0 0 var(--radius-sm) var(--radius-sm); border-bottom: 1px solid var(--border-soft); }
+.s-row:hover { background: var(--border-soft); }
+.s-row .s-num { color: var(--text-soft); font-size: 0.78rem; }
+.s-row .s-name { font-weight: 700; word-break: keep-all; }
+.s-row .s-date { font-size: 0.78rem; color: var(--text-light); }
+.s-row .s-status {
+  font-size: 0.7rem; padding: 2px 8px; border-radius: 999px;
+  background: var(--border-soft); color: var(--text-light); font-weight: 600;
+  text-align: center; max-width: 100px;
+}
+.s-row .s-status.subscription { background: rgba(0,184,148,0.15); color: var(--accent); }
+.s-row .s-status.trial { background: rgba(253,203,110,0.18); color: #b8860b; }
+.s-row .s-status.package { background: rgba(108,92,231,0.15); color: var(--primary); }
+.s-row .s-url {
+  font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.78rem;
+  color: var(--text-light); word-break: break-all;
+}
+.s-actions { display: flex; gap: 6px; }
+.s-btn {
+  padding: 6px 12px; border: 1.5px solid var(--border); border-radius: 6px;
+  background: var(--card-bg); color: var(--text); font-size: 0.78rem; font-weight: 600;
+  cursor: pointer; font-family: inherit; white-space: nowrap;
+}
+.s-btn:hover { border-color: var(--primary); color: var(--primary); }
+.s-btn.copied { background: var(--accent); color: #fff; border-color: var(--accent); }
+.s-btn.primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+.template-box {
+  margin-top: 24px; padding: 18px 20px; background: var(--card-bg); border-radius: var(--radius);
+  box-shadow: var(--shadow); border-left: 4px solid var(--primary);
+}
+.template-box h3 { margin-bottom: 8px; }
+.template-box pre {
+  background: var(--border-soft); padding: 14px; border-radius: 8px; font-size: 0.88rem;
+  white-space: pre-wrap; line-height: 1.55; margin-top: 10px; word-break: keep-all;
+}
+@media (max-width: 700px) {
+  .s-row { grid-template-columns: 1fr; gap: 6px; padding: 12px 14px; }
+}
+</style>
+</head>
+<body>
+<div class="container students-container">
+  <div class="topbar">
+    <h1><a href="index.html" style="text-decoration:none; color:inherit;"><span class="brand">Fly Korean</span><span class="daily-suffix"> Teacher</span></a></h1>
+    <div class="right">
+      <a class="nav-link" href="teacher.html">Submissions</a>
+      <a class="nav-link" href="archive.html">Archive</a>
+      <a class="nav-link active" href="students.html">Students</a>
+    </div>
+  </div>
+
+  <div class="hero">
+    <h2>Active Students</h2>
+    <p>Send each student their personal URL. Identity auto-namespaced — no setup per student.</p>
+  </div>
+
+  <div class="s-meta" id="s-meta">Loading…</div>
+  <input class="s-search" id="s-search" type="text" placeholder="Filter by name…" />
+  <div class="s-toolbar">
+    <button class="s-btn primary" id="copy-all">📋 Copy all URLs (one per line)</button>
+    <button class="s-btn" id="copy-template">📋 Copy send template</button>
+  </div>
+
+  <div id="s-list"></div>
+
+  <div class="template-box">
+    <h3>Send template</h3>
+    <pre id="template-text">Hi! I made a daily Korean reading app for you.
+
+- 10 news topics every day, at your level (Level 1 Starter to Level 5 Academic)
+- Tap any word to save → flashcards remember it forever
+- Listen with native Korean voice (edge-tts)
+- Answer comprehension questions (typing or speaking in Korean)
+
+Your link: {URL}
+Bookmark it. Open daily.</pre>
+  </div>
+</div>
+
+<script>
+(async () => {
+  const list = document.getElementById('s-list');
+  let students = [];
+  try {
+    students = await fetch('data/_active_students.json?v=' + Date.now()).then(r => r.json());
+  } catch (e) {
+    list.innerHTML = '<p style="color:var(--accent-hot)">Failed to load active students list.</p>';
+    return;
+  }
+
+  document.getElementById('s-meta').innerHTML =
+    `<strong>${students.length}</strong> active students &nbsp;·&nbsp; lessons in last 30 days &nbsp;·&nbsp; sorted by name`;
+
+  function statusClass(s) {
+    s = (s || '').toLowerCase();
+    if (s.includes('sub')) return 'subscription';
+    if (s.includes('trial')) return 'trial';
+    if (s.includes('pack')) return 'package';
+    return '';
+  }
+
+  function render(filter = '') {
+    const f = filter.trim().toLowerCase();
+    const rows = students.filter(s => !f || s.name.toLowerCase().includes(f));
+    list.innerHTML = rows.map((s, i) => `
+      <div class="s-row">
+        <span class="s-num">${i + 1}</span>
+        <span class="s-name">${s.name}</span>
+        <span class="s-date">last: ${s.last_lesson}</span>
+        <span class="s-status ${statusClass(s.status)}">${s.status}</span>
+        <span class="s-url">${s.url}</span>
+        <span class="s-actions">
+          <button class="s-btn copy-url" data-url="${s.url}">📋 URL</button>
+          <button class="s-btn copy-msg" data-name="${s.name}" data-url="${s.url}">📋 Message</button>
+          <a class="s-btn" href="${s.url}" target="_blank">↗ Open</a>
+        </span>
+      </div>
+    `).join('');
+    list.querySelectorAll('.copy-url').forEach(b => b.addEventListener('click', () => copyToBtn(b, b.dataset.url)));
+    list.querySelectorAll('.copy-msg').forEach(b => b.addEventListener('click', () => {
+      const tpl = document.getElementById('template-text').textContent;
+      const msg = tpl.replace('{URL}', b.dataset.url);
+      copyToBtn(b, msg);
+    }));
+  }
+
+  async function copyToBtn(btn, text) {
+    try {
+      await navigator.clipboard.writeText(text);
+      const orig = btn.textContent;
+      btn.classList.add('copied');
+      btn.textContent = '✓ Copied';
+      setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 1500);
+    } catch { alert('Copy failed — please select manually.'); }
+  }
+
+  document.getElementById('s-search').addEventListener('input', e => render(e.target.value));
+  document.getElementById('copy-all').addEventListener('click', e => {
+    copyToBtn(e.target, students.map(s => s.url).join('\n'));
+  });
+  document.getElementById('copy-template').addEventListener('click', e => {
+    copyToBtn(e.target, document.getElementById('template-text').textContent);
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
