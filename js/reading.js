@@ -140,14 +140,21 @@
 
     currentTopicIdx = Math.min(currentTopicIdx, topics.length - 1);
     const topic = topics[currentTopicIdx];
-    const lvl = topic.levels?.[currentLevel] || topic.levels?.k2 || Object.values(topic.levels)[0];
+    // Topic-specific level availability (e.g. Business/Health skip k1)
+    const availableLevels = Object.keys(topic.levels || {}).sort();  // e.g. ['k1','k2','k3','k5'] or ['k2','k3','k4','k5']
+    // Pick the closest available level if the user's preferred level is missing for this topic
+    const lvl = topic.levels?.[currentLevel] || topic.levels?.[availableLevels[0]];
+    // The actual level key being shown (may differ from currentLevel if not present)
+    const shownLevel = topic.levels?.[currentLevel] ? currentLevel : availableLevels[0];
     const marks = Common.getMarks();
 
-    const levelTabs = ['k1','k2','k3','k4'].map(l => {
-      const labels = { k1:'Starter', k2:'Elementary', k3:'Intermediate', k4:'Advanced' };
-      const hints = { k1:'Short sentences', k2:'Everyday Korean', k3:'News style', k4:'Academic / 수능' };
-      return `<button class="level-tab ${l===currentLevel?'active':''}" data-level="${l}" title="${hints[l]}">
-        <span class="lv">Level ${l.slice(1)}</span>${labels[l]}
+    // Render only the levels that exist for THIS topic (e.g. Business/Health skip k1)
+    const labels = { k1:'Starter', k2:'Elementary', k3:'Intermediate', k4:'Advanced', k5:'Academic' };
+    const hints = { k1:'Short, present tense', k2:'Past tense, everyday', k3:'News light', k4:'Full newspaper', k5:'수능 / native' };
+    const levelTabs = availableLevels.map(l => {
+      const isActive = l === shownLevel;
+      return `<button class="level-tab ${isActive?'active':''}" data-level="${l}" title="${hints[l] || ''}">
+        <span class="lv">Level ${l.slice(1)}</span>${labels[l] || l}
       </button>`;
     }).join('');
 
