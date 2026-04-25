@@ -24,9 +24,12 @@
     unknown: { label: 'Practice Weak',   desc: 'Drill new + learning words',          buttons: 'know3' }
   };
 
-  let mode = localStorage.getItem('fkd_fc_mode') || 'daily';
+  // Per-student preferences so two students sharing a browser don't bleed state
+  const MODE_KEY = `fkd_fc_mode:${student}`;
+  const DIR_KEY  = `fkd_fc_dir:${student}`;
+  let mode = localStorage.getItem(MODE_KEY) || 'daily';
   if (!MODES[mode]) mode = 'daily';
-  let direction = localStorage.getItem('fkd_fc_dir') || 'kr2en';   // kr2en | en2kr
+  let direction = localStorage.getItem(DIR_KEY) || 'kr2en';   // kr2en | en2kr
   let queue = [];
   let idx = 0;
   let flipped = false;
@@ -63,16 +66,17 @@
     const marks = Object.values(Common.getMarks());
     const today = new Date().toISOString().slice(0, 10);
     return {
-      daily:   marks.filter(m => (m.nextReview || '') <= today).length,
-      browse:  marks.length,
-      known:   marks.filter(isKnown).length,
-      unknown: marks.filter(isWeak).length
+      daily:    marks.filter(m => (m.nextReview || '') <= today).length,
+      browse:   marks.length,
+      known:    marks.filter(isKnown).length,
+      unknown:  marks.filter(isWeak).length,
+      reviewing: marks.filter(m => m.status === 'reviewing').length,
+      mastered: marks.filter(m => m.status === 'mastered').length
     };
   }
 
   function render() {
     const counts = modeCounts();
-    const stats = Common.getStats();
 
     const tabs = Object.entries(MODES).map(([k, m]) => `
       <button class="fc-mode-tab ${k === mode ? 'active' : ''}" data-mode="${k}">
@@ -83,14 +87,15 @@
 
     const body = (queue.length === 0) ? renderEmpty() : renderCardBody(queue[idx]);
 
+    // Mutually exclusive tiles: every saved word lands in exactly one bucket
     app.innerHTML = `
       <div class="fc-modes">${tabs}</div>
       <div class="fc-mode-desc">${MODES[mode].desc}</div>
 
       <div class="flash-summary">
         <div class="stat unknown"><span class="n">${counts.unknown}</span><div class="lbl">Weak</div></div>
-        <div class="stat known"><span class="n">${counts.known}</span><div class="lbl">Known</div></div>
-        <div class="stat mastered"><span class="n">${stats.mastered}</span><div class="lbl">Mastered</div></div>
+        <div class="stat learning"><span class="n">${counts.reviewing}</span><div class="lbl">Reviewing</div></div>
+        <div class="stat mastered"><span class="n">${counts.mastered}</span><div class="lbl">Mastered</div></div>
       </div>
 
       ${body}
@@ -102,7 +107,7 @@
       b.addEventListener('click', () => {
         if (mode === b.dataset.mode) return;
         mode = b.dataset.mode;
-        localStorage.setItem('fkd_fc_mode', mode);
+        localStorage.setItem(MODE_KEY, mode);
         flipped = false;
         idx = 0;
         queue = buildQueue();
@@ -115,8 +120,7 @@
   }
 
   function renderEmpty() {
-    const total = Object.keys(Common.getMarks()).length;
-    if (total === 0) {
+    if (Object.keys(Common.getMarks()).length === 0) {
       return `
         <div class="empty-state">
           <span class="ic">🌱</span>
@@ -156,10 +160,17 @@
         <button class="srs-btn srs-good"  data-q="good">Know</button>
       </div>`;
 
+    // Front 🔊 only when the front is Korean (otherwise it spoils the answer)
+    const frontListen = direction === 'kr2en'
+      ? `<button class="fc-listen" id="listen" aria-label="Listen">🔊</button>` : '';
+    // Hide shuffle in Daily mode — SM-2 scheduling shouldn't be reordered
+    const shuffleBtn = mode === 'daily'
+      ? '' : `<button class="fc-tool-btn" id="shuffle-btn" title="Shuffle this deck">🔀 Shuffle</button>`;
+
     return `
       <div class="fc-toolbar">
         <button class="fc-tool-btn" id="dir-toggle" title="Swap question side">${direction === 'kr2en' ? 'KR → EN' : 'EN → KR'}</button>
-        <button class="fc-tool-btn" id="shuffle-btn" title="Shuffle this deck">🔀 Shuffle</button>
+        ${shuffleBtn}
         <span class="fc-progress">${idx + 1} / ${queue.length}</span>
       </div>
 
@@ -167,7 +178,7 @@
         <div class="fc-card ${flipped ? 'flipped' : ''}" id="card">
           <div class="fc-face fc-front">
             <span class="fc-badge">${(card.status || 'new').toUpperCase()}</span>
-            <button class="fc-listen" id="listen" aria-label="Listen">🔊</button>
+            ${frontListen}
             <div class="fc-word">${front}</div>
             <div class="fc-hint">Tap to reveal</div>
           </div>
@@ -183,6 +194,7 @@
       </div>
 
       ${buttonsHtml}
+      <div class="fc-keyhint">Space = flip · 1 = ${MODES[mode].buttons === 'srs' ? 'Again' : "Don't Know"} · 2 = ${MODES[mode].buttons === 'srs' ? 'Hard' : 'Unsure'} · 3 = ${MODES[mode].buttons === 'srs' ? 'Good' : 'Know'}</div>
     `;
   }
 
@@ -204,7 +216,7 @@
 
     document.getElementById('dir-toggle')?.addEventListener('click', () => {
       direction = direction === 'kr2en' ? 'en2kr' : 'kr2en';
-      localStorage.setItem('fkd_fc_dir', direction);
+      localStorage.setItem(DIR_KEY, direction);
       flipped = false;
       render();
     });
@@ -346,6 +358,23 @@
       reader.readAsText(file);
     });
   }
+
+  // Keyboard shortcuts: Space = flip, 1/2/3 = grading buttons.
+  // Skip when user is typing in an input (e.g. inline meaning edit).
+  document.addEventListener('keydown', (e) => {
+    if (queue.length === 0) return;
+    const tag = (e.target.tagName || '').toLowerCase();
+    if (tag === 'input' || tag === 'textarea' || e.target.isContentEditable) return;
+    if (e.key === ' ' || e.code === 'Space') {
+      e.preventDefault();
+      const cardEl = document.getElementById('card');
+      if (!cardEl) return;
+      flipped = !flipped;
+      cardEl.classList.toggle('flipped');
+    } else if (e.key === '1') { e.preventDefault(); rate('again'); }
+    else if (e.key === '2') { e.preventDefault(); rate('hard'); }
+    else if (e.key === '3') { e.preventDefault(); rate('good'); }
+  });
 
   // Boot
   queue = buildQueue();
