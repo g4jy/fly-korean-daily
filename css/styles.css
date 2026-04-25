@@ -274,6 +274,63 @@ body {
   box-shadow: none;
 }
 
+.passage-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.btn-multi {
+  background: var(--card-bg);
+  border: 1.5px solid var(--border);
+  color: var(--text);
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+.btn-multi:hover { border-color: var(--primary); color: var(--primary); }
+.btn-multi.on {
+  background: var(--accent-warm);
+  border-color: var(--accent-warm);
+  color: var(--text);
+}
+
+.w.multi-pick {
+  background: rgba(253, 203, 110, 0.5);
+  outline: 2px solid var(--accent-warm);
+  border-radius: 4px;
+}
+
+.multi-bar {
+  position: sticky;
+  bottom: 0;
+  margin-top: 16px;
+  display: none;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: var(--card-bg);
+  border: 2px solid var(--accent-warm);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lg);
+  flex-wrap: wrap;
+}
+.multi-bar.show { display: flex; }
+.multi-preview {
+  flex: 1;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text);
+  word-break: keep-all;
+  min-width: 0;
+}
+
 .level-tab .lv { font-size: 0.7rem; display: block; opacity: 0.7; margin-bottom: 2px; font-weight: 500; }
 
 /* --- Recent feedback widget (landing page) --- */
@@ -1053,6 +1110,25 @@ body {
 }
 
 .word-row .wr-del:hover { background: rgba(225, 112, 85, 0.1); color: var(--accent-hot); }
+
+.wr-en-cell { min-width: 0; }
+.wr-en-edit {
+  width: 100%;
+  background: transparent;
+  border: 1px dashed transparent;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-family: inherit;
+  font-size: 0.88rem;
+  color: var(--text);
+}
+.wr-en-edit:hover { border-color: var(--border); }
+.wr-en-edit:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: rgba(108, 92, 231, 0.04);
+}
+.wr-en-edit::placeholder { color: var(--text-soft); font-style: italic; }
 
 .portability-row {
   display: flex;
