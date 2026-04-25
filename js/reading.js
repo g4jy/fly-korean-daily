@@ -64,28 +64,90 @@
     }
     // Fallback: heuristic strip → try vocab list of this level, then all levels
     const stripped = heuristicStrip(rawToken);
-    const v = (level?.vocab || []).find(x => x.kr === stripped);
-    if (v) {
-      return { kr: v.kr, surface: clean, en: v.en || '', def: v.def || '', pos: v.pos || '', gloss: '' };
+    const allVocab = collectAllVocab(daily);
+    // Try multiple morphological derivations to find the dictionary form
+    const candidates = morphCandidates(stripped, clean);
+    for (const c of candidates) {
+      const v = allVocab.find(x => x.kr === c);
+      if (v) return { kr: v.kr, surface: clean, en: v.en || '', def: v.def || '', pos: v.pos || '', gloss: '' };
     }
-    // Last resort: save the stripped token with no metadata
-    return { kr: stripped || clean, surface: clean, en: '', def: '', pos: '', gloss: '' };
+    // Last resort: save the BEST GUESS dictionary form (first morph candidate)
+    return { kr: candidates[0] || stripped || clean, surface: clean, en: '', def: '', pos: '', gloss: '' };
+  }
+
+  function collectAllVocab(d) {
+    const out = [];
+    for (const t of d?.topics || []) {
+      for (const lv of Object.values(t.levels || {})) {
+        for (const v of lv.vocab || []) out.push(v);
+      }
+    }
+    return out;
+  }
+
+  /**
+   * Generate plausible dictionary-form candidates for a stripped Korean stem.
+   * Order matters: most likely first.
+   *
+   *   위한    → 위하다  (X한 → X하다)
+   *   따뜻한  → 따뜻하다
+   *   사랑한  → 사랑하다
+   *   좋은    → 좋다  (already handled by particle strip removing 은)
+   *   마시는  → 마시다 (particle strip removes 는)
+   *   가던    → 가다  (X던 → X다)
+   *   먹을    → 먹다  (X을 future modifier)
+   *   하려고  → 하다  (X려고 → X다)
+   *   되어서  → 되다  (X어서 → X다)
+   *   해      → 하다  (irregular)
+   *   와      → 오다  (irregular)
+   */
+  function morphCandidates(stripped, clean) {
+    if (!stripped) return [clean];
+    const out = [stripped];
+    // -한 → -하다 (very common: 위한, 따뜻한, 사랑한, 시작한, ...)
+    if (stripped.endsWith('한') && stripped.length > 1) {
+      out.push(stripped.slice(0, -1) + '하다');
+    }
+    // -해 → -하다 (해, 사랑해, 시작해, ...)
+    if (stripped.endsWith('해')) out.push(stripped.slice(0, -1) + '하다');
+    // -해서 → -하다
+    if (stripped.endsWith('해서') && stripped.length > 2) out.push(stripped.slice(0, -2) + '하다');
+    // -하려고 → -하다
+    if (stripped.endsWith('하려고') && stripped.length > 3) out.push(stripped.slice(0, -3) + '하다');
+    // -려고 → -다 (general)
+    if (stripped.endsWith('려고') && stripped.length > 2) out.push(stripped.slice(0, -2) + '다');
+    // -려 → -리다 (열려 → 열리다 fusion)
+    if (stripped.endsWith('려')) out.push(stripped.slice(0, -1) + '리다');
+    // -와 → -오다, -워 → -우다 (irregular)
+    if (stripped.endsWith('와')) out.push(stripped.slice(0, -1) + '오다');
+    if (stripped.endsWith('워')) out.push(stripped.slice(0, -1) + '우다');
+    // -던 → -다 (가던, 좋던, ...)
+    if (stripped.endsWith('던') && stripped.length > 1) out.push(stripped.slice(0, -1) + '다');
+    // ㄴ-modifier from 다 verbs that don't end in 한 or 은: e.g. 만든 → 만들다 (irregular)
+    // Skip — too ambiguous without more info.
+    // -어/-아/-여 connective → +다
+    if (/[어아여]$/.test(stripped)) out.push(stripped.slice(0, -1) + '다');
+    // -어서 / -아서 / -여서 → +다
+    if (/[어아여]서$/.test(stripped) && stripped.length > 1) out.push(stripped.slice(0, -2) + '다');
+    // -다 already → strip 다 to get stem + try as noun
+    if (!stripped.endsWith('다')) out.push(stripped + '다');
+    // ㄹ-future modifier (즐길 → 즐기다)
+    const lStem = dropFinalJongseong(stripped, 'ㄹ');
+    if (lStem) out.push(lStem + '다');
+    // Dedup, keep order
+    return [...new Set(out)];
   }
 
   function tokenMatchesAnyMark(tok, marks, level) {
     // For highlighting: a token on the page matches a mark if token_map resolves to it
-    // OR heuristic variants do.
+    // OR any morphological variant does.
     const clean = cleanToken(tok);
     const tm = level?.token_map || {};
     const candidates = new Set();
     if (tm[clean]?.dict) candidates.add(tm[clean].dict);
     candidates.add(clean);
     const stripped = heuristicStrip(tok);
-    if (stripped) {
-      candidates.add(stripped);
-      candidates.add(stripped + '다');
-      if (/[어아여]$/.test(stripped)) candidates.add(stripped.slice(0, -1) + '다');
-    }
+    morphCandidates(stripped, clean).forEach(c => candidates.add(c));
     for (const c of candidates) if (marks[c]) return true;
     return false;
   }
@@ -101,6 +163,8 @@
   }
 
   let daily, currentLevel, currentTopicIdx, filterCategory, studentReview;
+  let multiMode = false;
+  let multiSelected = []; // [{spanRef, raw}]
 
   function saveLevel(lvl) { localStorage.setItem('fkd_level', lvl); }
   function loadLevel() { return localStorage.getItem('fkd_level') || 'k2'; }
@@ -240,9 +304,17 @@
       <div class="passage-card">
         <div class="passage-header">
           <h2 class="passage-title">${lvl.title || ''}</h2>
-          <button class="btn-listen" id="listen" aria-label="Listen">🔊</button>
+          <div class="passage-actions">
+            <button class="btn-multi ${multiMode?'on':''}" id="multi-toggle" aria-label="Multi-word select" title="Tap-to-pick a phrase across multiple words">${multiMode?'✓ 구절 선택중':'✏️ 구절 선택'}</button>
+            <button class="btn-listen" id="listen" aria-label="Listen">🔊</button>
+          </div>
         </div>
         <div class="passage-text">${paragraphs}</div>
+        <div class="multi-bar ${multiSelected.length?'show':''}" id="multi-bar">
+          <span class="multi-preview" id="multi-preview"></span>
+          <button class="btn-small" id="multi-save">저장</button>
+          <button class="btn-small btn-ghost" id="multi-cancel">취소</button>
+        </div>
       </div>
 
       ${questionsBlock}
@@ -269,6 +341,13 @@
     wireWordTaps(lvl, topic);
     wireVocabDrawer(lvl, topic);
     wireQuestions(lvl, daily.date, topic.id);
+    wireMultiSelect(lvl, topic);
+  }
+
+  function wireMultiSelect(lvl, topic) {
+    document.getElementById('multi-toggle')?.addEventListener('click', () => setMultiMode(!multiMode, topic, lvl));
+    document.getElementById('multi-save')?.addEventListener('click', () => saveMultiSelection(topic, lvl));
+    document.getElementById('multi-cancel')?.addEventListener('click', () => setMultiMode(false, topic, lvl));
   }
 
   function renderCategoryTabs(cats) {
@@ -506,6 +585,20 @@
     const clean = cleanToken(raw);
     if (!clean) return;
 
+    // Multi-word selection: just collect, don't save yet
+    if (multiMode) {
+      const idx = multiSelected.findIndex(s => s.span === span);
+      if (idx >= 0) {
+        multiSelected.splice(idx, 1);
+        span.classList.remove('multi-pick');
+      } else {
+        multiSelected.push({ span, raw });
+        span.classList.add('multi-pick');
+      }
+      updateMultiBar(topic, lvl);
+      return;
+    }
+
     const marks = Common.getMarks();
     const existingKey = findExistingMarkKeyForTap(raw, lvl, marks);
     if (existingKey) {
@@ -540,6 +633,57 @@
       const raw = decodeURIComponent(span.dataset.tok);
       span.classList.toggle('marked', tokenMatchesAnyMark(raw, marks, lvl));
     });
+  }
+
+  /* --- Multi-word selection --- */
+  function updateMultiBar(topic, lvl) {
+    const bar = document.getElementById('multi-bar');
+    const preview = document.getElementById('multi-preview');
+    if (!bar || !preview) return;
+    if (multiSelected.length === 0) {
+      bar.classList.remove('show');
+      return;
+    }
+    // Sort by DOM order
+    const allW = [...app.querySelectorAll('.w')];
+    multiSelected.sort((a, b) => allW.indexOf(a.span) - allW.indexOf(b.span));
+    const phrase = multiSelected.map(s => cleanToken(s.raw)).join(' ');
+    preview.textContent = phrase;
+    bar.classList.add('show');
+  }
+
+  function setMultiMode(on, topic, lvl) {
+    multiMode = on;
+    multiSelected.forEach(s => s.span.classList.remove('multi-pick'));
+    multiSelected = [];
+    const btn = document.getElementById('multi-toggle');
+    if (btn) {
+      btn.classList.toggle('on', on);
+      btn.textContent = on ? '✓ 구절 선택중' : '✏️ 구절 선택';
+    }
+    const bar = document.getElementById('multi-bar');
+    if (bar) bar.classList.remove('show');
+  }
+
+  function saveMultiSelection(topic, lvl) {
+    if (multiSelected.length === 0) return;
+    const allW = [...app.querySelectorAll('.w')];
+    multiSelected.sort((a, b) => allW.indexOf(a.span) - allW.indexOf(b.span));
+    const phrase = multiSelected.map(s => cleanToken(s.raw)).join(' ');
+    Common.addMark({
+      kr: phrase,
+      surface: phrase,
+      en: '',
+      def: '',
+      pos: 'phrase',
+      gloss: '',
+      context: lvl.title || '',
+      category: topic.category || '',
+      source: 'reading-tap-phrase'
+    });
+    Common.toast('구절 저장: ' + phrase, 'success', 1800);
+    setMultiMode(false, topic, lvl);
+    syncMarkedStates(lvl);
   }
 
   /* --- Boot --- */
