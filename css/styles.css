@@ -892,6 +892,104 @@ body {
 .flash-summary .stat.due .n { color: var(--accent-hot); }
 .flash-summary .stat.learning .n { color: var(--accent-warm); }
 .flash-summary .stat.mastered .n { color: var(--accent); }
+.flash-summary .stat.unknown .n { color: var(--accent-hot); }
+.flash-summary .stat.known .n { color: var(--primary); }
+
+/* --- Practice mode tabs --- */
+.fc-modes {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 6px;
+  margin-bottom: 6px;
+}
+.fc-mode-tab {
+  background: transparent;
+  border: none;
+  padding: 10px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--text-light);
+  font-weight: 600;
+  font-size: 0.78rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  transition: all 0.12s;
+}
+.fc-mode-tab:hover { background: var(--border-soft); color: var(--text); }
+.fc-mode-tab.active {
+  background: var(--primary);
+  color: white;
+}
+.fc-mode-tab .fc-mode-label { font-size: 0.78rem; line-height: 1.1; }
+.fc-mode-tab .fc-mode-count {
+  font-size: 0.68rem;
+  opacity: 0.85;
+  font-weight: 500;
+  background: rgba(255,255,255,0.2);
+  padding: 1px 7px;
+  border-radius: 10px;
+  margin-top: 2px;
+}
+.fc-mode-tab:not(.active) .fc-mode-count {
+  background: var(--border-soft);
+  color: var(--text-soft);
+}
+.fc-mode-desc {
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--text-soft);
+  margin-bottom: 14px;
+}
+
+/* --- Card toolbar (direction + shuffle + progress) --- */
+.fc-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding: 0 4px;
+}
+.fc-tool-btn {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  color: var(--text-light);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+.fc-tool-btn:hover { background: var(--border-soft); color: var(--text); }
+.fc-progress {
+  margin-left: auto;
+  font-size: 0.78rem;
+  color: var(--text-soft);
+  font-weight: 600;
+}
+
+/* --- Word list status badge --- */
+.wr-status {
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  background: var(--border-soft);
+  color: var(--text-soft);
+  white-space: nowrap;
+}
+.wr-status.known { background: rgba(108, 92, 231, 0.12); color: var(--primary); }
+.wr-status.weak  { background: rgba(225, 112, 85, 0.12); color: var(--accent-hot); }
 
 .fc-stage {
   perspective: 1400px;
@@ -1087,8 +1185,8 @@ body {
 
 .word-row {
   display: grid;
-  grid-template-columns: 1fr 1fr auto;
-  gap: 12px;
+  grid-template-columns: 1fr 1fr auto auto;
+  gap: 10px;
   padding: 10px 20px;
   align-items: center;
   border-bottom: 1px solid var(--border-soft);
@@ -1165,6 +1263,15 @@ body {
   .fc-word { font-size: 2rem; }
   .level-tab { font-size: 0.78rem; padding: 9px 4px; }
   .level-tab .lv { font-size: 0.65rem; }
+}
+
+@media (max-width: 480px) {
+  .fc-modes { grid-template-columns: repeat(2, 1fr); }
+  .fc-mode-tab { font-size: 0.75rem; padding: 9px 6px; }
+  .word-row { grid-template-columns: 1fr auto; gap: 6px; padding: 10px 16px; }
+  .word-row .wr-en-cell { grid-column: 1 / 2; }
+  .word-row .wr-status { grid-column: 2 / 3; justify-self: end; }
+  .word-row .wr-del { grid-column: 2 / 3; justify-self: end; }
 }
 
 @media (max-width: 420px) {
