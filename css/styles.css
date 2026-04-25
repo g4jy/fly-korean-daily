@@ -255,6 +255,25 @@ body {
   box-shadow: var(--shadow-sm);
 }
 
+.level-tab.unavailable {
+  opacity: 0.45;
+  position: relative;
+}
+.level-tab.unavailable .lv,
+.level-tab.unavailable {
+  font-style: italic;
+}
+.level-tab.unavailable.active {
+  background: var(--border-soft);
+  color: var(--text-soft);
+}
+
+.passage-card.level-unavailable {
+  border: 2px dashed var(--border);
+  background: var(--bg);
+  box-shadow: none;
+}
+
 .level-tab .lv { font-size: 0.7rem; display: block; opacity: 0.7; margin-bottom: 2px; font-weight: 500; }
 
 /* --- Recent feedback widget (landing page) --- */
