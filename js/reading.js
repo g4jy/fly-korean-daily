@@ -140,23 +140,58 @@
 
     currentTopicIdx = Math.min(currentTopicIdx, topics.length - 1);
     const topic = topics[currentTopicIdx];
-    // Topic-specific level availability (e.g. Business/Health skip k1)
-    const availableLevels = Object.keys(topic.levels || {}).sort();  // e.g. ['k1','k2','k3','k5'] or ['k2','k3','k4','k5']
-    // Pick the closest available level if the user's preferred level is missing for this topic
-    const lvl = topic.levels?.[currentLevel] || topic.levels?.[availableLevels[0]];
-    // The actual level key being shown (may differ from currentLevel if not present)
-    const shownLevel = topic.levels?.[currentLevel] ? currentLevel : availableLevels[0];
+    // ALL 5 level tabs always shown for consistency. Missing levels = placeholder content.
+    const ALL_LEVELS = ['k1','k2','k3','k4','k5'];
+    const availableLevels = ALL_LEVELS.filter(l => topic.levels?.[l]);
+    // Track whether the currently-shown level exists for this topic
+    const lvlExists = !!topic.levels?.[currentLevel];
+    const lvl = lvlExists ? topic.levels[currentLevel] : null;
+    const shownLevel = currentLevel;
     const marks = Common.getMarks();
 
-    // Render only the levels that exist for THIS topic (e.g. Business/Health skip k1)
+    // ALL 5 tabs always shown. Disabled visual state if topic doesn't have that level.
     const labels = { k1:'Starter', k2:'Elementary', k3:'Intermediate', k4:'Advanced', k5:'Academic' };
     const hints = { k1:'Short, present tense', k2:'Past tense, everyday', k3:'News light', k4:'Full newspaper', k5:'수능 / native' };
-    const levelTabs = availableLevels.map(l => {
+    const levelTabs = ALL_LEVELS.map(l => {
       const isActive = l === shownLevel;
-      return `<button class="level-tab ${isActive?'active':''}" data-level="${l}" title="${hints[l] || ''}">
+      const isAvailable = !!topic.levels?.[l];
+      return `<button class="level-tab ${isActive?'active':''} ${isAvailable?'':'unavailable'}" data-level="${l}" title="${hints[l] || ''}${isAvailable?'':' (not available for this topic)'}">
         <span class="lv">Level ${l.slice(1)}</span>${labels[l] || l}
       </button>`;
     }).join('');
+
+    // If currently selected level is not available for this topic, show a placeholder card.
+    if (!lvlExists) {
+      app.innerHTML = `
+        ${catTabs}
+        <div class="reading-meta">
+          <span class="topic-chip">${topic.category || 'News'}</span>
+          <button class="star-cat ${isStarred(topic.category) ? 'starred' : ''}" data-cat="${topic.category}" aria-label="Star category">${isStarred(topic.category) ? '★' : '☆'}</button>
+          <span>${daily.date || ''}</span>
+          ${topic.source_title ? `<span class="src-title">· ${topic.source_title}</span>` : ''}
+        </div>
+        <div class="level-tabs">${levelTabs}</div>
+        <div class="topic-nav">
+          <button id="prev" ${currentTopicIdx===0?'disabled':''} aria-label="Previous">‹</button>
+          <span class="topic-counter">${currentTopicIdx+1} / ${topics.length}</span>
+          <button id="next" ${currentTopicIdx===topics.length-1?'disabled':''} aria-label="Next">›</button>
+        </div>
+        <div class="passage-card level-unavailable">
+          <div class="empty-state">
+            <span class="ic">🚫</span>
+            <h3>이 토픽은 Level ${currentLevel.slice(1)}이 없어요</h3>
+            <p>이 주제는 너무 추상적이라 Level ${currentLevel.slice(1)}로 만들기에 부자연스러워요. 위 탭에서 다른 레벨을 선택해 주세요.</p>
+            <p style="font-size:0.85rem; color:var(--text-soft); margin-top:14px;">사용 가능한 레벨: ${availableLevels.map(l => `Level ${l.slice(1)} ${labels[l]}`).join(' · ')}</p>
+          </div>
+        </div>
+      `;
+      wireCategoryTabs();
+      wireStarButtons();
+      wireLevelTabs();
+      wireTopicNav();
+      return;
+    }
+
 
     const paragraphs = tokenize(lvl.text).map(para => {
       const inner = para.map(({ tok, space }) => {
