@@ -976,6 +976,15 @@ body {
   font-weight: 600;
 }
 
+.fc-keyhint {
+  text-align: center;
+  font-size: 0.72rem;
+  color: var(--text-soft);
+  margin-top: 10px;
+  letter-spacing: 0.01em;
+}
+@media (max-width: 560px) { .fc-keyhint { display: none; } }
+
 /* --- Word list status badge --- */
 .wr-status {
   font-size: 0.7rem;
