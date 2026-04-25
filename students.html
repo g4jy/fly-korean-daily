@@ -109,7 +109,7 @@ Bookmark it. Open daily.</pre>
   const list = document.getElementById('s-list');
   let students = [];
   try {
-    students = await fetch('data/_active_students.json?v=' + Date.now()).then(r => r.json());
+    students = await fetch('data/active_students.json?v=' + Date.now()).then(r => r.json());
   } catch (e) {
     list.innerHTML = '<p style="color:var(--accent-hot)">Failed to load active students list.</p>';
     return;
