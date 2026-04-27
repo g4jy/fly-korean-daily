@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Fly Korean Daily</title>
-<link rel="stylesheet" href="css/styles.css?v=8" />
+<link rel="stylesheet" href="css/styles.css?v=10" />
 </head>
 <body>
 <div class="container">
@@ -16,7 +16,7 @@
   <div id="app"></div>
 </div>
 
-<script src="js/common.js?v=8"></script>
+<script src="js/common.js?v=10"></script>
 <script>
 (async function () {
   const gate = new URLSearchParams(location.search).get('gate');
@@ -61,12 +61,12 @@
     <div id="fb-widget"></div>
 
     <div class="hub-cards">
-      <a class="hub-card" href="reading.html">
+      <a class="hub-card" href="reading.html?student=${encodeURIComponent(student)}">
         <span class="ic">📖</span>
         <h3>Today's Reading</h3>
-        <p>Fresh news stories, 4 difficulty levels, plain Korean.</p>
+        <p>Fresh news stories, 5 difficulty levels, plain Korean.</p>
       </a>
-      <a class="hub-card" href="flashcards.html">
+      <a class="hub-card" href="flashcards.html?student=${encodeURIComponent(student)}">
         <span class="ic">🎴</span>
         <h3>My Flashcards</h3>
         <p>${stats.total} saved · ${stats.due} due · ${stats.mastered} mastered</p>
