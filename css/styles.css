@@ -1071,9 +1071,31 @@ body {
 .fc-context {
   font-size: 0.78rem;
   color: var(--text-soft);
-  margin-top: 14px;
+  margin-top: 8px;
   text-align: center;
   font-style: italic;
+}
+
+.fc-sentence {
+  font-size: 0.95rem;
+  color: var(--text-strong, #1e2433);
+  margin-top: 14px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.55);
+  border-left: 3px solid var(--accent, #6366f1);
+  border-radius: 6px;
+  text-align: left;
+  line-height: 1.7;
+  max-width: 95%;
+  word-break: keep-all;
+}
+
+.fc-sentence .fc-hl {
+  background: #fde68a;
+  color: #92400e;
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-weight: 700;
 }
 
 .fc-listen {

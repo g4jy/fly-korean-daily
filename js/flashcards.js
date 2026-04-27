@@ -24,6 +24,23 @@
     unknown: { label: 'Practice Weak',   desc: 'Drill new + learning words',          buttons: 'know3' }
   };
 
+  function escapeHtml(s) {
+    return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  /**
+   * Wrap the first occurrence of `surface` inside `sentence` in <mark>.
+   * Falls back to the plain (escaped) sentence if surface not found.
+   */
+  function highlightInSentence(sentence, surface) {
+    const safe = escapeHtml(sentence);
+    if (!surface) return safe;
+    const safeSurface = escapeHtml(surface);
+    const idx = safe.indexOf(safeSurface);
+    if (idx < 0) return safe;
+    return safe.slice(0, idx) + '<mark class="fc-hl">' + safeSurface + '</mark>' + safe.slice(idx + safeSurface.length);
+  }
+
   // Per-student preferences so two students sharing a browser don't bleed state
   const MODE_KEY = `fkd_fc_mode:${student}`;
   const DIR_KEY  = `fkd_fc_dir:${student}`;
@@ -188,6 +205,7 @@
             <div class="fc-en">${back}</div>
             ${card.dict_kr && card.dict_kr !== card.kr ? `<div class="fc-def">dictionary form: <b>${card.dict_kr}</b></div>` : ''}
             ${card.def ? `<div class="fc-def">${card.def}</div>` : ''}
+            ${card.source_sentence ? `<div class="fc-sentence">${highlightInSentence(card.source_sentence, card.surface || card.kr)}</div>` : ''}
             ${card.context ? `<div class="fc-context">from: ${card.context}</div>` : ''}
           </div>
         </div>

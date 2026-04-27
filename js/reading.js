@@ -96,8 +96,10 @@
       const v = allVocab.find(x => x.kr === c);
       if (v) return { kr: v.kr, surface: clean, en: v.en || '', def: v.def || '', pos: v.pos || '', gloss: '' };
     }
-    // Last resort: save the BEST GUESS dictionary form (first morph candidate)
-    return { kr: candidates[0] || stripped || clean, surface: clean, en: '', def: '', pos: '', gloss: '' };
+    // Last resort: prefer a morphologically-motivated dict guess over the surface,
+    // so "심고" saves as "심다" and "올" saves as "오다" even when not in vocab.
+    const dictGuess = bestDictGuess(stripped);
+    return { kr: dictGuess || candidates[0] || stripped || clean, surface: clean, en: '', def: '', pos: '', gloss: '' };
   }
 
   function collectAllVocab(d) {
@@ -154,13 +156,58 @@
     if (/[어아여]$/.test(stripped)) out.push(stripped.slice(0, -1) + '다');
     // -어서 / -아서 / -여서 → +다
     if (/[어아여]서$/.test(stripped) && stripped.length > 1) out.push(stripped.slice(0, -2) + '다');
-    // -다 already → strip 다 to get stem + try as noun
-    if (!stripped.endsWith('다')) out.push(stripped + '다');
-    // ㄹ-future modifier (즐길 → 즐기다)
+    // -고 connective → +다 (심고 → 심다, 먹고 → 먹다)
+    if (stripped.endsWith('고') && stripped.length > 1) out.push(stripped.slice(0, -1) + '다');
+    // -지(만) connective → +다 (심지/심지만 → 심다)
+    if (stripped.endsWith('지만') && stripped.length > 2) out.push(stripped.slice(0, -2) + '다');
+    if (stripped.endsWith('지') && stripped.length > 1) out.push(stripped.slice(0, -1) + '다');
+    // -니까/-니 connective → +다 (가니까/가니 → 가다)
+    if (stripped.endsWith('니까') && stripped.length > 2) out.push(stripped.slice(0, -2) + '다');
+    if (stripped.endsWith('니') && stripped.length > 1) out.push(stripped.slice(0, -1) + '다');
+    // -(으)면 conditional → +다 (먹으면 → 먹다, 가면 → 가다)
+    if (stripped.endsWith('으면') && stripped.length > 2) out.push(stripped.slice(0, -2) + '다');
+    if (stripped.endsWith('면') && stripped.length > 1) out.push(stripped.slice(0, -1) + '다');
+    // -게 adverbial → +다 (빠르게 → 빠르다)
+    if (stripped.endsWith('게') && stripped.length > 1) out.push(stripped.slice(0, -1) + '다');
+    // ㄹ-future modifier (즐길 → 즐기다, 올 → 오다)
     const lStem = dropFinalJongseong(stripped, 'ㄹ');
     if (lStem) out.push(lStem + '다');
+    // Catch-all: stem + 다 (covers 마시 → 마시다 etc; LOW CONFIDENCE — also generates noise like 사과+다=사과다)
+    if (!stripped.endsWith('다')) out.push(stripped + '다');
     // Dedup, keep order
     return [...new Set(out)];
+  }
+
+  /**
+   * Most-confident dict-form guess from a stripped stem, using ONLY
+   * morphologically motivated rules (no catch-all +다). Returns null if no
+   * specific rule matches. Used by resolveTap fallback so we don't fabricate
+   * noise dict forms like "사과다" when no vocab match exists.
+   */
+  function bestDictGuess(stripped) {
+    if (!stripped || stripped.length < 1) return null;
+    if (stripped.endsWith('한') && stripped.length > 1) return stripped.slice(0, -1) + '하다';
+    if (stripped.endsWith('해서') && stripped.length > 2) return stripped.slice(0, -2) + '하다';
+    if (stripped.endsWith('해')) return stripped.slice(0, -1) + '하다';
+    if (stripped.endsWith('하려고') && stripped.length > 3) return stripped.slice(0, -3) + '하다';
+    if (stripped.endsWith('려고') && stripped.length > 2) return stripped.slice(0, -2) + '다';
+    if (stripped.endsWith('와')) return stripped.slice(0, -1) + '오다';
+    if (stripped.endsWith('워')) return stripped.slice(0, -1) + '우다';
+    if (stripped.endsWith('던') && stripped.length > 1) return stripped.slice(0, -1) + '다';
+    if (stripped.endsWith('려')) return stripped.slice(0, -1) + '리다';
+    if (/[어아여]서$/.test(stripped) && stripped.length > 1) return stripped.slice(0, -2) + '다';
+    if (/[어아여]$/.test(stripped)) return stripped.slice(0, -1) + '다';
+    if (stripped.endsWith('지만') && stripped.length > 2) return stripped.slice(0, -2) + '다';
+    if (stripped.endsWith('지') && stripped.length > 1) return stripped.slice(0, -1) + '다';
+    if (stripped.endsWith('니까') && stripped.length > 2) return stripped.slice(0, -2) + '다';
+    if (stripped.endsWith('니') && stripped.length > 1) return stripped.slice(0, -1) + '다';
+    if (stripped.endsWith('으면') && stripped.length > 2) return stripped.slice(0, -2) + '다';
+    if (stripped.endsWith('면') && stripped.length > 1) return stripped.slice(0, -1) + '다';
+    if (stripped.endsWith('게') && stripped.length > 1) return stripped.slice(0, -1) + '다';
+    if (stripped.endsWith('고') && stripped.length > 1) return stripped.slice(0, -1) + '다';
+    const lStem = dropFinalJongseong(stripped, 'ㄹ');
+    if (lStem) return lStem + '다';
+    return null;
   }
 
   function tokenMatchesAnyMark(tok, marks, level) {
@@ -619,6 +666,26 @@
     })();
   }
 
+  /**
+   * Extract the sentence containing `span` from its parent paragraph.
+   * Splits paragraph text on Korean/English sentence terminators, picks the
+   * one containing the clicked surface, falls back to full paragraph.
+   */
+  function getSourceSentence(span) {
+    const paragraph = span.closest('p');
+    if (!paragraph) return '';
+    const fullText = paragraph.textContent.replace(/\s+/g, ' ').trim();
+    if (!fullText) return '';
+    const sentences = fullText.match(/[^.?!。]+[.?!。]?/g) || [fullText];
+    const surfaceText = (span.textContent || '').trim();
+    if (surfaceText) {
+      for (const s of sentences) {
+        if (s.includes(surfaceText)) return s.trim();
+      }
+    }
+    return fullText;
+  }
+
   function handleWordTap(span, lvl, topic) {
     const raw = decodeURIComponent(span.dataset.tok);
     const clean = cleanToken(raw);
@@ -648,6 +715,7 @@
     }
 
     const resolved = resolveTap(raw, lvl);
+    const sourceSentence = getSourceSentence(span);
     Common.addMark({
       kr: resolved.kr,
       surface: resolved.surface,
@@ -656,6 +724,7 @@
       pos: resolved.pos,
       gloss: resolved.gloss,
       context: lvl.title || '',
+      source_sentence: sourceSentence,
       category: topic.category || '',
       source: 'reading-tap'
     });
@@ -709,9 +778,11 @@
     const allW = [...app.querySelectorAll('.w')];
     multiSelected.sort((a, b) => allW.indexOf(a.span) - allW.indexOf(b.span));
     const phrase = multiSelected.map(s => cleanToken(s.raw)).join(' ');
+    const sourceSentence = getSourceSentence(multiSelected[0].span);
     Common.addMark({
       kr: phrase,
       surface: phrase,
+      source_sentence: sourceSentence,
       en: '',
       def: '',
       pos: 'phrase',

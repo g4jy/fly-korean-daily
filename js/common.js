@@ -69,7 +69,7 @@ const Common = (() => {
     localStorage.setItem(marksKey(student), JSON.stringify(marks));
   }
 
-  function addMark({ kr, dict_kr, surface, en, def, pos, gloss, context, category, source }) {
+  function addMark({ kr, dict_kr, surface, en, def, pos, gloss, context, source_sentence, category, source }) {
     const student = getStudent();
     if (!student || !kr) return null;
     const marks = getMarks(student);
@@ -83,6 +83,7 @@ const Common = (() => {
       pos: pos || '',
       gloss: gloss || '',
       context: context || '',
+      source_sentence: source_sentence || '',
       category: category || '',
       source: source || 'reading',
       added: new Date().toISOString(),
@@ -100,13 +101,15 @@ const Common = (() => {
     if (pos && !entry.pos) entry.pos = pos;
     if (gloss && !entry.gloss) entry.gloss = gloss;
     if (context && !entry.context) entry.context = context;
+    if (source_sentence && !entry.source_sentence) entry.source_sentence = source_sentence;
     if (category && !entry.category) entry.category = category;
     marks[kr] = entry;
     saveMarks(marks, student);
     queueWebhook({
       student, word_kr: kr, word_dict_kr: entry.dict_kr, word_en: entry.en,
       status: 'marked', category: entry.category, source: entry.source,
-      context: entry.context, pos: entry.pos, gloss: entry.gloss
+      context: entry.context, source_sentence: entry.source_sentence,
+      pos: entry.pos, gloss: entry.gloss
     });
     pushMarksSnapshot();
     return entry;
