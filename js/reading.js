@@ -75,30 +75,45 @@
   function resolveTap(rawToken, level) {
     const clean = cleanToken(rawToken);
     const tm = level?.token_map || {};
-    // Try exact clean match in token_map
+    const stripped = heuristicStrip(rawToken);
+    const dictGuess = bestDictGuess(stripped);
+
+    // 1) token_map — but reject entries whose dict equals the inflected surface
+    //    when bestDictGuess offers a real dict-form derivation. The daily-content
+    //    generator sometimes produces `token_map["심고"] = {dict: "심고"}` which
+    //    is wrong (dict should be 심다); we ignore those.
     if (tm[clean]) {
       const m = tm[clean];
-      return {
-        kr: m.dict || clean,
-        surface: clean,
-        en: m.en || '',
-        def: m.def || '',
-        pos: m.pos || '',
-        gloss: m.gloss || ''
-      };
+      const tmDict = m.dict || clean;
+      const tmLooksInflected = !!dictGuess && (tmDict === clean || tmDict === stripped) && dictGuess !== tmDict;
+      if (!tmLooksInflected) {
+        return {
+          kr: tmDict,
+          surface: clean,
+          en: m.en || '',
+          def: m.def || '',
+          pos: m.pos || '',
+          gloss: m.gloss || ''
+        };
+      }
+      // tmLooksInflected: fall through but keep token_map's en/def/pos/gloss for use later
     }
-    // Fallback: heuristic strip → try vocab list of this level, then all levels
-    const stripped = heuristicStrip(rawToken);
+
+    // 2) Try vocab match through morphological candidates. Prefer dict-form
+    //    derivations over the surface so "심고" hits 심다 even when vocab
+    //    happens to contain "심고" as an inflected entry.
     const allVocab = collectAllVocab(daily);
-    // Try multiple morphological derivations to find the dictionary form
     const candidates = morphCandidates(stripped, clean);
-    for (const c of candidates) {
+    const lookupOrder = dictGuess
+      ? [dictGuess, ...candidates.filter(c => c !== dictGuess)]
+      : candidates;
+    for (const c of lookupOrder) {
       const v = allVocab.find(x => x.kr === c);
       if (v) return { kr: v.kr, surface: clean, en: v.en || '', def: v.def || '', pos: v.pos || '', gloss: '' };
     }
-    // Last resort: prefer a morphologically-motivated dict guess over the surface,
-    // so "심고" saves as "심다" and "올" saves as "오다" even when not in vocab.
-    const dictGuess = bestDictGuess(stripped);
+
+    // 3) Last resort: prefer dictGuess over surface so the saved card is the
+    //    learnable lemma (심다, 오다, 변하다) rather than the inflected token.
     return { kr: dictGuess || candidates[0] || stripped || clean, surface: clean, en: '', def: '', pos: '', gloss: '' };
   }
 
