@@ -714,7 +714,22 @@
     studentReview = await Common.loadStudentReview(daily.date);
     render();
   } catch (e) {
-    console.error(e);
-    app.innerHTML = `<div class="empty-state"><span class="ic">⚠️</span><h3>No content loaded yet</h3><p>Today's reading hasn't arrived yet. If this persists, the daily routine may need attention.</p><a class="btn" href="index.html">Back home</a></div>`;
+    console.error('[fly-korean-daily] load failed:', e);
+    const reason = (e && e.message) ? e.message : String(e);
+    app.innerHTML = `
+      <div class="empty-state">
+        <span class="ic">⚠️</span>
+        <h3>콘텐츠를 불러오지 못했어요</h3>
+        <p>오래된 캐시일 가능성이 큽니다. 아래 새로고침 버튼을 누르거나 <strong>Ctrl + Shift + R</strong> (Mac: <strong>Cmd + Shift + R</strong>)을 눌러보세요.</p>
+        <p style="font-size:0.78rem; color:var(--text-soft); margin-top:10px; font-family:ui-monospace,monospace;">에러: ${reason.replace(/</g,'&lt;')}</p>
+        <button class="btn" id="hard-reload" style="margin-top:18px;">🔄 강제 새로고침</button>
+        <a class="btn btn-ghost" href="index.html" style="margin-top:8px;">← 홈으로</a>
+      </div>`;
+    document.getElementById('hard-reload')?.addEventListener('click', () => {
+      // Cache-bust by adding random query, then full reload
+      const u = new URL(location.href);
+      u.searchParams.set('_cb', Date.now().toString(36));
+      location.replace(u.toString());
+    });
   }
 })();
