@@ -269,13 +269,27 @@
       return `<p>${inner}</p>`;
     }).join('');
 
-    const vocabRows = (lvl.vocab || []).map(v =>
-      `<div class="word-row">
-        <span class="wr-kr">${v.kr}${v.pos ? ` <small class="pos-tag">${v.pos}</small>` : ''}</span>
-        <span class="wr-en">${v.en || ''}</span>
-        <button class="wr-del" data-add="${encodeURIComponent(v.kr)}">${marks[v.kr] ? '✓' : '+ save'}</button>
-      </div>`
-    ).join('');
+    const vocabRows = (lvl.vocab || []).map(v => {
+      const meaningsHtml = (v.meanings && v.meanings.length > 0)
+        ? `<div class="wr-meanings">${v.meanings.map(m => `
+            <div class="wr-meaning ${m.this_passage ? 'primary' : ''}">
+              <span class="wr-m-en">${m.en || ''}${m.this_passage ? ' ✓' : ''}</span>
+              ${m.ex_kr ? `<span class="wr-m-ex">예: ${m.ex_kr}</span>` : ''}
+            </div>`).join('')}</div>`
+        : '';
+      const relatedHtml = (v.related && v.related.length > 0)
+        ? `<div class="wr-related">관련어: ${v.related.map(r => `<span class="wr-rel-pill">${r.kr}<small>·${r.en}</small></span>`).join('')}</div>`
+        : '';
+      const hasExtras = meaningsHtml || relatedHtml;
+      return `<div class="word-row vocab-rich">
+        <div class="wr-main">
+          <span class="wr-kr">${v.kr}${v.pos ? ` <small class="pos-tag">${v.pos}</small>` : ''}</span>
+          <span class="wr-en">${v.en || ''}</span>
+          <button class="wr-del" data-add="${encodeURIComponent(v.kr)}">${marks[v.kr] ? '✓' : '+ save'}</button>
+        </div>
+        ${hasExtras ? `<div class="wr-extras">${meaningsHtml}${relatedHtml}</div>` : ''}
+      </div>`;
+    }).join('');
 
     const audioUrl = lvl.audio || '';
 
