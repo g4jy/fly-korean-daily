@@ -3,16 +3,19 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
 <title>Flashcards · Fly Korean Daily</title>
-<link rel="stylesheet" href="css/styles.css?v=7" />
+<link rel="stylesheet" href="css/styles.css?v=10" />
 </head>
 <body>
 <div class="container">
   <div class="topbar">
-    <h1><a href="index.html" style="text-decoration:none; color:inherit;"><span class="brand">Fly Korean</span><span class="daily-suffix"> Daily</span></a></h1>
+    <h1><a id="home-link" href="index.html" style="text-decoration:none; color:inherit;"><span class="brand">Fly Korean</span><span class="daily-suffix"> Daily</span></a></h1>
     <div class="right">
-      <a class="nav-link" href="reading.html">Reading</a>
-      <a class="nav-link active" href="flashcards.html">Flashcards</a>
+      <a class="nav-link" id="nav-reading" href="reading.html">Reading</a>
+      <a class="nav-link active" id="nav-flashcards" href="flashcards.html">Flashcards</a>
       <span id="top-right"></span>
     </div>
   </div>
@@ -20,7 +23,22 @@
   <div id="app"><p style="text-align:center; color:var(--text-light); padding:60px 0;">Loading…</p></div>
 </div>
 
-<script src="js/common.js?v=7"></script>
-<script src="js/flashcards.js?v=7"></script>
+<script src="js/common.js?v=10"></script>
+<script>
+  (function () {
+    var s = new URLSearchParams(location.search).get('student') || localStorage.getItem('fkd_student') || '';
+    if (s) {
+      ['home-link','nav-reading','nav-flashcards'].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el && el.href) {
+          var u = new URL(el.href);
+          u.searchParams.set('student', s);
+          el.href = u.toString();
+        }
+      });
+    }
+  })();
+</script>
+<script src="js/flashcards.js?v=10"></script>
 </body>
 </html>
