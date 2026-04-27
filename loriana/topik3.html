@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TOPIK 3급 읽기 연습 — Loriana</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Noto Sans KR', sans-serif; background: #f4f6fb; color: #1e2433; min-height: 100vh; line-height: 1.85; }
+header { background: #1b2a5e; color: white; padding: 22px 32px 0; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 12px rgba(0,0,0,0.15); }
+.header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px; }
+header h1 { font-family: 'Noto Serif KR', serif; font-size: 1.35rem; font-weight: 700; letter-spacing: -0.3px; }
+.header-badge { font-size: 0.8rem; background: rgba(255,255,255,0.15); padding: 5px 14px; border-radius: 20px; font-weight: 500; }
+.grand-total { font-size: 0.95rem; font-weight: 500; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+.grand-total .bar-bg { flex: 1; height: 6px; background: rgba(255,255,255,0.2); border-radius: 3px; overflow: hidden; }
+.grand-total .bar-fill { height: 100%; background: #6ee7b7; border-radius: 3px; transition: width 0.4s; }
+.tabs { display: flex; gap: 3px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 0; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab-btn { background: transparent; border: none; color: rgba(255,255,255,0.55); padding: 9px 16px; font-size: 0.78rem; font-family: 'Noto Sans KR', sans-serif; cursor: pointer; border-radius: 8px 8px 0 0; transition: all 0.18s; font-weight: 500; white-space: nowrap; flex-shrink: 0; }
+.tab-btn:hover { color: white; background: rgba(255,255,255,0.1); }
+.tab-btn.active { background: #f4f6fb; color: #1b2a5e; font-weight: 700; }
+.tab-btn .tab-count { font-size: 0.65rem; opacity: 0.7; margin-left: 4px; }
+.content { padding: 28px 32px 60px; max-width: 860px; margin: 0 auto; }
+.passage-section { display: none; }
+.passage-section.active { display: block; }
+.passage-header { font-family: 'Noto Serif KR', serif; font-size: 1.4rem; font-weight: 700; color: #1b2a5e; margin-bottom: 6px; }
+.passage-meta { font-size: 0.82rem; color: #6b7280; margin-bottom: 20px; }
+.passage-card { background: white; border-radius: 12px; padding: 32px 36px; box-shadow: 0 1px 8px rgba(0,0,0,0.06); margin-bottom: 28px; font-size: 1.02rem; line-height: 2; }
+.passage-card p { margin-bottom: 16px; text-align: justify; }
+.passage-card p:last-child { margin-bottom: 0; }
+.vocab-word { font-weight: 700; cursor: pointer; padding: 1px 3px; border-radius: 3px; transition: background 0.2s, color 0.2s; }
+.vocab-word:hover { background: #dbeafe; }
+.vocab-word.checked { background: #6ee7b7; color: #064e3b; }
+.questions-card { background: #f0f4ff; border-radius: 12px; padding: 24px 32px; margin-bottom: 16px; border-left: 4px solid #1b2a5e; }
+.questions-card h3 { font-family: 'Noto Serif KR', serif; font-size: 1.05rem; color: #1b2a5e; margin-bottom: 14px; }
+.questions-card ol { padding-left: 20px; }
+.questions-card li { margin-bottom: 10px; font-size: 0.95rem; line-height: 1.7; }
+.word-counter { text-align: right; font-size: 0.85rem; color: #6b7280; margin-bottom: 18px; font-weight: 500; }
+.word-counter span { color: #059669; font-weight: 700; }
+@media print { header { position: static; } .tabs { display: none; } .passage-section { display: block !important; page-break-after: always; } .vocab-word.checked { background: #d1fae5 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; } .passage-card { box-shadow: none; border: 1px solid #e5e7eb; } }
+@media (max-width: 640px) { .content { padding: 18px 16px 40px; } .passage-card { padding: 22px 20px; font-size: 0.97rem; } header { padding: 16px 16px 0; } header h1 { font-size: 1.15rem; } .tab-btn { padding: 8px 12px; font-size: 0.72rem; } }
+</style>
+</head>
+<body>
+
+
+<!-- Body rebuilt 2026-04-27 — 12 passages regenerated, 549 vocab marks total -->
+<header>
+  <div class="header-top">
+    <h1>TOPIK 3급 읽기 연습</h1>
+    <div class="header-badge">Loriana</div>
+  </div>
+  <div class="grand-total">
+    <span id="grandTotalText">Total: 0 / 549 words mastered</span>
+    <div class="bar-bg"><div class="bar-fill" id="grandBar" style="width:0%"></div></div>
+  </div>
+  <div class="tabs" id="tabBar">
+    <button class="tab-btn active" data-tab="0">1. 대청소 <span class="tab-count" id="tc0"></span></button>
+    <button class="tab-btn" data-tab="1">2. 배낭여행 <span class="tab-count" id="tc1"></span></button>
+    <button class="tab-btn" data-tab="2">3. 힘든 한 주 <span class="tab-count" id="tc2"></span></button>
+    <button class="tab-btn" data-tab="3">4. 할머니의 부엌 <span class="tab-count" id="tc3"></span></button>
+    <button class="tab-btn" data-tab="4">5. 사계절 <span class="tab-count" id="tc4"></span></button>
+    <button class="tab-btn" data-tab="5">6. 쇼핑 <span class="tab-count" id="tc5"></span></button>
+    <button class="tab-btn" data-tab="6">7. 학교생활 <span class="tab-count" id="tc6"></span></button>
+    <button class="tab-btn" data-tab="7">8. 도시의 하루 <span class="tab-count" id="tc7"></span></button>
+    <button class="tab-btn" data-tab="8">9. 특별한 모임 <span class="tab-count" id="tc8"></span></button>
+    <button class="tab-btn" data-tab="9">10. 몸과 마음 <span class="tab-count" id="tc9"></span></button>
+    <button class="tab-btn" data-tab="10">11. 직장에서 <span class="tab-count" id="tc10"></span></button>
+    <button class="tab-btn" data-tab="11">12. 한국 문화 <span class="tab-count" id="tc11"></span></button>
+  </div>
+</header>
+
+<div class="content">
+
+<!-- ====== PASSAGE 1: 토요일의 대청소 ====== -->
+<div class="passage-section active" data-section="0">
+  <h2 class="passage-header">1. 토요일의 대청소</h2>
+  <div class="passage-meta">Saturday Cleaning &mdash; housework &amp; cleaning vocabulary</div>
+  <div class="word-counter">Checked: <span id="wc0">0</span> / <span id="wt0">0</span></div>
+  <div class="passage-card">
+<p>토요일 아침, <strong class="vocab-word" data-word="온">온</strong> 가족이 일찍 일어나 대청소를 시작했다. 어머니께서는 <strong class="vocab-word" data-word="당장">당장</strong> 청소부터 하자고 하셨고, 나는 <strong class="vocab-word" data-word="그저">그저</strong> 고개를 끄덕였다. <strong class="vocab-word" data-word="안방">안방</strong>에는 일주일 동안 정리하지 못한 옷가지가 <strong class="vocab-word" data-word="쌓이다">쌓여</strong> 있었고, <strong class="vocab-word" data-word="베란다">베란다</strong>에도 먼지가 <strong class="vocab-word" data-word="굉장히">굉장히</strong> 많았다. 우리는 각자 일을 나누어 움직이기 시작했다.</p>
+<p>어머니께서는 빨래를 <strong class="vocab-word" data-word="널다">너시</strong>려고 베란다로 나가셨다. 바람이 강해서 작은 수건이 <strong class="vocab-word" data-word="날아가다">날아갈</strong> 뻔했지만 다행히 빨래집게로 잘 고정하셨다. 빨래가 다 <strong class="vocab-word" data-word="말리다">마르</strong>면 <strong class="vocab-word" data-word="다리미">다리미</strong>를 꺼내 <strong class="vocab-word" data-word="다림질">다림질</strong>을 하실 거라고 하셨다. 셔츠에 작은 <strong class="vocab-word" data-word="얼룩">얼룩</strong>이 남아 있었지만 잘 지워지지 <strong class="vocab-word" data-word="않다">않았다</strong>.</p>
+<p>나는 거실 바닥을 빗자루로 <strong class="vocab-word" data-word="쓸다">쓸었다</strong>. 오래된 <strong class="vocab-word" data-word="벽시계">벽시계</strong>는 <strong class="vocab-word" data-word="낡다">낡아서</strong> 시침과 분침이 잘 맞지 않았다. 아버지께서는 새 건전지로 <strong class="vocab-word" data-word="갈다">갈아</strong> 끼우시고 시계 <strong class="vocab-word" data-word="바늘">바늘</strong>을 다시 맞추셨다. 그러다 작은 부품을 바닥에 <strong class="vocab-word" data-word="떨어뜨리다">떨어뜨리셨</strong>지만 금방 다시 찾아 제자리에 <strong class="vocab-word" data-word="꽂다">꽂으</strong>셨다.</p>
+<p>부엌에서는 누나가 <strong class="vocab-word" data-word="식기">식기</strong>를 정리하고 있었다. 세제를 <strong class="vocab-word" data-word="골고루">골고루</strong> 묻혀서 그릇을 <strong class="vocab-word" data-word="비비다">비비</strong>자 하얀 <strong class="vocab-word" data-word="거품">거품</strong>이 가득 일었다. 누나는 오래된 <strong class="vocab-word" data-word="가전제품">가전제품</strong>도 한 번씩 닦았다. <strong class="vocab-word" data-word="냉동">냉동</strong>실 안의 얼음도 정리하던 중에 갑자기 불이 <strong class="vocab-word" data-word="꺼지다">꺼졌다</strong>. 다들 깜짝 놀라 부엌을 둘러보았다.</p>
+<p>전기가 나가자 어머니께서 잠시 <strong class="vocab-word" data-word="당황">당황</strong>하셨지만 곧 차분해지셨다. <strong class="vocab-word" data-word="공과금">공과금</strong> 고지서를 확인해 보니 다행히 요금은 밀리지 않았다. 아버지께서 두꺼비집을 살펴보고 <strong class="vocab-word" data-word="전원">전원</strong>을 다시 올리시자 불이 들어왔다. 더운 날이라 <strong class="vocab-word" data-word="냉방">냉방</strong> 장치도 <strong class="vocab-word" data-word="새로이">새로이</strong> 켰다. 정말 <strong class="vocab-word" data-word="다행">다행</strong>이라고 모두가 한숨을 돌렸다.</p>
+<p>나는 벽에 걸린 <strong class="vocab-word" data-word="액자">액자</strong>가 <strong class="vocab-word" data-word="거꾸로">거꾸로</strong> 걸려 있는 것을 발견했다. <strong class="vocab-word" data-word="꽃무늬">꽃무늬</strong> 액자는 어머니께서 가장 아끼시는 것이었다. 새 못을 박으려고 벽을 <strong class="vocab-word" data-word="뚫다">뚫었다</strong>. 망치를 벽에 <strong class="vocab-word" data-word="대다">대고</strong> 두드렸다. 셔츠 <strong class="vocab-word" data-word="소매">소매</strong>가 자꾸 걸려서 <strong class="vocab-word" data-word="수선">수선</strong>도 필요했다. 나는 먼지를 창문 밖으로 <strong class="vocab-word" data-word="내보내다">내보내고</strong> 다시 청소를 이어 갔다.</p>
+<p>청소 도중 동생이 다리를 다쳐서 한참을 <strong class="vocab-word" data-word="꼼짝">꼼짝</strong> 못 했다. 일어나기도 <strong class="vocab-word" data-word="곤란">곤란</strong>해 보였다. 나는 빨래 <strong class="vocab-word" data-word="바구니">바구니</strong>에 옷을 <strong class="vocab-word" data-word="담다">담아</strong> 옮기다가 청소기의 <strong class="vocab-word" data-word="바퀴">바퀴</strong>가 빠진 것을 보았다. 아버지께서 곧 <strong class="vocab-word" data-word="수리">수리</strong>해 주셨다. 무거운 가구를 <strong class="vocab-word" data-word="끌다">끌어</strong> 옮기는데 바닥이 <strong class="vocab-word" data-word="딱딱하다">딱딱했다</strong>. 빨래는 잘 개어서 옷장에 <strong class="vocab-word" data-word="말다">말아</strong> 넣었다.</p>
+<p>오후 늦게야 청소가 <strong class="vocab-word" data-word="끝내">끝내</strong> 마무리되었다. 깨끗해진 집 안을 둘러보니 큰 <strong class="vocab-word" data-word="보람">보람</strong>이 느껴졌다. 모두가 소파에 편히 <strong class="vocab-word" data-word="놓이다">놓인</strong> 쿠션에 기대어 차를 마셨다. 함께 일한 토요일은 정말 잊을 수 없는 하루였다.</p>
+</div>
+  <div class="questions-card">
+    <h3>읽기 확인 질문</h3>
+    <ol>
+      <li>가족은 토요일에 무엇을 하기로 했습니까?</li>
+      <li>아버지가 전기료를 보고 당황한 이유는 무엇입니까?</li>
+      <li>동생은 왜 방에서 가만히 있었습니까?</li>
+      <li>대청소가 끝난 후 가족은 어떤 기분이었습니까?</li>
+    </ol>
+  </div>
+</div>
+
+<!-- ====== PASSAGE 2: 한국 배낭여행 ====== -->
+<div class="passage-section" data-section="1">
+  <h2 class="passage-header">2. 한국 배낭여행</h2>
+  <div class="passage-meta">Korea Backpacking &mdash; travel &amp; transportation vocabulary</div>
+  <div class="word-counter">Checked: <span id="wc1">0</span> / <span id="wt1">0</span></div>
+  <div class="passage-card">
+<p>지난여름에 나는 <strong class="vocab-word" data-word="배낭여행">배낭여행</strong>을 떠나기로 했다. <strong class="vocab-word" data-word="비자">비자</strong> 문제를 먼저 해결하고, 큰 <strong class="vocab-word" data-word="배낭">배낭</strong> 안에 <strong class="vocab-word" data-word="등산복">등산복</strong> 두 벌과 작은 <strong class="vocab-word" data-word="양산">양산</strong>을 <strong class="vocab-word" data-word="담기다">담았다</strong>. 부모님께서는 공항까지 나오셔서 따뜻하게 <strong class="vocab-word" data-word="배웅">배웅</strong>을 해 주셨다.</p>
+<p>인천 공항에 내린 후, 공항버스 <strong class="vocab-word" data-word="승차권">승차권</strong>을 사서 <strong class="vocab-word" data-word="승차">승차</strong>했다. 친절한 <strong class="vocab-word" data-word="승무원">승무원</strong>이 시내 <strong class="vocab-word" data-word="교통수단">교통수단</strong>에 대해 설명해 주셨고, 지하철 <strong class="vocab-word" data-word="노선도">노선도</strong>도 <strong class="vocab-word" data-word="권하다">권해</strong> 주셨다. 출근 시간이라 객차 안은 무척 <strong class="vocab-word" data-word="붐비다">붐볐지만</strong>, <strong class="vocab-word" data-word="노약자">노약자</strong> 자리는 비워 두는 사람들이 많았다.</p>
+<p>게스트하우스에 <strong class="vocab-word" data-word="닿다">닿기</strong> 위해 <strong class="vocab-word" data-word="약도">약도</strong> 한 장을 들고 <strong class="vocab-word" data-word="골목길">골목길</strong>을 걸었다. 한국어 <strong class="vocab-word" data-word="간판">간판</strong>이 <strong class="vocab-word" data-word="낯설다">낯설어서</strong> 길을 한 번 잘못 들었다. 도착한 <strong class="vocab-word" data-word="숙박">숙박</strong> 시설은 깨끗했고, 주인께서 <strong class="vocab-word" data-word="숙박비">숙박비</strong>를 친절히 안내해 주셨다. 나는 그곳에서 사흘 동안 <strong class="vocab-word" data-word="묵다">묵기</strong>로 했고, 마지막 밤에는 <strong class="vocab-word" data-word="외박">외박</strong> 계획도 세웠다.</p>
+<p>다음 날 새벽에는 <strong class="vocab-word" data-word="교외">교외</strong>로 떠나는 <strong class="vocab-word" data-word="교통편">교통편</strong>을 알아보았다. 버스가 가장 빠른 <strong class="vocab-word" data-word="수단">수단</strong>이라기에 그것을 타기로 했다. <strong class="vocab-word" data-word="도중">도중</strong>에 갑자기 <strong class="vocab-word" data-word="비">비</strong>가 내려서, 가방에 든 <strong class="vocab-word" data-word="양산">양산</strong> <strong class="vocab-word" data-word="대신">대신</strong> 우산을 사야 했다. 짐을 잠시 <strong class="vocab-word" data-word="내려놓다">내려놓고</strong> 정류장 의자에 앉아 <strong class="vocab-word" data-word="동부">동부</strong> 해안의 풍경을 머릿속에 그렸다.</p>
+<p>마침내 동해에 도착하니 푸른 <strong class="vocab-word" data-word="바닷물">바닷물</strong>이 끝없이 펼쳐져 있었다. 부드러운 <strong class="vocab-word" data-word="모래">모래</strong> 위를 <strong class="vocab-word" data-word="맨발">맨발</strong>로 걸으며 바라본 <strong class="vocab-word" data-word="광경">광경</strong>은 평생 잊을 수 없을 것 같았다. 가까운 섬으로 가는 <strong class="vocab-word" data-word="배편">배편</strong>도 있었지만, 이번에는 그저 해변에 머무는 쪽을 선택했다.</p>
+<p>여행 <strong class="vocab-word" data-word="경비">경비</strong>는 미리 계산해 두었지만, 한국 <strong class="vocab-word" data-word="물가">물가</strong>가 높아서 <strong class="vocab-word" data-word="식비">식비</strong>가 가장 큰 <strong class="vocab-word" data-word="비용">비용</strong>이 되었다. 그래도 <strong class="vocab-word" data-word="닷새">닷새</strong> 동안 <strong class="vocab-word" data-word="볼거리">볼거리</strong>가 많은 도시를 돌며 유명한 <strong class="vocab-word" data-word="식당가">식당가</strong>에서 다양한 음식을 맛보았다. 친구가 추천한 국밥은 <strong class="vocab-word" data-word="굉장히">굉장히</strong> 깊은 맛이 났다.</p>
+<p>떠나는 날 <strong class="vocab-word" data-word="비행장">비행장</strong>에서 짐이 컨베이어에 <strong class="vocab-word" data-word="실리다">실리는</strong> 모습을 보며, 다음에는 <strong class="vocab-word" data-word="남미">남미</strong>까지 <strong class="vocab-word" data-word="되돌아오다">되돌아오는</strong> 긴 여정을 꿈꿔 보았다. 다행히 <strong class="vocab-word" data-word="분실">분실</strong> 없이 <strong class="vocab-word" data-word="분실물">분실물</strong> 보관소에도 들를 일이 없었다.</p>
+</div>
+  <div class="questions-card">
+    <h3>읽기 확인 질문</h3>
+    <ol>
+      <li>여행자들은 서울에서 경주까지 어떻게 갔습니까?</li>
+      <li>섬에서 물가가 어떠했습니까?</li>
+      <li>전주에서 무엇을 했습니까?</li>
+      <li>친구는 다음 여행지로 어디를 제안했습니까?</li>
+    </ol>
+  </div>
+</div>
+
+<!-- ====== PASSAGE 3: 우리 가족의 힘든 한 주 ====== -->
+<div class="passage-section" data-section="2">
+  <h2 class="passage-header">3. 우리 가족의 힘든 한 주</h2>
+  <div class="passage-meta">Family's Tough Week &mdash; health &amp; hospital vocabulary</div>
+  <div class="word-counter">Checked: <span id="wc2">0</span> / <span id="wt2">0</span></div>
+  <div class="passage-card">
+<p>지난주는 우리 가족에게 힘든 한 주였다. 월요일 새벽 어머니께서 갑자기 열이 심하게 나셨고, 아버지는 <strong class="vocab-word" data-word="긴급">긴급</strong>하게 병원으로 모시고 가셨다. 의사 선생님은 <strong class="vocab-word" data-word="독감">독감</strong>이라고 하시며 <strong class="vocab-word" data-word="두통약">두통약</strong>을 처방해 주셨다. 어머니는 <strong class="vocab-word" data-word="병실">병실</strong>에서 약을 <strong class="vocab-word" data-word="복용">복용</strong>하셨고, 나는 <strong class="vocab-word" data-word="복도">복도</strong>에서 한참을 기다렸다.</p>
+<p>화요일에는 아버지께서 회사에서 갑자기 쓰러지셨다. 일이 많아 <strong class="vocab-word" data-word="과로">과로</strong>가 쌓이신 것이다. 며칠 동안 잠을 못 주무신 탓에 몸 상태가 점점 <strong class="vocab-word" data-word="나빠지다">나빠지셨고</strong>, 결국 의사 선생님께서 <strong class="vocab-word" data-word="수면제">수면제</strong>를 처방해 주셨다. <strong class="vocab-word" data-word="신체">신체</strong> 검사 결과 큰 병은 아니었지만, <strong class="vocab-word" data-word="식사량">식사량</strong>이 너무 적은 것이 문제라고 하셨다.</p>
+<p>수요일 오후에는 동생이 학교 계단에서 넘어졌다. 발목을 심하게 <strong class="vocab-word" data-word="삐다">삐었고</strong> 금세 빨갛게 <strong class="vocab-word" data-word="붓다">부었다</strong>. 어머니께서 약국에서 <strong class="vocab-word" data-word="반창고">반창고</strong>를 사 오셔서 동생의 무릎에 잘 <strong class="vocab-word" data-word="감다">감아</strong> 주셨다. 처음에는 뼈가 <strong class="vocab-word" data-word="부러지다">부러진</strong> 줄 알고 모두 놀랐지만, 엑스레이 결과 괜찮다고 해서 정말 <strong class="vocab-word" data-word="다행">다행</strong>이었다.</p>
+<p>목요일 저녁에는 막내가 갑자기 <strong class="vocab-word" data-word="복통">복통</strong>을 호소하며 울기 시작했다. <strong class="vocab-word" data-word="설사">설사</strong>도 계속하고 <strong class="vocab-word" data-word="대변">대변</strong> 색깔이 이상해서 우리는 <strong class="vocab-word" data-word="식중독">식중독</strong>을 의심했다. 다음 날 아침 <strong class="vocab-word" data-word="소아과">소아과</strong>에 갔더니 의사 선생님이 <strong class="vocab-word" data-word="물약">물약</strong>과 <strong class="vocab-word" data-word="영양제">영양제</strong>를 주시면서, 평소 <strong class="vocab-word" data-word="변비">변비</strong>가 있다면 식습관을 꼭 바꾸라고 조언하셨다.</p>
+<p>금요일에는 할머니께 <strong class="vocab-word" data-word="문병">문병</strong>을 갔다. 할머니는 며칠 전 <strong class="vocab-word" data-word="안과">안과</strong>에 다녀오셔서 <strong class="vocab-word" data-word="안약">안약</strong>을 하루 세 번씩 넣고 계셨고, <strong class="vocab-word" data-word="눈가">눈가</strong>가 조금 부어 있었다. 그날 저녁 어머니께서 국을 끓이시다 손등을 살짝 <strong class="vocab-word" data-word="데다">데셨는데</strong>, 바로 <strong class="vocab-word" data-word="소독약">소독약</strong>으로 상처를 <strong class="vocab-word" data-word="소독">소독</strong>하셨다. 평소에 <strong class="vocab-word" data-word="예방">예방</strong>이 정말 중요함을 다시 느꼈다.</p>
+<p>토요일 아침, 가족 모두가 조금씩 <strong class="vocab-word" data-word="나아지다">나아지기</strong> 시작했다. 오랜만에 시골에서 올라오신 큰아버지도 <strong class="vocab-word" data-word="뵈다">뵈었고</strong>, 함께 따뜻한 식사를 나누며 우리 가족은 평범한 일상을 천천히 <strong class="vocab-word" data-word="되찾다">되찾아</strong> 갔다.</p>
+</div>
+  <div class="questions-card">
+    <h3>읽기 확인 질문</h3>
+    <ol>
+      <li>할아버지는 왜 병원에 가셨습니까?</li>
+      <li>동생은 어디를 다쳤습니까?</li>
+      <li>나는 왜 학교에 가지 못했습니까?</li>
+      <li>주말에 가족은 어떤 결심을 했습니까?</li>
+    </ol>
+  </div>
+</div>
+
+<!-- ====== PASSAGE 4: 할머니의 부엌에서 ====== -->
+<div class="passage-section" data-section="3">
+  <h2 class="passage-header">4. 할머니의 부엌에서</h2>
+  <div class="passage-meta">In Grandma's Kitchen &mdash; cooking &amp; food vocabulary</div>
+  <div class="word-counter">Checked: <span id="wc3">0</span> / <span id="wt3">0</span></div>
+  <div class="passage-card">
+<p>어릴 적 주말이면 <strong class="vocab-word" data-word="대체로">대체로</strong> 할머니 댁에서 시간을 보냈다. 부엌 문을 열면 <strong class="vocab-word" data-word="구수하다">구수한</strong> 된장찌개 냄새가 코끝에 <strong class="vocab-word" data-word="떠오르다">떠올랐다</strong>. 할머니께서는 마른 <strong class="vocab-word" data-word="김">김</strong>을 살짝 굽고 계셨고, 작은 그릇에는 <strong class="vocab-word" data-word="멸치">멸치</strong> 몇 마리가 가지런히 <strong class="vocab-word" data-word="담다">담겨</strong> 있었다. 그 풍경은 지금도 눈을 감으면 선명하게 <strong class="vocab-word" data-word="떠오르다">떠오른다</strong>.</p>
+<p>토요일 아침, 할머니께서는 나를 데리고 <strong class="vocab-word" data-word="식품점">식품점</strong>에 <strong class="vocab-word" data-word="식료품">식료품</strong>을 사러 <strong class="vocab-word" data-word="나르다">나르듯</strong> 바쁘게 걸으셨다. 가게 앞에는 <strong class="vocab-word" data-word="싱싱하다">싱싱한</strong> 채소와 푸른 <strong class="vocab-word" data-word="보리">보리</strong> 자루가 놓여 있었다. 할머니께서는 <strong class="vocab-word" data-word="연하다">연한</strong> 잎채소를 고르시며 “이게 <strong class="vocab-word" data-word="대체로">대체로</strong> 제일 좋다”라고 말씀하셨다. 나는 작은 바구니에 <strong class="vocab-word" data-word="오리">오리</strong> <strong class="vocab-word" data-word="알">알</strong>과 닭의 <strong class="vocab-word" data-word="알">알</strong>을 <strong class="vocab-word" data-word="담다">담았다</strong>.</p>
+<p>집으로 돌아오자마자 할머니께서는 마늘 <strong class="vocab-word" data-word="껍질">껍질</strong>을 <strong class="vocab-word" data-word="까다">까시고</strong>, 양파를 곱게 <strong class="vocab-word" data-word="다지다">다지셨다</strong>. 나는 옆에서 <strong class="vocab-word" data-word="밤">밤</strong>의 단단한 <strong class="vocab-word" data-word="껍질">껍질</strong>을 <strong class="vocab-word" data-word="까다">까려고</strong> 애를 썼다. 할머니께서는 <strong class="vocab-word" data-word="끊다">끊으셨다</strong>—실로 묶인 채소 다발의 매듭을 한 번에 <strong class="vocab-word" data-word="끊다">끊으시는</strong> 모습이 신기했다. 부엌 바닥에는 <strong class="vocab-word" data-word="껍질">껍질</strong> 조각이 조용히 <strong class="vocab-word" data-word="쏟아지다">쏟아졌다</strong>.</p>
+<p>본격적인 요리가 시작되었다. 할머니께서는 시금치를 끓는 <strong class="vocab-word" data-word="소금물">소금물</strong>에 살짝 <strong class="vocab-word" data-word="데치다">데치셨고</strong>, 헹궈 <strong class="vocab-word" data-word="나물">나물</strong>로 무치셨다. 콩은 미리 물에 <strong class="vocab-word" data-word="담그다">담가</strong> 두셨다. 팬에 <strong class="vocab-word" data-word="식용유">식용유</strong>를 <strong class="vocab-word" data-word="붓다">부으시고</strong>, <strong class="vocab-word" data-word="다지다">다진</strong> 마늘을 넣자 기름이 <strong class="vocab-word" data-word="쏟다">쏟을</strong> 듯 튀었다. 밀<strong class="vocab-word" data-word="가루">가루</strong>에 물을 더해 <strong class="vocab-word" data-word="반죽">반죽</strong>을 만드시고, 그것을 얇게 펴서 천천히 <strong class="vocab-word" data-word="익히다">익히셨다</strong>.</p>
+<p><strong class="vocab-word" data-word="간">간</strong>을 보시던 할머니께서는 소금을 조금 <strong class="vocab-word" data-word="덜다">덜어</strong> 내시며 “싱거워야 <strong class="vocab-word" data-word="연하다">연한</strong> 맛이 산다”라고 하셨다. 마당의 감나무에서 잘 익은 감을 몇 개 <strong class="vocab-word" data-word="따다">따</strong> 오라 하셔서, 나는 사다리에 올라 조심스럽게 <strong class="vocab-word" data-word="따다">땄다</strong>. 부엌으로 돌아오니 <strong class="vocab-word" data-word="멸치">멸치</strong> 육수의 <strong class="vocab-word" data-word="구수하다">구수한</strong> 향이 집 안 가득 퍼져 있었다.</p>
+<p>저녁이 되자 온 식구가 모여 큰 <strong class="vocab-word" data-word="상">상</strong>을 폈다. 부엌이었지만 반찬이 어찌나 많은지 마치 <strong class="vocab-word" data-word="뷔페">뷔페</strong> 같았다. 아버지께서는 <strong class="vocab-word" data-word="술잔">술잔</strong>을 드시며 <strong class="vocab-word" data-word="음주">음주</strong>를 즐기셨고, 나는 <strong class="vocab-word" data-word="갈증">갈증</strong>이 나서 <strong class="vocab-word" data-word="보리">보리</strong>차를 마셨다. 식사를 마칠 즈음 할머니께서는 “이제 <strong class="vocab-word" data-word="음주">음주</strong>는 그만”이라며 아버지의 <strong class="vocab-word" data-word="술잔">술잔</strong> 옆에 물컵을 놓으셨다.</p>
+<p><strong class="vocab-word" data-word="밤">밤</strong>이 깊어 부엌의 불을 껐다. <strong class="vocab-word" data-word="보리">보리</strong>차 한 모금이 남은 <strong class="vocab-word" data-word="갈증">갈증</strong>을 달래 주었다. 창밖의 별빛이 조용히 <strong class="vocab-word" data-word="쏟아지다">쏟아졌고</strong>, 따뜻한 하루가 그렇게 저물어 갔다.</p>
+</div>
+  <div class="questions-card">
+    <h3>읽기 확인 질문</h3>
+    <ol>
+      <li>할머니는 어떤 음식들을 만드셨습니까?</li>
+      <li>나물은 어떻게 만들었습니까?</li>
+      <li>할머니가 손녀에게 하신 말씀은 무엇입니까?</li>
+    </ol>
+  </div>
+</div>
+
+<!-- ====== PASSAGE 5: 시골 마을의 사계절 ====== -->
+<div class="passage-section" data-section="4">
+  <h2 class="passage-header">5. 시골 마을의 사계절</h2>
+  <div class="passage-meta">Seasons in the Village &mdash; nature &amp; weather vocabulary</div>
+  <div class="word-counter">Checked: <span id="wc4">0</span> / <span id="wt4">0</span></div>
+  <div class="passage-card">
+<p>우리 할아버지는 평생을 시골 마을에서 지내신 <strong class="vocab-word" data-word="농부">농부</strong>이시다. 작은 밭을 정성껏 <strong class="vocab-word" data-word="가꾸다">가꾸시며</strong> 오랜 <strong class="vocab-word" data-word="세월">세월</strong>을 보내셨고, 사계절의 변화를 누구보다 잘 아셨다. 나는 방학 때마다 할아버지 댁에 내려가 마을의 풍경을 천천히 <strong class="vocab-word" data-word="관찰">관찰</strong>했고, 그 모습을 공책에 <strong class="vocab-word" data-word="묘사">묘사</strong>하곤 했다.</p>
+<p>봄이 되면 마을 입구에는 노란 <strong class="vocab-word" data-word="개나리">개나리</strong>가 가장 먼저 피었다. 할아버지는 이른 아침부터 밭에 나가 작은 <strong class="vocab-word" data-word="씨">씨</strong>를 한 줌씩 <strong class="vocab-word" data-word="뿌리다">뿌리셨다</strong>. <strong class="vocab-word" data-word="땅속">땅속</strong> 깊은 곳에서 잠들어 있던 작은 생명들이 따뜻한 햇살에 다시 <strong class="vocab-word" data-word="살아나다">살아나는</strong> 듯했다.</p>
+<p>며칠이 지나자 밭에는 <strong class="vocab-word" data-word="연두색">연두색</strong> 새싹이 돋아났고, 마을 전체가 <strong class="vocab-word" data-word="점차">점차</strong> 푸른빛으로 물들었다. 산에서 흘러 내려오는 <strong class="vocab-word" data-word="강물">강물</strong> 소리도 한결 맑아졌다. 나는 <strong class="vocab-word" data-word="물가">물가</strong>에 앉아 풀의 <strong class="vocab-word" data-word="뿌리">뿌리</strong>를 가만히 살펴보았고, 가까운 <strong class="vocab-word" data-word="언덕">언덕</strong> 위에 올라 마을을 내려다보았다.</p>
+<p>여름이 오자 햇빛은 한낮에 <strong class="vocab-word" data-word="눈부시다">눈부시게</strong> 쏟아졌고, <strong class="vocab-word" data-word="무더위">무더위</strong>와 높은 <strong class="vocab-word" data-word="습도">습도</strong> 때문에 가만히 앉아 있어도 땀이 흘렀다. <strong class="vocab-word" data-word="올여름">올여름</strong>은 특히 <strong class="vocab-word" data-word="소나기">소나기</strong>가 자주 내렸고, <strong class="vocab-word" data-word="번개">번개</strong>가 칠 때마다 창문이 흔들렸다. 비가 그치면 우리는 마을 뒤편 <strong class="vocab-word" data-word="계곡">계곡</strong>으로 달려가 시원한 <strong class="vocab-word" data-word="바위">바위</strong> 위에 앉아 물장난을 쳤다.</p>
+<p>가을이 깊어지자 새벽 공기가 차가워 손끝이 <strong class="vocab-word" data-word="떨리다">떨릴</strong> 정도였다. <strong class="vocab-word" data-word="산꼭대기">산꼭대기</strong>부터 단풍이 들기 시작했고, 마당에는 <strong class="vocab-word" data-word="밤색">밤색</strong> <strong class="vocab-word" data-word="낙엽">낙엽</strong>이 수북이 쌓였다. 동네 <strong class="vocab-word" data-word="놀이터">놀이터</strong>에서는 아이들이 <strong class="vocab-word" data-word="낙엽">낙엽</strong>을 던지며 놀았고, <strong class="vocab-word" data-word="때때로">때때로</strong> 작은 다람쥐가 <strong class="vocab-word" data-word="꼬리">꼬리</strong>를 흔들며 나무 사이를 지나갔다.</p>
+<p>겨울이 되어 눈이 내리면 할아버지는 거실 한가운데에 <strong class="vocab-word" data-word="난로">난로</strong>를 켜셨다. 우리는 두꺼운 외투에 장갑을 <strong class="vocab-word" data-word="끼다">끼고</strong> 마당으로 나가 눈사람을 만들었다. 밤하늘에는 <strong class="vocab-word" data-word="반달">반달</strong>이 <strong class="vocab-word" data-word="뜨다">뜨다가</strong> 며칠 뒤에는 둥근 <strong class="vocab-word" data-word="보름달">보름달</strong>이 <strong class="vocab-word" data-word="뜨다">떴다</strong>. 멀리서 <strong class="vocab-word" data-word="양">양</strong> 한 마리가 우는 소리가 들렸고, 처마 끝의 작은 <strong class="vocab-word" data-word="방울">방울</strong>이 바람에 흔들렸다.</p>
+<p>이렇게 한 해의 <strong class="vocab-word" data-word="보름">보름</strong>과 같은 짧은 <strong class="vocab-word" data-word="여가">여가</strong>가 흘러갔다. 시골의 사계절은 누구도 쉽게 <strong class="vocab-word" data-word="예측">예측</strong>할 수 없는 아름다움을 품고 있었다.</p>
+</div>
+  <div class="questions-card">
+    <h3>읽기 확인 질문</h3>
+    <ol>
+      <li>봄에 농부들은 무엇을 합니까?</li>
+      <li>여름에 소나기가 오면 사람들은 어떻게 합니까?</li>
+      <li>가을에 마을의 모습은 어떻습니까?</li>
+      <li>겨울 밤에 밖에 나가면 무엇이 보입니까?</li>
+    </ol>
+  </div>
+</div>
+
+<!-- ====== PASSAGE 6: 쇼핑의 달인 ====== -->
+<div class="passage-section" data-section="5">
+  <h2 class="passage-header">6. 쇼핑의 달인</h2>
+  <div class="passage-meta">Shopping Expert &mdash; shopping, stores &amp; items vocabulary</div>
+  <div class="word-counter">Checked: <span id="wc5">0</span> / <span id="wt5">0</span></div>
+  <div class="passage-card">
+<p>지영 씨는 주말마다 시내의 큰 <strong class="vocab-word" data-word="매장">매장</strong>과 작은 <strong class="vocab-word" data-word="상점">상점</strong>을 차례로 둘러보는 것을 좋아한다. 옷장 속 옷들에 <strong class="vocab-word" data-word="싫증">싫증</strong>이 난 그녀는 작년에 산 옷들과 <strong class="vocab-word" data-word="비하다">비해</strong> 올해는 조금 더 어른스러운 분위기를 만들고 싶었다. 그래서 오늘은 머리부터 발끝까지 새롭게 바꿔 보기로 마음을 먹었다.</p>
+<p>먼저 지영 씨는 백화점 1층의 <strong class="vocab-word" data-word="가죽">가죽</strong> 제품 <strong class="vocab-word" data-word="매장">매장</strong>으로 들어갔다. 점원은 올해 유행하는 <strong class="vocab-word" data-word="세련되다">세련된</strong> 짙은 갈색 <strong class="vocab-word" data-word="부츠">부츠</strong>를 권해 주었다. 그 옆에는 작은 <strong class="vocab-word" data-word="꽃무늬">꽃무늬</strong>가 들어간 셔츠가 걸려 있었는데, 비슷한 <strong class="vocab-word" data-word="무늬">무늬</strong>의 치마와도 잘 어울려 보였다.</p>
+<p>다음으로 그녀는 같은 층의 <strong class="vocab-word" data-word="보석">보석</strong> <strong class="vocab-word" data-word="상점">상점</strong>에 들렀다. 너무 화려한 것보다는 <strong class="vocab-word" data-word="단정하다">단정한</strong> 느낌의 작은 목걸이와 가벼운 <strong class="vocab-word" data-word="손가방">손가방</strong>을 골랐다. 마지막으로 약속 시간을 잘 지키고 싶어서 얇고 <strong class="vocab-word" data-word="세련되다">세련된</strong> <strong class="vocab-word" data-word="손목시계">손목시계</strong> 하나도 함께 골라 계산대 위에 올려놓았다.</p>
+<p>계산대에서 <strong class="vocab-word" data-word="신용">신용</strong> 카드를 내밀었지만 단말기 오류로 결제가 되지 않았다. 점원은 <strong class="vocab-word" data-word="수표">수표</strong>도 받는다고 했다. 마침 어머니께서 <strong class="vocab-word" data-word="예금">예금</strong> 통장에서 찾아 주신 현금이 있어, <strong class="vocab-word" data-word="거스름돈">거스름돈</strong> 이천 원까지 <strong class="vocab-word" data-word="딱">딱</strong> 맞게 돌려받았다. 같은 <strong class="vocab-word" data-word="부츠">부츠</strong>를 한 켤레 더 사고 싶었지만, 그 <strong class="vocab-word" data-word="수량">수량</strong>은 이미 <strong class="vocab-word" data-word="매진">매진</strong>된 상태였다.</p>
+<p>쇼핑백이 무거워질 때쯤 그녀는 잠시 길가의 작은 <strong class="vocab-word" data-word="문방구">문방구</strong> 앞에 멈춰 섰다. 조카에게 줄 색연필 한 통과 공책을 <strong class="vocab-word" data-word="만">만</strong> 원짜리 한 장으로 샀다. 가게 아저씨는 산 물건을 깨끗한 <strong class="vocab-word" data-word="신문지">신문지</strong>에 둘둘 말아 봉투에 넣어 주셨다. 작은 가게의 따뜻한 친절이 마음에 오래 남았다.</p>
+<p>이제 마지막 코스였다. 지영 씨는 단골 <strong class="vocab-word" data-word="미장원">미장원</strong>에 들어가 오랫동안 길렀던 <strong class="vocab-word" data-word="생머리">생머리</strong>를 어깨까지 짧게 잘랐다. 새 옷과 잘 어울리는 모습이 만족스러워, 바로 옆 <strong class="vocab-word" data-word="사진관">사진관</strong>에 들러 증명사진도 새로 찍었다. 사진사 아저씨께서는 표정이 한결 밝아졌다고 칭찬해 주셨다.</p>
+<p>집에 돌아온 지영 씨는 시원한 <strong class="vocab-word" data-word="물">물</strong> 한 잔을 마시며 하루를 떠올렸다. 작은 <strong class="vocab-word" data-word="불만">불만</strong> 하나 없이 모든 일이 순조로웠던 완벽한 하루였다.</p>
+</div>
+  <div class="questions-card">
+    <h3>읽기 확인 질문</h3>
+    <ol>
+      <li>언니가 좋아하는 취미는 무엇입니까?</li>
+      <li>인기 있는 상품을 왜 살 수 없었습니까?</li>
+      <li>미장원에서 언니는 무엇을 하고 싶어 했습니까?</li>
+      <li>어머니의 반응은 어떠했습니까?</li>
+    </ol>
+  </div>
+</div>
+
+<!-- ====== PASSAGE 7: 학교생활 이야기 ====== -->
+<div class="passage-section" data-section="6">
+  <h2 class="passage-header">7. 학교생활 이야기</h2>
+  <div class="passage-meta">School Life Story &mdash; school, education &amp; study vocabulary</div>
+  <div class="word-counter">Checked: <span id="wc6">0</span> / <span id="wt6">0</span></div>
+  <div class="passage-card">
+<p>새 학기 첫날, 1<strong class="vocab-word" data-word="교시">교시</strong> 종이 울리자 선생님께서 교실로 들어오셨다. 흰 <strong class="vocab-word" data-word="분필">분필</strong>을 드시고 우리에게 인사를 하신 뒤, 올해 우리 반에서 <strong class="vocab-word" data-word="모범">모범</strong>이 될 학생을 뽑겠다고 하셨다. 그러시면서 <strong class="vocab-word" data-word="성실">성실</strong>한 태도가 무엇보다 중요하다고 강조하셨다. 나는 이번 학기에는 열심히 공부하기로 마음먹었다.</p>
+<p>2<strong class="vocab-word" data-word="교시">교시</strong> 수학 시간에는 도형의 <strong class="vocab-word" data-word="넓이">넓이</strong>를 배웠다. 선생님께서 <strong class="vocab-word" data-word="가로">가로</strong> 5미터, <strong class="vocab-word" data-word="세로">세로</strong> 4미터인 직사각형을 그리시고 두 변을 <strong class="vocab-word" data-word="곱하다">곱해</strong> 면적을 구하셨다. 옆 친구는 자로 <strong class="vocab-word" data-word="선">선</strong>을 <strong class="vocab-word" data-word="긋다">그었다</strong>. 선생님께서는 <strong class="vocab-word" data-word="각">각</strong>도에 빨간 <strong class="vocab-word" data-word="분필">분필</strong>로 표시하시고 <strong class="vocab-word" data-word="밑줄">밑줄</strong>을 <strong class="vocab-word" data-word="긋다">그으셨다</strong>. 답에는 <strong class="vocab-word" data-word="단위">단위</strong>를 쓰고 세 변을 <strong class="vocab-word" data-word="더하다">더해</strong> 둘레도 구했다.</p>
+<p>3<strong class="vocab-word" data-word="교시">교시</strong>는 <strong class="vocab-word" data-word="미술">미술</strong> 시간이었다. 선생님께서 학생들의 관심을 알아보려고 <strong class="vocab-word" data-word="설문지">설문지</strong>를 나눠 주셨다. 안에는 좋아하는 색이나 주제를 묻는 <strong class="vocab-word" data-word="문장">문장</strong>이 여러 개 있었고, 각 질문 아래에 <strong class="vocab-word" data-word="보기">보기</strong>가 네 개씩 적혀 있었다. 종이가 모자라자 선생님께서는 <strong class="vocab-word" data-word="복사기">복사기</strong> 앞에서 추가로 <strong class="vocab-word" data-word="복사">복사</strong>를 해 오셨다.</p>
+<p>점심시간 후에는 <strong class="vocab-word" data-word="도서">도서</strong>관에 들러 지난주에 빌린 책을 <strong class="vocab-word" data-word="반납">반납</strong>했다. <strong class="vocab-word" data-word="기말시험">기말시험</strong> 참고서를 빌리다가 우연히 작은 <strong class="vocab-word" data-word="시집">시집</strong>을 발견했는데, 그 안에 실린 짧은 <strong class="vocab-word" data-word="시">시</strong> 한 편이 오래 마음에 남았다. 나오는 길에 친구가 자기가 가입한 독서 <strong class="vocab-word" data-word="동아리">동아리</strong>를 소개해 주었고, 다른 친구는 음악 <strong class="vocab-word" data-word="동호회">동호회</strong>도 권했다.</p>
+<p>수업이 끝난 뒤에는 친구들과 학교 근처 <strong class="vocab-word" data-word="오락실">오락실</strong>에 들러 <strong class="vocab-word" data-word="실컷">실컷</strong> 웃고 떠들었다. 한 친구는 자기가 모은 옛날 <strong class="vocab-word" data-word="시디">시디</strong>를 자랑하며, 요즘은 <strong class="vocab-word" data-word="디지털">디지털</strong> 기술의 <strong class="vocab-word" data-word="발달">발달</strong> 덕분에 음악을 어디서든 <strong class="vocab-word" data-word="널리">널리</strong> 들을 수 있다고 했다. 그렇지만 너무 늦게까지 놀다가 다음 날 지각해서 결국 선생님께 <strong class="vocab-word" data-word="벌">벌</strong>을 받았다.</p>
+<p>집으로 돌아오는 길, 문득 오래된 <strong class="vocab-word" data-word="동창">동창</strong>들의 얼굴이 하나둘 떠올랐다. 다음 <strong class="vocab-word" data-word="동창회">동창회</strong> 때는 모두 함께 모여 우리의 <strong class="vocab-word" data-word="앞날">앞날</strong>에 대해 천천히 이야기하고 싶어졌다.</p>
+</div>
+  <div class="questions-card">
+    <h3>읽기 확인 질문</h3>
+    <ol>
+      <li>첫 번째 교시에 무엇을 배웠습니까?</li>
+      <li>나는 어떤 동아리에 가입했습니까?</li>
+      <li>시험 결과는 어떠했습니까?</li>
+      <li>방과 후에 왜 오락실에 가지 못했습니까?</li>
+    </ol>
+  </div>
+</div>
+
+<!-- ====== PASSAGE 8: 도시의 하루 ====== -->
+<div class="passage-section" data-section="7">
+  <h2 class="passage-header">8. 도시의 하루</h2>
+  <div class="passage-meta">A Day in the City &mdash; city, buildings &amp; urban life vocabulary</div>
+  <div class="word-counter">Checked: <span id="wc7">0</span> / <span id="wt7">0</span></div>
+  <div class="passage-card">
+<p>아침 햇살이 <strong class="vocab-word" data-word="도심">도심</strong>의 높은 건물 사이로 비쳤다. 나는 종로<strong class="vocab-word" data-word="구">구</strong> 청운<strong class="vocab-word" data-word="동">동</strong>에 살고 있어서, 시청 근처까지 걸어서 갈 수 있었다. 출근 시간이라 <strong class="vocab-word" data-word="인도">인도</strong>는 <strong class="vocab-word" data-word="보행자">보행자</strong>들로 <strong class="vocab-word" data-word="붐비다">붐비고</strong> 있었고, <strong class="vocab-word" data-word="건널목">건널목</strong> 앞에서 신호를 기다리는 사람들이 줄을 길게 이루었다. 신호가 바뀌자 모두 빠른 걸음으로 길을 건넜다.</p>
+<p>오늘은 시청에 <strong class="vocab-word" data-word="볼일">볼일</strong>이 있었다. 외국인 등록증을 새로 <strong class="vocab-word" data-word="발급">발급</strong>받아야 했기 때문이다. 시청은 <strong class="vocab-word" data-word="공식">공식</strong> <strong class="vocab-word" data-word="기관">기관</strong>이라서 절차가 까다로웠다. 창구 직원이 <strong class="vocab-word" data-word="신청서">신청서</strong> 한 장을 건네주며, 이름을 쓴 뒤에 <strong class="vocab-word" data-word="도장">도장</strong>을 찍거나 <strong class="vocab-word" data-word="서명">서명</strong>을 하라고 안내했다. 모든 일을 마치는 데에는 <strong class="vocab-word" data-word="대여섯">대여섯</strong> 시간이 <strong class="vocab-word" data-word="소요">소요되었다</strong>.</p>
+<p>기다리는 동안 나는 복도의 <strong class="vocab-word" data-word="게시">게시</strong>판을 천천히 살펴보았다. <strong class="vocab-word" data-word="공공">공공</strong> 안내문에는 <strong class="vocab-word" data-word="비상구">비상구</strong> 위치와 <strong class="vocab-word" data-word="소방서">소방서</strong> 연락처가 적혀 있었고, 화재 시에는 <strong class="vocab-word" data-word="소방관">소방관</strong>의 안내에 따라 침착하게 대피하라고 쓰여 있었다. <strong class="vocab-word" data-word="불-">불이</strong> 났을 때 사용할 수 있는 <strong class="vocab-word" data-word="공중전화">공중전화</strong> 위치도 함께 표시되어 있었다.</p>
+<p>점심때가 되어 시청 뒤편의 <strong class="vocab-word" data-word="식당가">식당가</strong>로 향했다. 작은 식당들이 한 <strong class="vocab-word" data-word="단지">단지</strong>를 이루고 있었고, 좁은 <strong class="vocab-word" data-word="공간">공간</strong> 안에 손님들이 가득 차 있었다. 사람들 사이를 지나가려면 자꾸 옆으로 <strong class="vocab-word" data-word="비키다">비켜야</strong> 했다.</p>
+<p>오후에는 친구와 함께 <strong class="vocab-word" data-word="소극장">소극장</strong>에 갔다. 새 영화의 <strong class="vocab-word" data-word="상영">상영</strong> 첫날이었지만, <strong class="vocab-word" data-word="미성년자">미성년자</strong>에게는 <strong class="vocab-word" data-word="관람">관람</strong>이 금지된 작품이었다. 입구에는 “15세 <strong class="vocab-word" data-word="미만">미만</strong> 불가”라고 붙어 있었다. <strong class="vocab-word" data-word="공연장">공연장</strong> 안내 <strong class="vocab-word" data-word="벨">벨</strong>이 울리자 한 <strong class="vocab-word" data-word="관람객">관람객</strong>이 옆 사람에게 <strong class="vocab-word" data-word="쉿">쉿</strong> 하고 속삭였다. 영화 속 작은 <strong class="vocab-word" data-word="소-">소년</strong> 이야기가 깊은 인상을 남겼다.</p>
+<p>집으로 돌아오는 길, 가게 라디오에서 뉴스가 흘러나왔다. 올해 들어 서울로 이사 오는 사람들이 빠르게 <strong class="vocab-word" data-word="늘어나다">늘어나</strong>, 인구가 작년 <strong class="vocab-word" data-word="수도">수도</strong> 평균을 <strong class="vocab-word" data-word="넘어서다">넘어섰다고</strong> 했다. 이어서 경찰관들이 새로 <strong class="vocab-word" data-word="배치">배치</strong>되었다는 소식과, “<strong class="vocab-word" data-word="따르릉">따르릉</strong>” 하고 울린 신고 전화 덕분에 <strong class="vocab-word" data-word="실종">실종</strong>되었던 한 아이를 무사히 찾았다는 소식도 전해졌다.</p>
+<p>저녁이 되자 <strong class="vocab-word" data-word="도심">도심</strong>은 다시 조용해졌다. 나는 창밖을 바라보며 오늘 하루를 천천히 떠올렸다. 길고 바쁜 하루였지만, 마음은 따뜻했다.</p>
+</div>
+  <div class="questions-card">
+    <h3>읽기 확인 질문</h3>
+    <ol>
+      <li>동사무소에서 무엇을 했습니까?</li>
+      <li>공연 도중에 무슨 일이 있었습니까?</li>
+      <li>도시에서 보내는 하루는 어떻습니까?</li>
+    </ol>
+  </div>
+</div>
+
+<!-- ====== PASSAGE 9: 특별한 모임 ====== -->
+<div class="passage-section" data-section="8">
+  <h2 class="passage-header">9. 특별한 모임</h2>
+  <div class="passage-meta">Special Gathering &mdash; social events &amp; relationships vocabulary</div>
+  <div class="word-counter">Checked: <span id="wc8">0</span> / <span id="wt8">0</span></div>
+  <div class="passage-card">
+<p><strong class="vocab-word" data-word="그제">그제</strong> 저녁, <strong class="vocab-word" data-word="사촌">사촌</strong> 형의 결혼식이 있었다. 형은 오랫동안 만나 온 <strong class="vocab-word" data-word="연인">연인</strong>과 드디어 한 <strong class="vocab-word" data-word="쌍">쌍</strong>의 부부가 되었다. <strong class="vocab-word" data-word="신부">신부</strong>는 한복을 입고 매우 <strong class="vocab-word" data-word="곱다">고와</strong> 보였고, 형의 <strong class="vocab-word" data-word="부인">부인</strong>이 된다는 사실이 아직도 믿기지 않았다. 양가 <strong class="vocab-word" data-word="부모">부모</strong>님께서는 자리에 앉아 조용히 미소를 지으셨다.</p>
+<p>식이 시작되자 <strong class="vocab-word" data-word="사회자">사회자</strong>가 단상에 올라 하객 <strong class="vocab-word" data-word="명단">명단</strong>을 확인하였다. 그는 “<strong class="vocab-word" data-word="귀하">귀하</strong>의 참석에 감사드립니다”라고 인사하였다. <strong class="vocab-word" data-word="곧이어">곧이어</strong> 신랑의 <strong class="vocab-word" data-word="부친">부친</strong>께서 <strong class="vocab-word" data-word="시아버지">시아버지</strong>가 되실 분께 다가가 <strong class="vocab-word" data-word="안부">안부</strong>를 <strong class="vocab-word" data-word="여쭈다">여쭈셨다</strong>. 두 분은 <strong class="vocab-word" data-word="명함">명함</strong>을 주고받으며 웃으셨다.</p>
+<p>나는 입구에서 <strong class="vocab-word" data-word="작은아버지">작은아버지</strong>를 만났다. 작은아버지께서는 어린 <strong class="vocab-word" data-word="손자">손자</strong>를 <strong class="vocab-word" data-word="업다">업고</strong> 계셨는데, 아이는 등에서 <strong class="vocab-word" data-word="뛰어내리다">뛰어내리려</strong> 하였다. 작은아버지의 <strong class="vocab-word" data-word="자녀">자녀</strong>들도 <strong class="vocab-word" data-word="그중">그중</strong> <strong class="vocab-word" data-word="서넛">서넛</strong>이 함께 와 있었다. 한 아이는 의자를 <strong class="vocab-word" data-word="뛰어넘다">뛰어넘다가</strong> 넘어질 뻔하였다.</p>
+<p>피로연이 시작되자 분위기가 밝아졌다. 사람들은 <strong class="vocab-word" data-word="손뼉">손뼉</strong>을 치며 축하하였고, <strong class="vocab-word" data-word="술잔">술잔</strong>을 부딪치며 즐거워하였다. 무대에서는 익숙한 <strong class="vocab-word" data-word="대중가요">대중가요</strong>가 흘러나왔고, 부드러운 <strong class="vocab-word" data-word="멜로디">멜로디</strong>가 식장을 감쌌다. <strong class="vocab-word" data-word="사교적">사교적</strong>인 형은 <strong class="vocab-word" data-word="사나이">사나이</strong>답게 손님들과 <strong class="vocab-word" data-word="수다">수다</strong>를 떨었다.</p>
+<p>나는 평소 <strong class="vocab-word" data-word="내성적">내성적</strong>이라 구석에 조용히 앉아 있었다. 그때 옛 친구 민호가 다가와 말을 걸었다. 그는 해외로 <strong class="vocab-word" data-word="떠나가다">떠나간다</strong>며, <strong class="vocab-word" data-word="송별회">송별회</strong>에 꼭 와 달라고 부탁하였다. <strong class="vocab-word" data-word="낼모레">낼모레</strong>가 출국일이라 <strong class="vocab-word" data-word="선약">선약</strong>이 있었지만 조정하기로 하였다. 우리는 학창 시절의 <strong class="vocab-word" data-word="별명">별명</strong>을 <strong class="vocab-word" data-word="떠올리다">떠올리며</strong> 웃었다.</p>
+<p>피로연이 끝날 무렵, 형은 자리를 <strong class="vocab-word" data-word="내주다">내주고</strong> 입구로 향하였다. 손님들을 <strong class="vocab-word" data-word="배웅">배웅</strong>하는 형의 얼굴에는 행복이 가득하였다. 한 어르신께서는 두 사람의 앞날에 <strong class="vocab-word" data-word="별">별</strong> <strong class="vocab-word" data-word="별일">별일</strong> 없기를 <strong class="vocab-word" data-word="빌다">비셨다</strong>. 형은 <strong class="vocab-word" data-word="수">수</strong> 없이 고개를 숙였다. <strong class="vocab-word" data-word="내후년">내후년</strong> 봄에는 첫아이를 볼 <strong class="vocab-word" data-word="수">수</strong> 있겠다는 말도 오갔다.</p>
+<p>집으로 돌아오는 길, 밤하늘에는 <strong class="vocab-word" data-word="별">별</strong>이 유난히 밝게 빛났다. 오늘의 따뜻했던 장면들이 마음속에 오래도록 남을 것 같았다. 형의 새로운 시작을 진심으로 응원하고 싶었다.</p>
+</div>
+  <div class="questions-card">
+    <h3>읽기 확인 질문</h3>
+    <ol>
+      <li>가족은 어떤 행사에 참석했습니까?</li>
+      <li>작은아버지를 만났을 때 어떤 느낌이었습니까?</li>
+      <li>피로연에서 무엇을 했습니까?</li>
+      <li>내성적인 동생은 오늘 어떠했습니까?</li>
+    </ol>
+  </div>
+</div>
+
+<!-- ====== PASSAGE 10: 몸과 마음 ====== -->
+<div class="passage-section" data-section="9">
+  <h2 class="passage-header">10. 몸과 마음</h2>
+  <div class="passage-meta">Body &amp; Mind &mdash; body parts, physical &amp; emotional vocabulary</div>
+  <div class="word-counter">Checked: <span id="wc9">0</span> / <span id="wt9">0</span></div>
+  <div class="passage-card">
+<p>사람의 <strong class="vocab-word" data-word="신체">신체</strong>는 마음과 매우 깊이 연결되어 있다. 나는 매일 아침 거울 앞에 서서 <strong class="vocab-word" data-word="손목">손목</strong>과 <strong class="vocab-word" data-word="손등">손등</strong>을 가만히 <strong class="vocab-word" data-word="살피다">살펴본다</strong>. <strong class="vocab-word" data-word="손발">손발</strong>이 <strong class="vocab-word" data-word="단단하다">단단하게</strong> 느껴지는 날에는 마음도 가볍지만, 작은 <strong class="vocab-word" data-word="동작">동작</strong> 하나에도 힘이 들어가지 않는 날에는 어쩐지 하루 종일 기운이 없다.</p>
+<p>어릴 적의 나를 <strong class="vocab-word" data-word="떠올리다">떠올려</strong> 보면, 거실 바닥을 <strong class="vocab-word" data-word="기다">기어</strong> 다니며 어머니의 무릎에 <strong class="vocab-word" data-word="기대다">기대어</strong> 잠들던 장면이 가장 먼저 생각난다. 그때 어머니는 운동신경이 <strong class="vocab-word" data-word="뛰어나다">뛰어난</strong> 분이셨고, 나는 늘 그 강한 팔에 안겨 마음 놓고 안심하곤 했다.</p>
+<p>그러나 어머니는 아이를 키울 때만큼은 <strong class="vocab-word" data-word="냉정하다">냉정하셨다</strong>. 작은 잘못도 그냥 넘기지 않고, 늘 원칙을 <strong class="vocab-word" data-word="따르다">따르며</strong> 나를 <strong class="vocab-word" data-word="대하다">대하셨다</strong>. 어린 마음에는 그것이 서운하게 <strong class="vocab-word" data-word="여기다">여겨질</strong> 때도 있었지만, 지금은 그 시간이 나를 단단하게 만들었다고 생각한다.</p>
+<p>대학에 들어간 뒤 나는 식습관이 완전히 무너졌다. 과제와 아르바이트로 바쁘다는 이유를 대며 하루에 한 <strong class="vocab-word" data-word="끼">끼</strong>만 먹거나 아예 <strong class="vocab-word" data-word="굶다">굶는</strong> 날도 많아졌다. 그 결과 영양 <strong class="vocab-word" data-word="불균형">불균형</strong>이 심해졌고, 입안은 늘 마른 상태여서 작은 <strong class="vocab-word" data-word="갈증">갈증</strong>에도 쉽게 예민해졌다.</p>
+<p>어느 여름, 친구 집에 놀러 갔다가 강아지에게 손을 <strong class="vocab-word" data-word="물리다">물렸다</strong>. 평소 순하던 강아지가 갑자기 내 손가락을 세게 <strong class="vocab-word" data-word="물다">물어</strong> 버린 것이다. 너무 <strong class="vocab-word" data-word="당황">당황</strong>한 나머지 <strong class="vocab-word" data-word="눈가">눈가</strong>에 눈물이 금세 맺혔고, 친구는 놀란 표정으로 깨끗한 수건을 가져와 상처를 조심스럽게 <strong class="vocab-word" data-word="싸다">싸 주었다</strong>.</p>
+<p>그 일 이후로 나는 강아지와의 인연이 <strong class="vocab-word" data-word="끊어지다">끊어진</strong> 듯한 기분이 들었다. 좋아하던 마음을 억지로 <strong class="vocab-word" data-word="끊다">끊으려</strong> 애썼고, 어릴 때 사탕을 <strong class="vocab-word" data-word="빨다">빨던</strong> 기억에 기대기도 했다. 시간이 지나서야 동물에 대한 애정을 천천히 <strong class="vocab-word" data-word="되찾다">되찾았다</strong>.</p>
+<p><strong class="vocab-word" data-word="따라서">따라서</strong> 이제 나는 한 발짝 <strong class="vocab-word" data-word="물러나다">물러나</strong> 나를 본다. 힘들 때 잠시 <strong class="vocab-word" data-word="물러서다">물러서는</strong> 것도 용기라는 사실을 배웠다. 그날의 <strong class="vocab-word" data-word="감상">감상</strong>은 지금도 마음 한구석에 조용히 남아 있다.</p>
+</div>
+  <div class="questions-card">
+    <h3>읽기 확인 질문</h3>
+    <ol>
+      <li>아침에 일어나서 무엇을 합니까?</li>
+      <li>불균형한 생활 습관은 왜 안 좋습니까?</li>
+      <li>마음 건강을 위해 무엇을 할 수 있습니까?</li>
+      <li>다른 사람을 따뜻하게 대하면 어떤 효과가 있습니까?</li>
+    </ol>
+  </div>
+</div>
+
+<!-- ====== PASSAGE 11: 직장에서 ====== -->
+<div class="passage-section" data-section="10">
+  <h2 class="passage-header">11. 직장에서</h2>
+  <div class="passage-meta">At the Workplace &mdash; work, office &amp; professional vocabulary</div>
+  <div class="word-counter">Checked: <span id="wc10">0</span> / <span id="wt10">0</span></div>
+  <div class="passage-card">
+<p><strong class="vocab-word" data-word="사무">사무</strong>실에 출근한 첫 날, 나는 아무것도 모르는 신입이었다. 회사 <strong class="vocab-word" data-word="대표">대표</strong>님께서는 <strong class="vocab-word" data-word="아시아">아시아</strong> <strong class="vocab-word" data-word="시장">시장</strong>을 <strong class="vocab-word" data-word="대상">대상</strong>으로 <strong class="vocab-word" data-word="석유">석유</strong> 관련 제품을 <strong class="vocab-word" data-word="수출">수출</strong>하시는 <strong class="vocab-word" data-word="사업가">사업가</strong>셨다. 회사는 <strong class="vocab-word" data-word="동양">동양</strong>의 전통과 서양의 기술을 <strong class="vocab-word" data-word="바탕">바탕</strong>으로 성장해 온 <strong class="vocab-word" data-word="단체">단체</strong>였다. 첫 출근 <strong class="vocab-word" data-word="보고">보고</strong>를 드리러 가는 길에 가슴이 두근거렸다.</p>
+<p><strong class="vocab-word" data-word="과장">과장</strong>님께서 사내 시스템 사용법을 알려 주셨다. 컴퓨터에 <strong class="vocab-word" data-word="신분">신분</strong>증을 <strong class="vocab-word" data-word="달다">달고</strong> <strong class="vocab-word" data-word="비밀번호">비밀번호</strong>를 입력하니 직원 <strong class="vocab-word" data-word="목록">목록</strong>이 떴다. 부서별 업무가 <strong class="vocab-word" data-word="따로따로">따로따로</strong> 정리되어 있었고, 각종 서류 <strong class="vocab-word" data-word="양식">양식</strong>도 미리 <strong class="vocab-word" data-word="발행">발행</strong>되어 있었다. <strong class="vocab-word" data-word="과장">과장</strong>님은 "여기서 <strong class="vocab-word" data-word="곧장">곧장</strong> <strong class="vocab-word" data-word="사인">사인</strong>하면 됩니다"라고 차근차근 설명해 주셨다.</p>
+<p>오후에는 영업 <strong class="vocab-word" data-word="부">부</strong>에서 회의가 열렸다. <strong class="vocab-word" data-word="대표">대표</strong>님께서 새로 <strong class="vocab-word" data-word="발명">발명</strong>한 포장 기술을 <strong class="vocab-word" data-word="바탕">바탕</strong>으로 <strong class="vocab-word" data-word="수출">수출</strong> 물량을 <strong class="vocab-word" data-word="연장">연장</strong>하자고 제안하셨다. <strong class="vocab-word" data-word="몇몇">몇몇</strong> 직원들은 <strong class="vocab-word" data-word="외부">외부</strong> 업체와 협력해야 한다고 주장했고, 다른 <strong class="vocab-word" data-word="몇몇">몇몇</strong>은 자체 <strong class="vocab-word" data-word="기술자">기술자</strong>만으로 충분하다고 <strong class="vocab-word" data-word="보고">보고</strong>했다. <strong class="vocab-word" data-word="대표">대표</strong>님은 모두의 의견을 조용히 들으셨다.</p>
+<p>회의가 끝난 뒤 <strong class="vocab-word" data-word="과장">과장</strong>님은 나에게 거래처 자료를 <strong class="vocab-word" data-word="구하다">구해</strong> 오라고 하셨다. 나는 <strong class="vocab-word" data-word="곧장">곧장</strong> 자료실로 달려갔지만, 일이 <strong class="vocab-word" data-word="밀리다">밀려서</strong> 자료가 정리되어 있지 않았다. 한 <strong class="vocab-word" data-word="기술자">기술자</strong> 선배가 도와주시며 "처음에는 누구나 헤맨다"고 따뜻하게 말씀하셨다. 그분은 정말 <strong class="vocab-word" data-word="영리하다">영리하시고</strong> 경험도 풍부한 분이셨다.</p>
+<p>저녁이 되자 <strong class="vocab-word" data-word="대표">대표</strong>님께서 직원들을 한자리에 모으셨다. "우리 회사를 <strong class="vocab-word" data-word="대중">대중</strong>에게 <strong class="vocab-word" data-word="널리">널리</strong> 알리려면 무엇이 필요할까요?"라고 물으셨다. 한 <strong class="vocab-word" data-word="사업가">사업가</strong> 출신 임원은 <strong class="vocab-word" data-word="외부">외부</strong> 광고를, 또 다른 임원은 직원들의 <strong class="vocab-word" data-word="사적">사적</strong>인 이야기를 추천했다. 단, <strong class="vocab-word" data-word="사생활">사생활</strong> 보호는 꼭 지켜야 한다고 하셨다.</p>
+<p>퇴근 시간이 가까워지자, 나는 오늘 배운 내용을 정리했다. <strong class="vocab-word" data-word="사무">사무</strong> 업무 <strong class="vocab-word" data-word="및">및</strong> 회의 절차, 그리고 <strong class="vocab-word" data-word="시장">시장</strong> 조사 방법까지 노트에 빼곡히 적었다. <strong class="vocab-word" data-word="과장">과장</strong>님께서는 "내일은 <strong class="vocab-word" data-word="대상">대상</strong> 고객 분석을 함께 해 보자"고 <strong class="vocab-word" data-word="곧장">곧장</strong> 다음 일정을 알려 주셨다. 첫 날부터 배울 것이 정말 많았다.</p>
+<p>집으로 돌아오는 길, 나는 창밖을 바라보며 미소를 지었다. 비록 일은 <strong class="vocab-word" data-word="밀리다">밀렸지만</strong>, 좋은 분들과 함께 시작한 하루였다. 내일이 기다려졌다.</p>
+</div>
+  <div class="questions-card">
+    <h3>읽기 확인 질문</h3>
+    <ol>
+      <li>오늘 회의에서 무엇을 논의했습니까?</li>
+      <li>점심시간에 동료와 무엇을 했습니까?</li>
+      <li>퇴근 전에 무엇을 했습니까?</li>
+      <li>석유 관련 프로젝트는 어떻게 되었습니까?</li>
+    </ol>
+  </div>
+</div>
+
+<!-- ====== PASSAGE 12: 한국 문화 탐방 ====== -->
+<div class="passage-section" data-section="11">
+  <h2 class="passage-header">12. 한국 문화 탐방</h2>
+  <div class="passage-meta">Exploring Korean Culture &mdash; culture, traditions &amp; calendar vocabulary</div>
+  <div class="word-counter">Checked: <span id="wc11">0</span> / <span id="wt11">0</span></div>
+  <div class="passage-card">
+<p>지난봄 나는 미루어 두었던 한국 문화 탐방을 <strong class="vocab-word" data-word="새로이">새로이</strong> 시작했다. <strong class="vocab-word" data-word="양력">양력</strong>으로 사월 첫 주, 벚꽃이 한창인 <strong class="vocab-word" data-word="시기">시기</strong>였다. 일정의 첫 <strong class="vocab-word" data-word="데">데</strong>는 서울의 한 <strong class="vocab-word" data-word="고궁">고궁</strong>이었고, 오래된 <strong class="vocab-word" data-word="문화재">문화재</strong>가 가득한 그곳의 <strong class="vocab-word" data-word="구조">구조</strong>는 정교했다. 입구에 <strong class="vocab-word" data-word="들어서다">들어서자</strong> 마음이 차분해졌다.</p>
+<p>해설사 선생님을 <strong class="vocab-word" data-word="뵈다">뵙고</strong> 인사를 드린 뒤, 나는 그분을 <strong class="vocab-word" data-word="따라가다">따라갔다</strong>. 선생님께서는 궁궐의 <strong class="vocab-word" data-word="양옆">양옆</strong>에 늘어선 건물들의 쓰임을 <strong class="vocab-word" data-word="밝히다">밝혀</strong> 주셨고, 작은 질문에도 끝까지 귀를 기울여 <strong class="vocab-word" data-word="들어주다">들어주셨다</strong>. 한 어르신께서는 <strong class="vocab-word" data-word="신사">신사</strong>답게 모자를 벗고 <strong class="vocab-word" data-word="절">절</strong>을 올리셨는데, 그 <strong class="vocab-word" data-word="예절">예절</strong> 바른 모습이 오래 기억에 남았다.</p>
+<p>다음 날 나는 박물관에 갔다. <strong class="vocab-word" data-word="도자기">도자기</strong> 전시실에서는 모양이 <strong class="vocab-word" data-word="둥글다">둥근</strong> 항아리들이 줄지어 놓여 있었다. 손잡이의 <strong class="vocab-word" data-word="두께">두께</strong>까지 일정하게 다듬은 솜씨가 놀라웠다. 옆 전시실에는 옛 <strong class="vocab-word" data-word="영웅">영웅</strong>의 <strong class="vocab-word" data-word="무덤">무덤</strong>에서 나온 유물과 <strong class="vocab-word" data-word="북부">북부</strong> 지방에서 옮겨 온 비석이 함께 전시되어 있었다.</p>
+<p>오후에는 <strong class="vocab-word" data-word="민속놀이">민속놀이</strong> 마당이 펼쳐졌다. 어떤 분들은 마루에 앉아 <strong class="vocab-word" data-word="바둑">바둑</strong>을 두셨고, 아이들은 <strong class="vocab-word" data-word="연">연</strong>을 하늘 높이 띄웠다. <strong class="vocab-word" data-word="예컨대">예컨대</strong> <strong class="vocab-word" data-word="부채">부채</strong> 만들기, <strong class="vocab-word" data-word="띠">띠</strong> 매기, 종이 <strong class="vocab-word" data-word="북">북</strong> 두드리기 같은 체험이 <strong class="vocab-word" data-word="양쪽">양쪽</strong> 마당에 나뉘어 있었다. 나는 작은 <strong class="vocab-word" data-word="부채">부채</strong> 하나를 만들어 벽에 <strong class="vocab-word" data-word="매달다">매달</strong> 생각으로 챙겼다.</p>
+<p>저녁에는 <strong class="vocab-word" data-word="방송사">방송사</strong>가 주최한 공연이 열렸다. <strong class="vocab-word" data-word="대중">대중</strong>에게 사랑받는 가수가 무대에 올랐고, 전통 <strong class="vocab-word" data-word="무용">무용</strong> 팀은 <strong class="vocab-word" data-word="사물">사물</strong>놀이의 힘찬 <strong class="vocab-word" data-word="멜로디">멜로디</strong>에 맞추어 춤을 추었다. 박자를 <strong class="vocab-word" data-word="어기다">어기지</strong> 않고 발을 맞추는 모습이 인상적이었다. <strong class="vocab-word" data-word="얼마간">얼마간</strong> 시간이 흐르자 관객들도 손뼉으로 함께 어우러졌다.</p>
+<p>다음 주말, 나는 어머니를 모시고 시골 친척 댁에 갔다. 마침 <strong class="vocab-word" data-word="음력">음력</strong>으로 <strong class="vocab-word" data-word="보름">보름</strong>을 <strong class="vocab-word" data-word="맞이하다">맞이하는</strong> 날이었다. 큰아버지께서 일찍 나오셔서 손님을 <strong class="vocab-word" data-word="맞다">맞아</strong> 주셨고, 어린 조카들은 신이 나 내 뒤를 <strong class="vocab-word" data-word="따라오다">따라왔다</strong>. 밤이 깊어지자 <strong class="vocab-word" data-word="보름달">보름달</strong>이 떠올라 온 마을을 환하게 비추었다.</p>
+<p>그 자리에서 어른들은 우리 집안이 어느 <strong class="vocab-word" data-word="대">대</strong>까지 이어졌는지, <strong class="vocab-word" data-word="분단">분단</strong> 이전 <strong class="vocab-word" data-word="북부">북부</strong> 친척들이 어떻게 흩어졌는지 들려주셨다. 마을이 <strong class="vocab-word" data-word="공동">공동</strong>으로 지켜 온 <strong class="vocab-word" data-word="바">바</strong>를 떠올리니, 한국 문화의 <strong class="vocab-word" data-word="발달">발달</strong>이 가까이 숨 쉰다는 사실이 놀라웠다. <strong class="vocab-word" data-word="올">올</strong>해 <strong class="vocab-word" data-word="스무째">스무째</strong> 되는 행사도 곧 열린다고 했다.</p>
+<p>집으로 돌아오는 길, 나는 짧은 <strong class="vocab-word" data-word="소감">소감</strong>을 마음속에 정리했다. 보고 들은 장면들이 따뜻한 한 폭의 그림처럼 오래도록 남을 것 같았다.</p>
+</div>
+  <div class="questions-card">
+    <h3>읽기 확인 질문</h3>
+    <ol>
+      <li>한국에서 양력과 음력은 어떻게 사용됩니까?</li>
+      <li>민속놀이 체험에서 무엇을 했습니까?</li>
+      <li>로리아나의 소감은 어떠했습니까?</li>
+      <li>한국 문화 탐방에서 가장 인상적이었던 것은 무엇입니까?</li>
+    </ol>
+  </div>
+</div>
+
+</div><!-- end .content -->
+
+<script>
+(function(){
+  const STORAGE_KEY = 'loriana_topik3_v2';
+  let checked = {};
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) checked = JSON.parse(saved);
+  } catch(e) {}
+
+  function save() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(checked)); } catch(e) {}
+  }
+
+  // Tab switching
+  const tabs = document.querySelectorAll('.tab-btn');
+  const sections = document.querySelectorAll('.passage-section');
+
+  tabs.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = btn.dataset.tab;
+      tabs.forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      sections.forEach(s => s.classList.remove('active'));
+      document.querySelector('[data-section="' + idx + '"]').classList.add('active');
+    });
+  });
+
+  // Word click toggling
+  const allWords = document.querySelectorAll('.vocab-word');
+  allWords.forEach(el => {
+    const w = el.dataset.word;
+    if (checked[w]) el.classList.add('checked');
+
+    el.addEventListener('click', () => {
+      if (checked[w]) {
+        delete checked[w];
+        document.querySelectorAll('.vocab-word[data-word="' + CSS.escape(w) + '"]').forEach(e => e.classList.remove('checked'));
+      } else {
+        checked[w] = true;
+        document.querySelectorAll('.vocab-word[data-word="' + CSS.escape(w) + '"]').forEach(e => e.classList.add('checked'));
+      }
+      save();
+      updateCounters();
+    });
+  });
+
+  function updateCounters() {
+    sections.forEach((sec, i) => {
+      const words = sec.querySelectorAll('.vocab-word');
+      const uniqueWords = new Set();
+      const checkedUnique = new Set();
+      words.forEach(el => {
+        const w = el.dataset.word;
+        uniqueWords.add(w);
+        if (checked[w]) checkedUnique.add(w);
+      });
+      const wcEl = document.getElementById('wc' + i);
+      const wtEl = document.getElementById('wt' + i);
+      const tcEl = document.getElementById('tc' + i);
+      if (wcEl) wcEl.textContent = checkedUnique.size;
+      if (wtEl) wtEl.textContent = uniqueWords.size;
+      if (tcEl) tcEl.textContent = checkedUnique.size + '/' + uniqueWords.size;
+    });
+
+    const allUniqueWords = new Set();
+    allWords.forEach(el => allUniqueWords.add(el.dataset.word));
+    const totalUnique = allUniqueWords.size;
+    const totalChecked = [...allUniqueWords].filter(w => checked[w]).length;
+
+    document.getElementById('grandTotalText').textContent = 'Total: ' + totalChecked + ' / ' + totalUnique + ' words mastered';
+    document.getElementById('grandBar').style.width = (totalUnique ? (totalChecked/totalUnique*100) : 0) + '%';
+  }
+
+  updateCounters();
+})();
+</script>
+</body>
+</html>
