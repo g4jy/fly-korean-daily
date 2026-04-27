@@ -1237,6 +1237,47 @@ body {
 }
 .wr-en-edit::placeholder { color: var(--text-soft); font-style: italic; }
 
+/* --- Rich vocab rows (multi-meaning + related) --- */
+.word-row.vocab-rich {
+  display: block;
+  padding: 14px 20px;
+}
+.word-row.vocab-rich .wr-main {
+  display: grid; grid-template-columns: 1fr 1fr auto; gap: 12px;
+  align-items: center;
+}
+.word-row.vocab-rich .wr-extras {
+  margin-top: 10px; padding-top: 10px;
+  border-top: 1px dashed var(--border-soft);
+}
+.wr-meanings { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
+.wr-meaning {
+  display: flex; gap: 10px; align-items: baseline;
+  padding: 5px 10px; border-radius: 6px;
+  background: rgba(0,0,0,0.02); font-size: 0.84rem;
+}
+.wr-meaning.primary {
+  background: rgba(108, 92, 231, 0.07);
+  border-left: 3px solid var(--primary);
+  font-weight: 600;
+}
+.wr-meaning .wr-m-en { color: var(--text); flex-shrink: 0; }
+.wr-meaning.primary .wr-m-en { color: var(--primary); }
+.wr-meaning .wr-m-ex {
+  color: var(--text-soft); font-size: 0.8rem;
+  font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+}
+.wr-related {
+  font-size: 0.8rem; color: var(--text-soft); padding: 4px 0;
+  display: flex; gap: 6px; flex-wrap: wrap; align-items: center;
+}
+.wr-rel-pill {
+  background: var(--border-soft); color: var(--text);
+  padding: 2px 8px; border-radius: 999px; font-size: 0.78rem;
+  font-weight: 500;
+}
+.wr-rel-pill small { color: var(--text-soft); margin-left: 3px; font-weight: 400; }
+
 .portability-row {
   display: flex;
   gap: 8px;
