@@ -1,0 +1,62 @@
+name: Daily Korean content
+
+on:
+  schedule:
+    # 21:00 UTC = 06:00 KST
+    - cron: '0 21 * * *'
+  workflow_dispatch:
+    inputs:
+      topic_count:
+        description: 'Number of topics to generate'
+        required: false
+        default: '5'
+      model:
+        description: 'Anthropic model'
+        required: false
+        default: 'claude-sonnet-4-6'
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install deps
+        run: |
+          pip install --quiet anthropic edge-tts
+
+      - name: Generate
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          FKD_MODEL: ${{ github.event.inputs.model || 'claude-sonnet-4-6' }}
+          FKD_TARGET_TOPICS: ${{ github.event.inputs.topic_count || '5' }}
+        run: |
+          python scripts/generate_daily.py
+
+      - name: Report on failure
+        if: failure()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          if [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$TELEGRAM_CHAT_ID" ]; then
+            curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+              --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+              --data-urlencode "text=❌ Fly Korean Daily workflow failed. See: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          fi

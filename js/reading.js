@@ -45,6 +45,31 @@
     );
   }
 
+  // Compatibility-jamo charCodes for Hangul jongseong (final consonants).
+  // Index = position in the standard 28-jongseong list (0 = no jongseong).
+  const JONG_JAMO = [
+    0x0000, 0x3131, 0x3132, 0x3133, 0x3134, 0x3135, 0x3136, 0x3137,
+    0x3139, 0x313A, 0x313B, 0x313C, 0x313D, 0x313E, 0x313F, 0x3140,
+    0x3141, 0x3142, 0x3144, 0x3145, 0x3146, 0x3147, 0x3148, 0x314A,
+    0x314B, 0x314C, 0x314D, 0x314E
+  ];
+
+  /**
+   * If the final syllable of `s` has a jongseong matching `targetJamo`
+   * (e.g. 'ㄹ'), return `s` with that jongseong dropped. Otherwise null.
+   * Used to recover verb stems from ㄹ-future modifiers: 즐길 → 즐기, 갈 → 가.
+   */
+  function dropFinalJongseong(s, targetJamo) {
+    if (!s) return null;
+    const last = s.charCodeAt(s.length - 1);
+    if (last < 0xAC00 || last > 0xD7A3) return null;
+    const offset = last - 0xAC00;
+    const jong = offset % 28;
+    if (jong === 0) return null;
+    if (JONG_JAMO[jong] !== targetJamo.charCodeAt(0)) return null;
+    return s.slice(0, -1) + String.fromCharCode(last - jong);
+  }
+
   // Look up a surface token in the current level's token_map first.
   // Returns { kr, en, def, pos, gloss, surface } for saving, or falls back to heuristic.
   function resolveTap(rawToken, level) {
