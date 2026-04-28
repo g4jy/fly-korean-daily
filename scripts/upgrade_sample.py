@@ -3,11 +3,66 @@
 
 Temporary dev helper — the production routine generates all this natively.
 Used when the writer agent times out so we can test the new schema end-to-end.
+
+Morphology resolution: prefers kiwipiepy (real Korean morphological analyzer) for
+dict-form derivation. Falls back to heuristic best_dict_guess only when kiwipiepy
+is unavailable or returns no content morpheme. This prevents the prior bug class
+where universal ㄹ-drop turned nouns into fake verbs (서울 → 서우다, 정말 → 정마다).
 """
 import json
 import re
 import sys
 from pathlib import Path
+
+# kiwipiepy is the real Korean morphological analyzer. We use it as the PRIMARY
+# source of truth for dict-form derivation. The earlier heuristic best_dict_guess
+# stays as a last-resort fallback for cases kiwi can't analyze (rare proper nouns,
+# foreign-loan words, neologisms).
+try:
+    from kiwipiepy import Kiwi
+    _KIWI = Kiwi()
+except ImportError:
+    _KIWI = None
+    print("WARNING: kiwipiepy not installed; falling back to heuristic morphology only.\n"
+          "         Run: pip install kiwipiepy", file=sys.stderr)
+
+
+# Content tags from kiwipiepy. We extract the lemma of the FIRST content morpheme
+# in a token; particles, endings, and copulas are skipped. This means 겨울은
+# (winter+topic) → 겨울 (NNG), 심고 (plant+connective) → 심다 (VV).
+_KIWI_CONTENT_TAGS = {
+    'NNG': 'noun', 'NNP': 'noun', 'NNB': 'noun', 'NR': 'noun', 'NP': 'noun',
+    'VV': 'verb',  'VX': 'verb',
+    'VA': 'adjective',
+    'MAG': 'adverb', 'MAJ': 'adverb',
+    'MM':  'determiner',
+    'IC':  'interjection',
+    'XR':  'noun',  # XR = root, treat as nominal
+    'SL':  'noun',  # foreign-language alphabetic → treat as proper noun
+    'SH':  'noun',  # hanja
+}
+
+
+def kiwi_dict_form(token: str):
+    """Use kiwipiepy to derive (dict_form, pos) for a surface token.
+    Returns (str, str) tuple or None if kiwi unavailable / no content morpheme found.
+    Strips particles and endings naturally — returns the lemma of the lexical root.
+    """
+    if _KIWI is None or not token:
+        return None
+    try:
+        result = _KIWI.tokenize(token)
+    except Exception:
+        return None
+    if not result:
+        return None
+    # First content morpheme wins. kiwi's `lemma` is already canonical:
+    # verbs/adjectives end in -다, nouns are bare.
+    for tok in result:
+        pos = _KIWI_CONTENT_TAGS.get(tok.tag)
+        if pos:
+            return (tok.lemma, pos)
+    return None
 
 
 PARTICLES_SINGLE = ["을", "를", "이", "가", "은", "는", "의", "에", "로", "과", "와", "도", "만"]
@@ -178,20 +233,37 @@ def build_token_map(level_data: dict) -> dict:
             for var in noun_variants(base):
                 tm.setdefault(var, {"dict": base, "en": en, "pos": pos or "noun"})
 
-    # 2) for every whitespace token in the text, if not already in map, add a minimal entry
+    # 2) for every whitespace token in the text, if not already in map, add a minimal entry.
+    #    Resolution priority:
+    #      (a) kiwipiepy → real morphology, knows nouns vs verbs (PRIMARY)
+    #      (b) particle-strip → vocab-list lookup (catches noun + non-particle suffix combos)
+    #      (c) best_dict_guess heuristic (LAST RESORT — only for tokens kiwi can't analyze)
     for tok in tokenize_text(level_data.get("text", "")):
         if tok in tm:
             continue
-        # Try to match by noun-strip first (covers vocab + particle)
+
+        # (a) kiwipiepy is authoritative when available.
+        kiwi_result = kiwi_dict_form(tok)
+        if kiwi_result:
+            dict_form, pos = kiwi_result
+            # Cross-reference with vocab list to enrich the entry's en/def/gloss.
+            v = by_base.get(dict_form)
+            if v:
+                tm[tok] = {"dict": dict_form, "en": v.get("en", ""), "pos": v.get("pos", pos)}
+            else:
+                tm[tok] = {"dict": dict_form, "en": "", "pos": pos}
+            continue
+
+        # (b) try noun-strip + vocab match (covers compound + particle cases kiwi missed).
         stripped = _strip_particles(tok)
         if stripped in by_base:
             v = by_base[stripped]
             tm[tok] = {"dict": stripped, "en": v.get("en", ""), "pos": v.get("pos", "noun")}
             continue
-        # Otherwise, derive a real dict form via morphology rules. We avoid the
-        # earlier "self-mapping" fallback because it produced bogus entries like
-        # token_map["심고"] = {"dict": "심고"} that overrode the front-end's own
-        # bestDictGuess at click time.
+
+        # (c) Heuristic last resort. The earlier bug class (서울 → 서우다, 정말 → 정마다)
+        # came from this rule firing on nouns. Now it only runs when kiwi has already
+        # said "no content morpheme found" — which for real Korean text is rare.
         guess = best_dict_guess(stripped or tok)
         if guess and guess != tok:
             tm[tok] = {"dict": guess, "en": "", "pos": "verb"}
