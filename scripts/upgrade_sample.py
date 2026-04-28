@@ -80,6 +80,85 @@ def tokenize_text(text: str) -> list[str]:
     return out
 
 
+def _drop_final_jongseong(s: str, target_jamo: str) -> str | None:
+    """If final syllable's jongseong matches target_jamo, drop it. Else None.
+    Mirror of JS dropFinalJongseong used by reading.js."""
+    if not s:
+        return None
+    last = ord(s[-1])
+    if last < 0xAC00 or last > 0xD7A3:
+        return None
+    offset = last - 0xAC00
+    jong = offset % 28
+    if jong == 0:
+        return None
+    # Compatibility-jamo charcodes for each jongseong index
+    jamo_table = [
+        0x0000, 0x3131, 0x3132, 0x3133, 0x3134, 0x3135, 0x3136, 0x3137,
+        0x3139, 0x313A, 0x313B, 0x313C, 0x313D, 0x313E, 0x313F, 0x3140,
+        0x3141, 0x3142, 0x3144, 0x3145, 0x3146, 0x3147, 0x3148, 0x314A,
+        0x314B, 0x314C, 0x314D, 0x314E,
+    ]
+    if jamo_table[jong] != ord(target_jamo):
+        return None
+    return s[:-1] + chr(last - jong)
+
+
+def best_dict_guess(stripped: str) -> str | None:
+    """Most-confident dict-form guess from a stripped stem.
+    Mirror of JS bestDictGuess (only morphologically-motivated rules,
+    no catch-all '+ 다'). Returns None when no rule fires.
+    Used to populate token_map['unknown'] entries with a real dict form
+    instead of self-mapping to the inflected surface."""
+    if not stripped:
+        return None
+    s = stripped
+    # -한 → -하다 (위한 → 위하다)
+    if s.endswith("한") and len(s) > 1:
+        return s[:-1] + "하다"
+    if s.endswith("해서") and len(s) > 2:
+        return s[:-2] + "하다"
+    if s.endswith("해"):
+        return s[:-1] + "하다"
+    if s.endswith("하려고") and len(s) > 3:
+        return s[:-3] + "하다"
+    if s.endswith("려고") and len(s) > 2:
+        return s[:-2] + "다"
+    if s.endswith("와"):
+        return s[:-1] + "오다"
+    if s.endswith("워"):
+        return s[:-1] + "우다"
+    if s.endswith("던") and len(s) > 1:
+        return s[:-1] + "다"
+    if s.endswith("려"):
+        return s[:-1] + "리다"
+    if re.search(r"[어아여]서$", s) and len(s) > 1:
+        return s[:-2] + "다"
+    if re.search(r"[어아여]$", s):
+        return s[:-1] + "다"
+    if s.endswith("지만") and len(s) > 2:
+        return s[:-2] + "다"
+    if s.endswith("지") and len(s) > 1:
+        return s[:-1] + "다"
+    if s.endswith("니까") and len(s) > 2:
+        return s[:-2] + "다"
+    if s.endswith("니") and len(s) > 1:
+        return s[:-1] + "다"
+    if s.endswith("으면") and len(s) > 2:
+        return s[:-2] + "다"
+    if s.endswith("면") and len(s) > 1:
+        return s[:-1] + "다"
+    if s.endswith("게") and len(s) > 1:
+        return s[:-1] + "다"
+    if s.endswith("고") and len(s) > 1:
+        return s[:-1] + "다"
+    # ㄹ-future: 즐길 → 즐기다, 올 → 오다
+    l_stem = _drop_final_jongseong(s, "ㄹ")
+    if l_stem:
+        return l_stem + "다"
+    return None
+
+
 def build_token_map(level_data: dict) -> dict:
     """Derive token_map from the level's vocab and tokenize text to catch surface forms."""
     vocab = level_data.get("vocab", [])
@@ -103,14 +182,22 @@ def build_token_map(level_data: dict) -> dict:
     for tok in tokenize_text(level_data.get("text", "")):
         if tok in tm:
             continue
-        # try to match by noun-strip
+        # Try to match by noun-strip first (covers vocab + particle)
         stripped = _strip_particles(tok)
         if stripped in by_base:
             v = by_base[stripped]
             tm[tok] = {"dict": stripped, "en": v.get("en", ""), "pos": v.get("pos", "noun")}
-        else:
-            # unknown word: map to itself so at least the flashcard stores it sanely
-            tm.setdefault(tok, {"dict": stripped or tok, "en": "", "pos": ""})
+            continue
+        # Otherwise, derive a real dict form via morphology rules. We avoid the
+        # earlier "self-mapping" fallback because it produced bogus entries like
+        # token_map["심고"] = {"dict": "심고"} that overrode the front-end's own
+        # bestDictGuess at click time.
+        guess = best_dict_guess(stripped or tok)
+        if guess and guess != tok:
+            tm[tok] = {"dict": guess, "en": "", "pos": "verb"}
+        # else: leave the token absent. resolveTap on the client will then run
+        # its own morphology fallback (bestDictGuess + heuristic strip) and
+        # land on the right answer.
 
     # sort keys for determinism
     return dict(sorted(tm.items()))
