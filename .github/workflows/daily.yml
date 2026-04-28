@@ -37,7 +37,7 @@ jobs:
 
       - name: Install deps
         run: |
-          pip install --quiet anthropic edge-tts
+          pip install --quiet anthropic edge-tts kiwipiepy
 
       - name: Generate
         env:
