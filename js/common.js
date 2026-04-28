@@ -16,7 +16,7 @@ const Common = (() => {
    *
    * Schema migrations: bump SCHEMA_VERSION, add a migration step in migrate().
    */
-  const SCHEMA_VERSION = 2;
+  const SCHEMA_VERSION = 3;
   const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbw3f0cxkufdZkrG6kABkMy9djKGIrJvQX1qqqcFMFgt89ZhNGRlFVElYFUohA3z-tqoew/exec';
   const KEYS = {
     STUDENT: 'fkd_student',
@@ -28,15 +28,107 @@ const Common = (() => {
     SCHEMA_VERSION: 'fkd_schema_version' // controls migration
   };
 
-  /** Run any schema migrations needed to bring local storage up to SCHEMA_VERSION. */
+  // --- Korean morphology helpers (used by mark migration v2→v3 and exposed
+  //     via Common.bestDictGuess for reading.js / flashcards.js callers).
+  const JONG_JAMO_CODES = [
+    0x0000, 0x3131, 0x3132, 0x3133, 0x3134, 0x3135, 0x3136, 0x3137,
+    0x3139, 0x313A, 0x313B, 0x313C, 0x313D, 0x313E, 0x313F, 0x3140,
+    0x3141, 0x3142, 0x3144, 0x3145, 0x3146, 0x3147, 0x3148, 0x314A,
+    0x314B, 0x314C, 0x314D, 0x314E
+  ];
+  function dropFinalJongseong(s, targetJamo) {
+    if (!s) return null;
+    const last = s.charCodeAt(s.length - 1);
+    if (last < 0xAC00 || last > 0xD7A3) return null;
+    const offset = last - 0xAC00;
+    const jong = offset % 28;
+    if (jong === 0) return null;
+    if (JONG_JAMO_CODES[jong] !== targetJamo.charCodeAt(0)) return null;
+    return s.slice(0, -1) + String.fromCharCode(last - jong);
+  }
+  function bestDictGuess(stripped) {
+    if (!stripped || stripped.length < 1) return null;
+    const s = stripped;
+    if (s.endsWith('한') && s.length > 1) return s.slice(0, -1) + '하다';
+    if (s.endsWith('해서') && s.length > 2) return s.slice(0, -2) + '하다';
+    if (s.endsWith('해')) return s.slice(0, -1) + '하다';
+    if (s.endsWith('하려고') && s.length > 3) return s.slice(0, -3) + '하다';
+    if (s.endsWith('려고') && s.length > 2) return s.slice(0, -2) + '다';
+    if (s.endsWith('와')) return s.slice(0, -1) + '오다';
+    if (s.endsWith('워')) return s.slice(0, -1) + '우다';
+    if (s.endsWith('던') && s.length > 1) return s.slice(0, -1) + '다';
+    if (s.endsWith('려')) return s.slice(0, -1) + '리다';
+    if (/[어아여]서$/.test(s) && s.length > 1) return s.slice(0, -2) + '다';
+    if (/[어아여]$/.test(s)) return s.slice(0, -1) + '다';
+    if (s.endsWith('지만') && s.length > 2) return s.slice(0, -2) + '다';
+    if (s.endsWith('지') && s.length > 1) return s.slice(0, -1) + '다';
+    if (s.endsWith('니까') && s.length > 2) return s.slice(0, -2) + '다';
+    if (s.endsWith('니') && s.length > 1) return s.slice(0, -1) + '다';
+    if (s.endsWith('으면') && s.length > 2) return s.slice(0, -2) + '다';
+    if (s.endsWith('면') && s.length > 1) return s.slice(0, -1) + '다';
+    if (s.endsWith('게') && s.length > 1) return s.slice(0, -1) + '다';
+    if (s.endsWith('고') && s.length > 1) return s.slice(0, -1) + '다';
+    const lStem = dropFinalJongseong(s, 'ㄹ');
+    if (lStem) return lStem + '다';
+    return null;
+  }
+
+  /**
+   * v2 → v3: rewrite mark keys whose surface form was saved as the dict.
+   * Uses bestDictGuess; if it derives a different real dict form AND no
+   * existing mark already lives at that key, the mark is rekeyed in place.
+   * If a mark already exists at the new key, leave the legacy one alone
+   * (we don't want to silently merge SRS state).
+   */
+  function migrateLegacyInflectedMarks(student) {
+    if (!student) return { changed: 0, skipped: 'no-student' };
+    const marks = JSON.parse(localStorage.getItem(KEYS.MARKS + ':' + student) || '{}');
+    let changed = 0;
+    const conflicts = [];
+    for (const oldKey of Object.keys(marks)) {
+      const guess = bestDictGuess(oldKey);
+      if (!guess || guess === oldKey) continue;
+      if (marks[guess]) { conflicts.push([oldKey, guess]); continue; }
+      const m = marks[oldKey];
+      m.kr = guess;
+      if (!m.surface) m.surface = oldKey;
+      marks[guess] = m;
+      delete marks[oldKey];
+      changed++;
+    }
+    if (changed > 0) {
+      localStorage.setItem(KEYS.MARKS + ':' + student, JSON.stringify(marks));
+    }
+    return { changed, conflicts };
+  }
+
+  /** Run any schema migrations needed to bring local storage up to SCHEMA_VERSION.
+   *  Only bumps the stored version after the per-student step actually succeeds,
+   *  so a student who visits the page after their first cold-start (when no
+   *  student name was set yet) still gets their marks migrated. */
   function migrate() {
     const cur = parseInt(localStorage.getItem(KEYS.SCHEMA_VERSION) || '1', 10);
     if (cur >= SCHEMA_VERSION) return { skipped: true, version: cur };
     const log = [];
-    // v1 → v2: no data-shape changes yet (future migrations go here)
-    // Example: rename a key, add a default field, etc.
-    localStorage.setItem(KEYS.SCHEMA_VERSION, String(SCHEMA_VERSION));
-    log.push(`migrated v${cur} → v${SCHEMA_VERSION}`);
+    let allDone = true;
+    if (cur < 3) {
+      // v2 → v3: rekey inflected-surface marks (saved pre-be464ed) to dict forms.
+      const student = (() => {
+        const url = new URLSearchParams(location.search).get('student');
+        return url || localStorage.getItem(KEYS.STUDENT) || '';
+      })();
+      if (student) {
+        const r = migrateLegacyInflectedMarks(student);
+        log.push(`v2→v3: rekeyed ${r.changed} marks for ${student} (${r.conflicts.length} conflicts left as-is)`);
+      } else {
+        log.push('v2→v3: no student yet — migration deferred to next visit');
+        allDone = false;
+      }
+    }
+    if (allDone) {
+      localStorage.setItem(KEYS.SCHEMA_VERSION, String(SCHEMA_VERSION));
+      log.push(`schema → v${SCHEMA_VERSION}`);
+    }
     return { migrated: true, log };
   }
   migrate();
@@ -583,6 +675,8 @@ const Common = (() => {
     playOrSpeak, speakKorean, stopAudio,
     createRecognizer,
     fetchJSON, loadDaily, loadIndex, loadStudentReview,
-    toast, renderStudentChip
+    toast, renderStudentChip,
+    // morphology helpers (also used by reading.js / migrations)
+    bestDictGuess, dropFinalJongseong, migrateLegacyInflectedMarks
   };
 })();
