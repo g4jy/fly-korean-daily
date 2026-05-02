@@ -43,6 +43,35 @@ def fix_pos(v: dict) -> bool:
     return False
 
 
+def fix_missing_title(lvl: dict) -> bool:
+    """If `title` is missing or empty, derive one from the first sentence of `text`.
+    Subagents occasionally skip the title field — better to auto-derive than fail."""
+    import re
+    if lvl.get("title"):
+        return False
+    text = lvl.get("text", "")
+    if not text:
+        return False
+    # Take content up to first terminator (Korean . ? ! 。) or 35 chars max.
+    m = re.match(r"[^.?!。\n]{1,35}", text)
+    title = (m.group(0) if m else text[:30]).strip()
+    if title:
+        lvl["title"] = title
+        return True
+    return False
+
+
+def fix_missing_this_passage(v: dict) -> bool:
+    """If no meaning has this_passage:true, mark the first meaning."""
+    meanings = v.get("meanings", [])
+    if not meanings:
+        return False
+    if any(m.get("this_passage") for m in meanings):
+        return False
+    meanings[0]["this_passage"] = True
+    return True
+
+
 def validate_and_fix(path: str) -> int:
     p = Path(path)
     if not p.exists():
@@ -68,6 +97,11 @@ def validate_and_fix(path: str) -> int:
             fatal.append(f"missing level: {lk}")
             continue
         lvl = d["levels"][lk]
+
+        # Auto-derive title from text if missing — subagents sometimes skip it.
+        if fix_missing_title(lvl):
+            fixes.append(f"{lk}: derived title from first sentence of text")
+
         for f in ("title", "text", "vocab", "questions"):
             if f not in lvl:
                 fatal.append(f"{lk} missing field: {f}")
@@ -82,10 +116,12 @@ def validate_and_fix(path: str) -> int:
 
         # Vocab fixes
         vocab = lvl.get("vocab", [])
-        # 1) reclassify pos where kr contradicts label
+        # 1) reclassify pos where kr contradicts label, fix this_passage marker
         for i, v in enumerate(vocab):
             if fix_pos(v):
                 fixes.append(f"{lk} vocab[{i}] kr={v['kr']}: pos -> {v['pos']}")
+            if fix_missing_this_passage(v):
+                fixes.append(f"{lk} vocab[{i}] kr={v.get('kr','')}: marked first meaning this_passage:true")
         # 2) trim or warn on count mismatch
         target = SPEC_VOCAB.get(lk, len(vocab))
         if len(vocab) > target:
