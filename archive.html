@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Archive · Fly Korean Daily</title>
-<link rel="stylesheet" href="css/styles.css?v=4" />
+<link rel="stylesheet" href="css/styles.css?v=15" />
 <style>
 .archive-container { max-width: 1000px; }
 .arch-layout { display: grid; grid-template-columns: 260px 1fr; gap: 20px; margin-top: 14px; }
@@ -105,6 +105,9 @@
   <div class="arch-layout">
     <aside class="arch-sidebar">
       <input class="arch-search" id="arch-search" type="text" placeholder="Filter dates…" />
+      <select class="arch-search" id="arch-cat-filter" style="margin-bottom:10px; cursor:pointer;">
+        <option value="">All categories</option>
+      </select>
       <div id="arch-dates"><p style="color:var(--text-light); text-align:center; padding:20px 0;">Loading…</p></div>
     </aside>
 
@@ -114,7 +117,7 @@
   </div>
 </div>
 
-<script src="js/common.js?v=4"></script>
-<script src="js/archive.js?v=4"></script>
+<script src="js/common.js?v=15"></script>
+<script src="js/archive.js?v=15"></script>
 </body>
 </html>

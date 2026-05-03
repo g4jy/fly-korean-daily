@@ -304,6 +304,54 @@ const Common = (() => {
     return list;
   }
 
+  /* --- Liked passages (per student) ---
+   * Keyed by `${date}|${topic_id}`. localStorage primary, webhook mirrors to
+   * the Apps Script Sheet so the teacher can pull a per-student likes list.
+   * Apps Script must accept POST with action="like_toggle" — see docs/APPS_SCRIPT.md.
+   */
+  function likesKey(student) { return 'fkd_likes:' + (student || getStudent() || ''); }
+  function getLikes(student) {
+    const k = likesKey(student);
+    if (!k) return {};
+    return JSON.parse(localStorage.getItem(k) || '{}');
+  }
+  function saveLikes(map, student) {
+    const k = likesKey(student);
+    if (!k) return;
+    localStorage.setItem(k, JSON.stringify(map));
+  }
+  function isLiked(date, topicId) {
+    const m = getLikes();
+    return Boolean(m[`${date}|${topicId}`]);
+  }
+  function toggleLike(date, topicId, meta) {
+    const student = getStudent();
+    if (!student) return false;
+    const m = getLikes(student);
+    const key = `${date}|${topicId}`;
+    const liked = !m[key];
+    if (liked) {
+      m[key] = {
+        liked_at: new Date().toISOString(),
+        category: (meta && meta.category) || '',
+        title: (meta && meta.title) || ''
+      };
+    } else {
+      delete m[key];
+    }
+    saveLikes(m, student);
+    queueWebhook({
+      action: 'like_toggle',
+      student, date,
+      topic_id: topicId,
+      like_state: liked ? 'liked' : 'unliked',
+      category: (meta && meta.category) || '',
+      title: (meta && meta.title) || '',
+      timestamp: new Date().toISOString()
+    });
+    return liked;
+  }
+
   /* --- Answer submissions --- */
   function answerKey(student, date, topicId, level, qId) {
     return [student || getStudent(), date, topicId, level, qId].join('::');
@@ -667,6 +715,7 @@ const Common = (() => {
     getMarks, addMark, editMark, removeMark, hasMark,
     updateSRS, getDueCards, getStats,
     getStarredCats, toggleStarredCat,
+    getLikes, isLiked, toggleLike,
     submitAnswer, getLocalAnswer, fetchFeedback, fetchRecentFeedback,
     markFeedbackSeen,
     pushMarksSnapshot, pullMarksSnapshot,

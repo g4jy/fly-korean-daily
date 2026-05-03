@@ -95,14 +95,35 @@ function doGet(e) {
   if (action === 'pending') {
     out = rows.filter(r => r.action === 'answer' && r.status === 'submitted' && !r.feedback_score);
   } else if (action === 'all') {
-    out = rows;
+    // UNION: Submissions + Likes → teacher dashboard sees both answer-submissions and like events.
+    out = rows.concat(_fkdReadLikesAsEvents());
   } else if (action === 'student') {
     const s = e.parameter.student;
-    out = rows.filter(r => r.student === s);
+    out = rows.filter(r => r.student === s).concat(
+      _fkdReadLikesAsEvents().filter(r => r.student === s)
+    );
+  } else if (action === 'likes') {
+    // Direct likes-only feed.
+    const s = e.parameter.student;
+    out = _fkdReadLikesAsEvents().filter(r => !s || r.student === s);
   }
 
   return ContentService.createTextOutput(JSON.stringify(out))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+// Helper: read the Likes sheet and shape rows like Submissions events (for UNION in doGet).
+// Each like row gets `action: 'like_toggle'` and a synthesized `timestamp`/`student`/`date`/`topic_id`/`like_state` set.
+function _fkdReadLikesAsEvents() {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Likes');
+  if (!sheet || sheet.getLastRow() < 2) return [];
+  const values = sheet.getDataRange().getValues();
+  const headers = values[0];
+  return values.slice(1).map(row => {
+    const obj = { action: 'like_toggle' };
+    headers.forEach((h, i) => { obj[h] = row[i]; });
+    return obj;
+  });
 }
 
 // Snapshot writer (called by fkdHandlePost when it sees action === 'marks_snapshot')
@@ -148,8 +169,12 @@ function fkdHandlePost(e) {
   if (Array.isArray(body)) {
     const answerEvents = body.filter(x => x.action === 'answer');
     const snapshotEvents = body.filter(x => x.action === 'marks_snapshot');
-    const otherEvents = body.filter(x => x.action !== 'answer' && x.action !== 'marks_snapshot');
+    const likeEvents = body.filter(x => x.action === 'like_toggle');
+    const otherEvents = body.filter(x =>
+      x.action !== 'answer' && x.action !== 'marks_snapshot' && x.action !== 'like_toggle'
+    );
     if (answerEvents.length) fkdWriteSubmissions(answerEvents);
+    if (likeEvents.length) fkdWriteLikes(likeEvents);
     // Snapshots: only keep latest per student → collapse batch to per-student latest
     if (snapshotEvents.length) {
       const latestByStudent = {};
@@ -163,6 +188,27 @@ function fkdHandlePost(e) {
     return ContentService.createTextOutput('ok').setMimeType(ContentService.MimeType.TEXT);
   }
   return ContentService.createTextOutput('ok').setMimeType(ContentService.MimeType.TEXT);
+}
+
+// Likes sheet writer — appends one row per like_toggle event from common.js.
+// Teacher dashboard reads via doGet ?action=all (which UNIONs Submissions + Likes).
+function fkdWriteLikes(events) {
+  const sheetName = 'Likes';
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sheet = ss.getSheetByName(sheetName) || ss.insertSheet(sheetName);
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(['timestamp','student','date','topic_id','like_state','category','title']);
+  }
+  const rows = events.map(e => [
+    e.timestamp || new Date().toISOString(),
+    e.student || '',
+    e.date || '',
+    e.topic_id || '',
+    e.like_state || '',   // 'liked' | 'unliked'
+    e.category || '',
+    e.title || ''
+  ]);
+  sheet.getRange(sheet.getLastRow() + 1, 1, rows.length, rows[0].length).setValues(rows);
 }
 
 function fkdWriteSubmissions(events) {

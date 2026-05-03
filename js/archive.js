@@ -2,7 +2,21 @@
 /* Browse all past daily content; export/share any topic or passage. */
 
 (async function () {
-  const state = { index: null, currentDate: null, daily: null, selectedLevel: {} };
+  const state = { index: null, currentDate: null, daily: null, selectedLevel: {}, catFilter: '' };
+
+  // Populate category dropdown with the 12 canonical categories.
+  const CATEGORIES = [
+    'Business', 'Culture', 'Daily Life', 'Education', 'Entertainment',
+    'Health', 'Korea', 'Politics', 'Science', 'Sports', 'Technology', 'Travel', 'World'
+  ];
+  const catSelect = document.getElementById('arch-cat-filter');
+  if (catSelect) {
+    CATEGORIES.forEach(c => {
+      const o = document.createElement('option');
+      o.value = c; o.textContent = c;
+      catSelect.appendChild(o);
+    });
+  }
 
   async function loadIndex() {
     try {
@@ -63,18 +77,28 @@
     const d = state.daily;
     if (!d) return;
     const main = document.getElementById('arch-main');
-    const topics = d.topics || [];
-    const cats = [...new Set(topics.map(t => t.category))];
+    const allTopics = d.topics || [];
+    const topics = state.catFilter
+      ? allTopics.filter(t => t.category === state.catFilter)
+      : allTopics;
+    const cats = [...new Set(allTopics.map(t => t.category))];
     const allText = estimateChars(topics);
+    const filterNote = state.catFilter
+      ? ` · <em>filter: ${state.catFilter} (${topics.length}/${allTopics.length})</em>`
+      : '';
 
     main.innerHTML = `
       <div class="arch-summary">
-        <strong>${d.date}</strong> · ${topics.length} topics · ${cats.length} categories
-        (${cats.join(', ')}) · ~${allText.toLocaleString()} Korean characters total
+        <strong>${d.date}</strong> · ${allTopics.length} topics · ${cats.length} categories
+        (${cats.join(', ')}) · ~${allText.toLocaleString()} Korean characters total${filterNote}
       </div>
       <div id="arch-topics"></div>
     `;
     const host = document.getElementById('arch-topics');
+    if (topics.length === 0) {
+      host.innerHTML = `<p style="color:var(--text-light); padding:20px 0;">No topics in this date for category "${state.catFilter}".</p>`;
+      return;
+    }
     host.innerHTML = topics.map(renderTopic).join('');
     host.querySelectorAll('.arch-level-btn').forEach(b =>
       b.addEventListener('click', () => {
@@ -191,8 +215,14 @@
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   }
 
-  // Wire search
+  // Wire search + category filter
   document.getElementById('arch-search').addEventListener('input', (e) => renderDates(e.target.value.trim()));
+  if (catSelect) {
+    catSelect.addEventListener('change', (e) => {
+      state.catFilter = e.target.value;
+      if (state.daily) renderDaily();
+    });
+  }
 
   loadIndex();
 })();

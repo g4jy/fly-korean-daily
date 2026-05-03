@@ -475,6 +475,32 @@ body {
 
 .passage-header .passage-title { margin-bottom: 0; flex: 1; }
 
+.btn-like {
+  background: var(--card-bg);
+  border: 1.5px solid var(--border);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s, border-color 0.15s, background 0.15s;
+}
+.btn-like:hover { border-color: var(--accent-hot); transform: scale(1.08); }
+.btn-like.liked {
+  background: rgba(225,112,85,0.08);
+  border-color: var(--accent-hot);
+  animation: like-pop 0.3s;
+}
+@keyframes like-pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+
 .btn-listen {
   background: var(--primary);
   color: #fff;

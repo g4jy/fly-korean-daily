@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Teacher Dashboard · Fly Korean Daily</title>
-<link rel="stylesheet" href="css/styles.css?v=4" />
+<link rel="stylesheet" href="css/styles.css?v=15" />
 <style>
 .teacher-container { max-width: 1100px; }
 .t-grid { display: grid; grid-template-columns: 240px 1fr; gap: 18px; margin-top: 12px; }
@@ -68,7 +68,7 @@
   </div>
 </div>
 
-<script src="js/common.js?v=4"></script>
+<script src="js/common.js?v=15"></script>
 <script>
 (async function () {
   const GET_URL = Common.WEBHOOK_URL + '?action=all&key=' + encodeURIComponent('teacher');
@@ -103,13 +103,29 @@
     const g = {};
     for (const s of list) {
       const k = s.student || 'unknown';
-      if (!g[k]) g[k] = { name: k, total: 0, flagged: 0, awaitingFeedback: 0, latest: null };
+      if (!g[k]) g[k] = { name: k, total: 0, flagged: 0, awaitingFeedback: 0, likes: 0, latest: null };
       g[k].total++;
+      if (s.action === 'like_toggle' && s.like_state === 'liked') g[k].likes++;
       if ((s.feedback_score !== undefined && s.feedback_score <= 2) || s.flagged) g[k].flagged++;
       if (!s.feedback_score && s.status === 'submitted') g[k].awaitingFeedback++;
       if (!g[k].latest || s.timestamp > g[k].latest) g[k].latest = s.timestamp;
     }
     return Object.values(g).sort((a, b) => (b.latest || '').localeCompare(a.latest || ''));
+  }
+
+  function studentLikes(student) {
+    // Reduce like_toggle stream into current liked-set per (date|topic_id).
+    // Each toggle flips state; the latest event wins.
+    const events = state.submissions
+      .filter(s => s.student === student && s.action === 'like_toggle')
+      .sort((a, b) => (a.timestamp || '').localeCompare(b.timestamp || ''));
+    const liked = new Map();
+    for (const e of events) {
+      const key = `${e.date}|${e.topic_id}`;
+      if (e.like_state === 'liked') liked.set(key, e);
+      else if (e.like_state === 'unliked') liked.delete(key);
+    }
+    return Array.from(liked.values()).sort((a, b) => (b.timestamp || '').localeCompare(a.timestamp || ''));
   }
 
   function renderStudents() {
@@ -123,7 +139,10 @@
     host.innerHTML = groups.map(g => `
       <button class="t-student-btn ${state.currentStudent === g.name ? 'active' : ''}" data-student="${g.name}">
         <span>${g.name} <small style="opacity:0.7">· ${g.total}</small></span>
-        ${g.awaitingFeedback > 0 ? `<span class="t-badge">${g.awaitingFeedback} pending</span>` : g.flagged > 0 ? `<span class="t-badge">${g.flagged} flag</span>` : ''}
+        ${g.awaitingFeedback > 0 ? `<span class="t-badge">${g.awaitingFeedback} pending</span>`
+          : g.flagged > 0 ? `<span class="t-badge">${g.flagged} flag</span>`
+          : g.likes > 0 ? `<span class="t-badge" style="background:var(--accent-hot);">❤ ${g.likes}</span>`
+          : ''}
       </button>
     `).join('');
     host.querySelectorAll('.t-student-btn').forEach(btn => {
@@ -141,17 +160,39 @@
       main.innerHTML = `<p style="color:var(--text-light); text-align:center; padding:40px 0;">Select a student.</p>`;
       return;
     }
+    // Submissions = answer-type events only (exclude like_toggle from the answer panel)
     const list = state.submissions
       .filter(s => s.student === state.currentStudent)
+      .filter(s => s.action !== 'like_toggle')
       .filter(s => state.filter !== 'flagged' || (s.feedback_score <= 2 || s.flagged))
       .sort((a, b) => (b.timestamp || '').localeCompare(a.timestamp || ''));
 
-    if (list.length === 0) {
-      main.innerHTML = `<p style="color:var(--text-light); text-align:center; padding:40px 0;">No submissions for this student.</p>`;
+    const likes = studentLikes(state.currentStudent);
+
+    const likesBlock = likes.length > 0 ? `
+      <details class="t-likes-section" ${likes.length <= 5 ? 'open' : ''} style="margin-bottom:18px;">
+        <summary style="cursor:pointer; font-weight:600; padding:8px 0;">❤️ Liked passages (${likes.length})</summary>
+        <div style="display:flex; flex-direction:column; gap:6px; margin-top:8px;">
+          ${likes.map(l => `
+            <div style="display:flex; gap:10px; align-items:center; padding:8px 12px; background:var(--border-soft); border-radius:6px; font-size:0.85rem;">
+              <span style="color:var(--text-light); font-variant-numeric: tabular-nums; min-width:80px;">${l.date || ''}</span>
+              <span style="background:var(--card-bg); padding:2px 8px; border-radius:999px; font-size:0.72rem; color:var(--text-light);">${l.category || ''}</span>
+              <span style="flex:1; color:var(--text);">${l.title || l.topic_id || ''}</span>
+              <a href="reading.html?student=${encodeURIComponent(state.currentStudent)}&date=${l.date}&topic=${l.topic_id}" style="font-size:0.75rem; color:var(--primary); text-decoration:none;">View →</a>
+            </div>
+          `).join('')}
+        </div>
+      </details>
+    ` : '';
+
+    if (list.length === 0 && likes.length === 0) {
+      main.innerHTML = `<p style="color:var(--text-light); text-align:center; padding:40px 0;">No activity for this student yet.</p>`;
       return;
     }
 
     main.innerHTML = `
+      ${likesBlock}`;
+    main.innerHTML += `
       <h3 style="margin-bottom:14px;">${state.currentStudent} · ${list.length} submissions</h3>
       ${list.map(s => `
         <div class="t-sub-card">

@@ -406,6 +406,7 @@
         <div class="passage-header">
           <h2 class="passage-title">${lvl.title || ''}</h2>
           <div class="passage-actions">
+            <button class="btn-like ${Common.isLiked(daily.date, topic.id) ? 'liked' : ''}" id="like-btn" aria-label="Like this passage" title="좋아요">${Common.isLiked(daily.date, topic.id) ? '❤️' : '🤍'}</button>
             <button class="btn-multi ${multiMode?'on':''}" id="multi-toggle" aria-label="Multi-word select" title="Tap-to-pick a phrase across multiple words">${multiMode?'✓ 구절 선택중':'✏️ 구절 선택'}</button>
             <button class="btn-listen" id="listen" aria-label="Listen">🔊</button>
           </div>
@@ -442,6 +443,20 @@
     wireWordTaps(lvl, topic);
     wireVocabDrawer(lvl, topic);
     wireQuestions(lvl, daily.date, topic.id);
+
+    // ♥ like button — toggle + animate, persists to localStorage + webhook
+    const likeBtn = document.getElementById('like-btn');
+    if (likeBtn) {
+      likeBtn.addEventListener('click', () => {
+        const liked = Common.toggleLike(daily.date, topic.id, {
+          category: topic.category || '',
+          title: lvl.title || topic.id
+        });
+        likeBtn.classList.toggle('liked', liked);
+        likeBtn.textContent = liked ? '❤️' : '🤍';
+        Common.toast(liked ? '❤️ 저장했어요' : '저장 취소', 'success', 1200);
+      });
+    }
     wireMultiSelect(lvl, topic);
   }
 
