@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<title>QA Diagnostic · Fly Korean Daily</title>
+<link rel="stylesheet" href="css/styles.css?v=15" />
+<style>
+.qa-container { max-width: 980px; padding: 16px; }
+.qa-section { margin-bottom: 28px; background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow-sm); padding: 16px 20px; }
+.qa-section h3 { margin: 0 0 12px; font-size: 1rem; color: var(--text); display: flex; align-items: center; gap: 10px; }
+.qa-section .qa-progress { font-size: 0.8rem; color: var(--text-light); font-weight: normal; }
+.qa-row { display: flex; align-items: flex-start; gap: 10px; padding: 8px 10px; border-radius: 6px; margin-bottom: 4px; font-size: 0.88rem; }
+.qa-row.pass { background: rgba(0,184,148,0.06); }
+.qa-row.fail { background: rgba(225,112,85,0.08); }
+.qa-row.manual { background: rgba(253,203,110,0.10); }
+.qa-row.pending { background: var(--border-soft); color: var(--text-light); }
+.qa-badge {
+  font-size: 0.65rem; font-weight: 700; padding: 2px 7px; border-radius: 999px;
+  white-space: nowrap; text-transform: uppercase; letter-spacing: 0.05em;
+  flex-shrink: 0; margin-top: 2px;
+}
+.qa-badge.pass { background: var(--accent); color: #fff; }
+.qa-badge.fail { background: var(--accent-hot); color: #fff; }
+.qa-badge.manual { background: var(--accent-warm); color: var(--text); }
+.qa-badge.pending { background: var(--text-soft); color: #fff; }
+.qa-name { font-weight: 600; min-width: 200px; }
+.qa-detail { color: var(--text-light); font-size: 0.82rem; word-break: break-word; flex: 1; }
+.qa-detail code { background: var(--border-soft); padding: 1px 5px; border-radius: 3px; font-size: 0.78rem; }
+.qa-summary {
+  display: flex; gap: 14px; padding: 12px 16px; background: var(--card-bg);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+  margin-bottom: 18px; align-items: center; flex-wrap: wrap;
+}
+.qa-summary .stat { display: flex; flex-direction: column; align-items: center; padding: 0 12px; border-right: 1px solid var(--border-soft); }
+.qa-summary .stat:last-child { border-right: none; }
+.qa-summary .n { font-size: 1.5rem; font-weight: 700; line-height: 1; }
+.qa-summary .lbl { font-size: 0.72rem; color: var(--text-light); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+.qa-summary .n.pass { color: var(--accent); }
+.qa-summary .n.fail { color: var(--accent-hot); }
+.qa-summary .n.manual { color: var(--accent-warm); }
+.qa-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+.qa-link {
+  padding: 6px 14px; font-size: 0.85rem;
+  background: var(--primary); color: #fff;
+  border-radius: 6px; text-decoration: none; cursor: pointer;
+  border: none; font-family: inherit;
+}
+.qa-link.ghost { background: transparent; color: var(--primary); border: 1.5px solid var(--primary); }
+.qa-link:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+.qa-checkbox-row { display: flex; gap: 8px; align-items: center; padding: 5px 8px; }
+.qa-checkbox-row input[type=checkbox] { width: 18px; height: 18px; cursor: pointer; }
+.qa-checkbox-row label { cursor: pointer; font-size: 0.88rem; }
+</style>
+</head>
+<body>
+<div class="container qa-container">
+  <div class="topbar">
+    <h1><span class="brand">Fly Korean</span><span class="daily-suffix"> · QA Diagnostic</span></h1>
+    <div class="right">
+      <a class="nav-link" href="index.html">Home</a>
+      <a class="nav-link" href="reading.html">Reading</a>
+      <a class="nav-link" href="flashcards.html">Flashcards</a>
+      <a class="nav-link" href="archive.html">Archive</a>
+      <a class="nav-link" href="teacher.html">Teacher</a>
+    </div>
+  </div>
+
+  <div class="hero" style="padding:14px 0;">
+    <h2>Auto + manual diagnostic</h2>
+    <p>Runs ~25 automated checks against the live deployment, plus a manual checklist for things only a human eye can verify (audio playback, mic input, animations).</p>
+  </div>
+
+  <div class="qa-summary" id="qa-summary">
+    <div class="stat"><span class="n pending" id="n-total">0</span><span class="lbl">tests</span></div>
+    <div class="stat"><span class="n pass" id="n-pass">0</span><span class="lbl">pass</span></div>
+    <div class="stat"><span class="n fail" id="n-fail">0</span><span class="lbl">fail</span></div>
+    <div class="stat"><span class="n manual" id="n-manual">0</span><span class="lbl">manual</span></div>
+    <div style="flex:1"></div>
+    <button class="qa-link" id="rerun-btn">↻ Re-run automated tests</button>
+    <button class="qa-link ghost" id="reset-btn">Reset QA state</button>
+  </div>
+
+  <div id="qa-sections"></div>
+
+</div>
+
+<script src="js/common.js?v=15"></script>
+<script>
+/* ---------- Test framework ---------- */
+const QA_STUDENT = '_qa_diagnostic';
+const RESULTS = [];   // { section, name, status, detail }
+
+function record(section, name, status, detail = '') {
+  RESULTS.push({ section, name, status, detail });
+}
+
+async function runTest(section, name, fn) {
+  try {
+    const detail = await fn();
+    record(section, name, 'pass', detail || 'ok');
+  } catch (e) {
+    record(section, name, 'fail', String(e.message || e));
+  }
+}
+
+function assert(cond, msg) {
+  if (!cond) throw new Error(msg);
+}
+
+/* ---------- Section A: Common.js API ---------- */
+async function runSectionA() {
+  // A1: getStudent / setStudent
+  await runTest('A · Common API', 'student gate (set/get)', () => {
+    Common.setStudent(QA_STUDENT);
+    assert(Common.getStudent() === QA_STUDENT, `expected ${QA_STUDENT}, got ${Common.getStudent()}`);
+    return `current student = ${Common.getStudent()}`;
+  });
+
+  // A2: schema version migration ran
+  await runTest('A · Common API', 'schema migration ran', () => {
+    const v = parseInt(localStorage.getItem('fkd_schema_version') || '0', 10);
+    assert(v >= 3, `schema version is ${v}, expected ≥3`);
+    return `fkd_schema_version = ${v}`;
+  });
+
+  // A3: addMark + getMarks + removeMark cycle
+  await runTest('A · Common API', 'mark add/remove cycle', () => {
+    const testKey = '_qa_word_' + Date.now();
+    Common.addMark({ kr: testKey, en: 'qa-test', def: 'test', pos: 'noun', source: 'qa' });
+    assert(Common.hasMark(testKey), 'addMark did not persist');
+    Common.removeMark(testKey);
+    assert(!Common.hasMark(testKey), 'removeMark did not work');
+    return 'add → has → remove';
+  });
+
+  // A4: bestDictGuess on known nouns/verbs
+  await runTest('A · Common API', 'bestDictGuess: 심고 → 심다', () => {
+    const r = Common.bestDictGuess('심고');
+    assert(r === '심다', `expected 심다, got ${r}`);
+    return r;
+  });
+
+  await runTest('A · Common API', 'bestDictGuess: 변하면 → 변하다', () => {
+    const r = Common.bestDictGuess('변하면');
+    assert(r === '변하다', `expected 변하다, got ${r}`);
+    return r;
+  });
+
+  // A5: dropFinalJongseong
+  await runTest('A · Common API', 'dropFinalJongseong: 즐길 + ㄹ → 즐기', () => {
+    const r = Common.dropFinalJongseong('즐길', 'ㄹ');
+    assert(r === '즐기', `expected 즐기, got ${r}`);
+    return r;
+  });
+
+  // A6: starred categories toggle
+  await runTest('A · Common API', 'toggleStarredCat (on/off)', () => {
+    const before = Common.getStarredCats().length;
+    Common.toggleStarredCat('_qa_cat');
+    const mid = Common.getStarredCats().length;
+    assert(mid === before + 1, `add: ${before} → ${mid}`);
+    Common.toggleStarredCat('_qa_cat');
+    const after = Common.getStarredCats().length;
+    assert(after === before, `remove: ${mid} → ${after}`);
+    return 'toggle works';
+  });
+
+  // A7: likes API (NEW)
+  await runTest('A · Common API', 'toggleLike toggles isLiked', () => {
+    const date = '2026-01-01';
+    const tid = '_qa_topic';
+    // Clean state
+    if (Common.isLiked(date, tid)) Common.toggleLike(date, tid);
+    assert(!Common.isLiked(date, tid), 'should start unliked');
+    const r1 = Common.toggleLike(date, tid, { category: 'QA', title: 'test' });
+    assert(r1 === true && Common.isLiked(date, tid), 'after toggle should be liked');
+    const r2 = Common.toggleLike(date, tid);
+    assert(r2 === false && !Common.isLiked(date, tid), 'after second toggle should be unliked');
+    return 'liked → unliked';
+  });
+
+  // A8: getLikes returns map
+  await runTest('A · Common API', 'getLikes returns map', () => {
+    const date = '2026-01-02';
+    const tid = '_qa_topic_persist';
+    Common.toggleLike(date, tid, { category: 'QA', title: 'persist' });
+    const m = Common.getLikes();
+    const k = `${date}|${tid}`;
+    assert(m[k], `expected key ${k} in map`);
+    assert(m[k].category === 'QA', `category not stored: ${m[k].category}`);
+    Common.toggleLike(date, tid);  // cleanup
+    return `map keys: ${Object.keys(m).length}`;
+  });
+}
+
+/* ---------- Section B: Data integrity ---------- */
+async function runSectionB() {
+  await runTest('B · Live data', 'data/index.json fetches', async () => {
+    const r = await fetch('data/index.json?t=' + Date.now());
+    assert(r.ok, `HTTP ${r.status}`);
+    const j = await r.json();
+    assert(j.latest, 'no latest field');
+    assert(Array.isArray(j.dates), 'dates not array');
+    return `latest=${j.latest}, ${j.dates.length} dates`;
+  });
+
+  await runTest('B · Live data', 'data/latest.json structure', async () => {
+    const r = await fetch('data/latest.json?t=' + Date.now());
+    assert(r.ok, `HTTP ${r.status}`);
+    const j = await r.json();
+    assert(Array.isArray(j.topics), 'no topics array');
+    assert(j.topics.length >= 3, `only ${j.topics.length} topics`);
+    return `${j.topics.length} topics, date=${j.date}`;
+  });
+
+  await runTest('B · Live data', 'every topic has 5 levels k1-k5', async () => {
+    const r = await fetch('data/latest.json?t=' + Date.now());
+    const j = await r.json();
+    const expected = ['k1','k2','k3','k4','k5'];
+    let bad = [];
+    for (const t of j.topics) {
+      const got = Object.keys(t.levels || {}).sort();
+      if (JSON.stringify(got) !== JSON.stringify(expected)) bad.push(t.id);
+    }
+    assert(bad.length === 0, `wrong levels in ${bad.length} topics: ${bad.slice(0,3).join(', ')}`);
+    return `${j.topics.length} topics OK`;
+  });
+
+  await runTest('B · Live data', 'token_map: 한국 maps to 한국 noun', async () => {
+    const r = await fetch('data/latest.json?t=' + Date.now());
+    const j = await r.json();
+    const matches = [];
+    for (const t of j.topics) for (const lvl of Object.values(t.levels)) {
+      const e = (lvl.token_map || {})['한국'];
+      if (e) matches.push({ dict: e.dict, pos: e.pos, topic: t.id });
+    }
+    if (matches.length === 0) return 'no 한국 token in any text — skip';
+    const bad = matches.filter(m => m.dict !== '한국' || m.pos !== 'noun');
+    assert(bad.length === 0, `${bad.length} bad mappings`);
+    return `${matches.length} hits, all noun ✓`;
+  });
+
+  await runTest('B · Live data', 'no ㄹ-noun→verb suspect maps in latest', async () => {
+    const r = await fetch('data/latest.json?t=' + Date.now());
+    const j = await r.json();
+    const SUSPECTS = '울알을길결발설결올필갈말결';
+    let cnt = 0;
+    for (const t of j.topics) for (const lvl of Object.values(t.levels)) {
+      for (const [s, e] of Object.entries(lvl.token_map || {})) {
+        if (e.dict?.endsWith('다') && s && SUSPECTS.includes(s.slice(-1)) && e.pos === 'noun') cnt++;
+      }
+    }
+    assert(cnt < 5, `${cnt} suspect mappings (kiwi may have regressed)`);
+    return `${cnt} suspect (acceptable < 5)`;
+  });
+
+  await runTest('B · Live data', 'every vocab has this_passage:true marker', async () => {
+    const r = await fetch('data/latest.json?t=' + Date.now());
+    const j = await r.json();
+    let bad = 0;
+    for (const t of j.topics) for (const lvl of Object.values(t.levels)) {
+      for (const v of (lvl.vocab || [])) {
+        const meanings = v.meanings || [];
+        if (!meanings.some(m => m.this_passage)) bad++;
+      }
+    }
+    assert(bad === 0, `${bad} vocab without this_passage marker`);
+    return 'all vocab OK';
+  });
+}
+
+/* ---------- Section C: Asset integrity ---------- */
+async function runSectionC() {
+  const assets = [
+    ['css/styles.css?v=15', 'btn-like'],
+    ['css/styles.css?v=15', 'like-pop'],
+    ['js/common.js?v=15',  'toggleLike'],
+    ['js/common.js?v=15',  'getLikes'],
+    ['js/reading.js?v=15', 'btn-like'],
+    ['js/reading.js?v=15', 'kiwi'],   // negative — should NOT be in JS, kiwi is Python only
+    ['js/archive.js?v=15', 'catFilter'],
+  ];
+  for (const [url, needle] of assets) {
+    const expectPresent = needle !== 'kiwi';
+    await runTest('C · Asset bundle', `${url.split('/').pop()} contains "${needle}"`, async () => {
+      const r = await fetch(url);
+      const t = await r.text();
+      const has = t.includes(needle);
+      if (expectPresent) {
+        assert(has, `not found in deployed bundle (cache may need v-bump)`);
+      } else {
+        assert(!has, `found unexpectedly`);
+      }
+      return has ? 'present' : 'absent';
+    });
+  }
+}
+
+/* ---------- Manual checklist (renders empty checkboxes for human verification) ---------- */
+const MANUAL_CHECKLIST = [
+  ['index.html: hub cards (Reading + Flashcards) clickable', 'index.html?student=' + QA_STUDENT],
+  ['reading.html: ♥ button visible top-right of passage', 'reading.html?student=' + QA_STUDENT],
+  ['reading.html: ♥ click → toast "❤️ 저장했어요" appears', 'reading.html?student=' + QA_STUDENT],
+  ['reading.html: ♥ click again → toast "저장 취소"', 'reading.html?student=' + QA_STUDENT],
+  ['reading.html: 🔊 button plays Korean audio (k1 has TTS)', 'reading.html?student=' + QA_STUDENT],
+  ['reading.html: tap a Korean word → "Saved: X" toast', 'reading.html?student=' + QA_STUDENT],
+  ['reading.html: ✏️ 구절 선택 mode highlights tokens on hover', 'reading.html?student=' + QA_STUDENT],
+  ['reading.html: question type+submit returns success', 'reading.html?student=' + QA_STUDENT],
+  ['reading.html: question 🎙️ records mic input (Chrome only)', 'reading.html?student=' + QA_STUDENT],
+  ['reading.html: prev/next topic navigation works', 'reading.html?student=' + QA_STUDENT],
+  ['reading.html: ★ category star toggles category filter', 'reading.html?student=' + QA_STUDENT],
+  ['flashcards.html: 4 mode tabs (Daily/Browse/Known/Weak) all switch', 'flashcards.html?student=' + QA_STUDENT],
+  ['flashcards.html: card flip on click', 'flashcards.html?student=' + QA_STUDENT],
+  ['flashcards.html: KR↔EN direction toggle', 'flashcards.html?student=' + QA_STUDENT],
+  ['flashcards.html: SRS buttons (Again/Hard/Good) advance card', 'flashcards.html?student=' + QA_STUDENT],
+  ['flashcards.html: word list inline edit saves on blur', 'flashcards.html?student=' + QA_STUDENT],
+  ['flashcards.html: ✕ delete word from list', 'flashcards.html?student=' + QA_STUDENT],
+  ['flashcards.html: 💾 Export downloads JSON file', 'flashcards.html?student=' + QA_STUDENT],
+  ['archive.html: date list populates in sidebar', 'archive.html'],
+  ['archive.html: category dropdown filters topics on selected date', 'archive.html'],
+  ['archive.html: level k1-k5 buttons switch text', 'archive.html'],
+  ['archive.html: 📋 Copy / 📤 Share / 💾 Export work', 'archive.html'],
+  ['teacher.html: student sidebar populates (after Apps Script update)', 'teacher.html'],
+  ['teacher.html: ❤ likes badge shows on student row', 'teacher.html'],
+  ['teacher.html: clicking student → liked passages list with View → links', 'teacher.html'],
+  ['loriana/topik3.html: vocab tap toggles checked + counter', 'loriana/topik3.html'],
+];
+
+/* ---------- Render ---------- */
+function renderResults() {
+  const sections = {};
+  RESULTS.forEach(r => {
+    sections[r.section] ||= [];
+    sections[r.section].push(r);
+  });
+
+  const auto = document.getElementById('qa-sections');
+  let html = '';
+  for (const [name, items] of Object.entries(sections)) {
+    const passN = items.filter(i => i.status === 'pass').length;
+    html += `<div class="qa-section">
+      <h3>${name} <span class="qa-progress">${passN}/${items.length} pass</span></h3>
+      ${items.map(it => `
+        <div class="qa-row ${it.status}">
+          <span class="qa-badge ${it.status}">${it.status}</span>
+          <span class="qa-name">${escapeHtml(it.name)}</span>
+          <span class="qa-detail">${escapeHtml(it.detail || '')}</span>
+        </div>
+      `).join('')}
+    </div>`;
+  }
+
+  // Manual checklist section
+  html += `<div class="qa-section">
+    <h3>D · Manual checklist <span class="qa-progress">${MANUAL_CHECKLIST.length} items — human eyes needed</span></h3>
+    <p style="font-size:0.83rem; color:var(--text-light); margin:0 0 10px;">
+      Click each link to open in a new tab. Verify the behavior, then check the box. State persists in localStorage.
+    </p>
+    ${MANUAL_CHECKLIST.map(([label, url], i) => {
+      const id = 'manual-' + i;
+      const checked = localStorage.getItem('qa_check_' + i) === '1' ? 'checked' : '';
+      return `<div class="qa-checkbox-row">
+        <input type="checkbox" id="${id}" data-idx="${i}" ${checked} />
+        <label for="${id}">${escapeHtml(label)}</label>
+        <span style="flex:1"></span>
+        <a class="qa-link ghost" href="${url}" target="_blank" rel="noopener" style="font-size:0.78rem; padding:3px 10px;">Open ↗</a>
+      </div>`;
+    }).join('')}
+  </div>`;
+
+  auto.innerHTML = html;
+  // wire manual checkboxes to persist
+  document.querySelectorAll('input[type=checkbox][data-idx]').forEach(cb => {
+    cb.addEventListener('change', () => {
+      const i = cb.dataset.idx;
+      if (cb.checked) localStorage.setItem('qa_check_' + i, '1');
+      else localStorage.removeItem('qa_check_' + i);
+      updateSummary();
+    });
+  });
+  updateSummary();
+}
+
+function updateSummary() {
+  const total = RESULTS.length;
+  const pass = RESULTS.filter(r => r.status === 'pass').length;
+  const fail = RESULTS.filter(r => r.status === 'fail').length;
+  const manualDone = MANUAL_CHECKLIST.filter((_, i) => localStorage.getItem('qa_check_' + i) === '1').length;
+  document.getElementById('n-total').textContent = total + MANUAL_CHECKLIST.length;
+  document.getElementById('n-pass').textContent = pass + manualDone;
+  document.getElementById('n-fail').textContent = fail;
+  document.getElementById('n-manual').textContent = MANUAL_CHECKLIST.length - manualDone;
+}
+
+function escapeHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+async function runAll() {
+  RESULTS.length = 0;
+  await runSectionA();
+  await runSectionB();
+  await runSectionC();
+  renderResults();
+}
+
+document.getElementById('rerun-btn').addEventListener('click', runAll);
+document.getElementById('reset-btn').addEventListener('click', () => {
+  for (let i = 0; i < MANUAL_CHECKLIST.length; i++) localStorage.removeItem('qa_check_' + i);
+  // Also clean QA scratch state
+  localStorage.removeItem('fkd_likes:' + QA_STUDENT);
+  Common.toast('QA state reset', 'success', 1500);
+  renderResults();
+});
+
+runAll();
+</script>
+</body>
+</html>
